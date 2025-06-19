@@ -1,0 +1,23 @@
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: debug
+
+  file:
+    path: logs/PhoeStorage.log
+
+spring:
+  datasource:
+    password: "%Wh@BJrX8z3uHugD7JPG#%"
+    url: jdbc:mysql://188.228.52.113/phoestorage
+    username: storage
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true

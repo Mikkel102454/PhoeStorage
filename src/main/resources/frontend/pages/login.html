@@ -1,0 +1,37 @@
+    <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script src="https://kit.fontawesome.com/f104e38812.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        
+    </head>
+    <body class="h-center">
+        <div class="w-fit h-center">
+            <form action="/login" method="post" class="w-fit h-center">
+                <div class="w-fit border-1 d-flex flex-column m-t-20px h-fit p-25px border-full border-r-6px">
+                    <div class="w-800px d-flex h-fit gray-text d-flex flex-column">
+                        <div class="m-r-10px">
+                            <label for="username" class="text-s-small m-b-6px">Brugernavn</label>
+                            <input type="text" id="username" name="username" placeholder="F.eks. Brugernavn" class="w-100p h-30px border-1 border-full border-r-6px p-l-10px outline-0" required>
+                        </div>
+                        <div class="m-r-10px m-t-10px">
+                            <label for=password class="text-s-small m-b-6px m-t-20px ">Password</label>
+                            <input type="password" id="password" name="password" placeholder="F.eks. ********" class="w-100p h-30px border-1 border-full border-r-6px p-l-10px outline-0" required>
+                        </div>
+                        <button class="a-left btn-2 border-1 border-full hover-1 border-r-6px hover-pointer m-t-20px w-fit h-center p-lr-100px" type="submit">Login</button>
+                    </div>  
+                </div>
+            </form>
+            <div th:if="${param.error}">
+                <p class="text-s-small" style="color: red;">Forkert brugernavn eller password.</p>
+            </div>
+        
+            <div th:if="${param.logout}">
+                <p class="text-s-small" style="color: green;">Du blev logged ud.</p>
+            </div>
+        </div>
+    </body>
+</html>

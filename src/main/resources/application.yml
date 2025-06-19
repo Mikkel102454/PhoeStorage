@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: PhoeStorage
+
+  cache:
+    type: caffeine
+    cache-names: resources, static-responses, code, style
+
+    caffeine:
+      spec: initialCapacity=20, maximumSize=100, expireAfterWrite=20m
+
+  profiles:
+    active: dev
+
+  thymeleaf:
+    prefix: classpath:/
+    suffix: .html
+    mode: HTMLs
+    cache: true
+
+server:
+  port: 8080
+  root: "C:/PhoeStorage/"
+  default:
+    storage: 2048 #MB
+
