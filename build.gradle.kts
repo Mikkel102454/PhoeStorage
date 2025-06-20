@@ -31,6 +31,8 @@ dependencies {
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     runtimeOnly("com.mysql:mysql-connector-j")
+
+    implementation("org.json:json:20171018")
 }
 
 tasks.withType<Test> {
