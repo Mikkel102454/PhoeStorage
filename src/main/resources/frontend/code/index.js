@@ -49,3 +49,23 @@ async function browseDirectory() {
     console.log("Directory contents:", result);
     alert("Directory browsed successfully!");
 }
+
+function downloadFile() {
+    const path = document.getElementById("fileDownloadInput").value;
+    fetch(`/api/files/download?path=${encodeURIComponent(path)}`, {
+        method: "GET",
+
+    })
+        .then(response => {
+            if (!response.ok) throw new Error("Download failed");
+
+            return response.blob();
+        })
+        .then(blob => {
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = path.split("/").pop(); // use filename from path
+            link.click();
+        })
+        .catch(err => alert("Error downloading file: " + err));
+}

@@ -49,17 +49,34 @@ public class FileController {
                     .body("Chunk too large (max 10 MB) the chunk was " + file.getSize() + " Bytes");
         }
 
-        int chunkCode = fileService.saveChunk(chunkIndex, file);
+
+        if(filepath.startsWith("/")) {
+            filepath = filepath.substring(1);
+        }
+
+        if(!filepath.isEmpty() && !filepath.endsWith("/")){
+            filepath += "/";
+        }
+
+        int chunkCode = fileService.saveChunk(chunkIndex, file, filepath + filename);
         if(chunkCode != 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception(String.valueOf(chunkCode))));
         }
 
         if(chunkIndex >= totalChunks - 1) {
-            String path = fileService.mergeChunk(totalChunks);
-            if(fileService.saveFile(path, filepath, filename) != 0){
+            String internalFileName = fileService.mergeChunk(totalChunks);
+            if(fileService.saveFile(internalFileName, filepath, filename) != 0){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception("error while saving file to database")));
             }
         }
         return ResponseEntity.ok("");
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<?> downloadFile(
+            @RequestParam("path") String filePath,
+            @RequestHeader(value = "Range", required = false) String rangeHeader
+    ){
+        return fileService.downloadFile(filePath, rangeHeader);
     }
 }

@@ -22,6 +22,15 @@ public class UserService {
         this.fileService = fileService;
     }
 
+    /**
+     * Creates user
+     *
+     * @param username user's username
+     * @param password user's password
+     * @param admin is user admin
+     * @return exit code
+     *
+     */
     public int addUser(String username, String password, boolean admin) {
         if(userRepository.existsByUsername(username)) { return 1; }
         if(password.length() < 3) { return 2; }

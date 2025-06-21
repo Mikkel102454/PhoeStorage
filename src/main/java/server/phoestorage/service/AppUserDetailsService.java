@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import server.phoestorage.datasource.users.UserEntity;
 import server.phoestorage.datasource.users.UserRepository;
 
 @Service
@@ -25,7 +26,13 @@ public class AppUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    public String getUuidFromUsername() {
+    /**
+     * Gets the user entity of current use in thread
+     *
+     * @return User entity
+     *
+     */
+    public UserEntity getUserEntity() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
@@ -34,7 +41,7 @@ public class AppUserDetailsService implements UserDetailsService {
 
         String username = auth.getName();
 
-        return userRepository.findUuidByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
     }
 }

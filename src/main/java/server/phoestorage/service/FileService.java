@@ -9,16 +9,19 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.input.BoundedInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import server.phoestorage.datasource.file.FileEntity;
@@ -31,10 +34,10 @@ public class FileService {
     @Value("${server.root}")
     private String rootPath;
 
-    private AppUserDetailsService appUserDetailsService;
-    private HandlerService handlerService;
+    private final AppUserDetailsService appUserDetailsService;
+    private final HandlerService handlerService;
 
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
     @Autowired
     public FileService(AppUserDetailsService appUserDetailsService, HandlerService handlerService, FileRepository fileRepository) {
@@ -43,6 +46,13 @@ public class FileService {
         this.fileRepository = fileRepository;
     }
 
+    /**
+     * Create user folders
+     *
+     * @param user the user
+     * @return true if successful and false if unsuccessful
+     *
+     */
     public boolean createUserFolder(UserEntity user) {
         try{
             new File(rootPath + user.getUuid()).mkdirs();
@@ -50,14 +60,26 @@ public class FileService {
             new File(rootPath + user.getUuid() + "/storage").mkdirs();
             return true;
         }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return false;
         }
     }
 
+    /**
+     * Browse directory
+     *
+     * @param path the current browsing directory
+     * @return response entity with list of FileEntry
+     *
+     */
     public ResponseEntity<?> BrowseDirectory(String path) {
-        String uuid = appUserDetailsService.getUuidFromUsername();
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
         if(path.startsWith("/")) {
             path = path.substring(1);
+        }
+
+        if(!path.endsWith("/")) {
+            path += "/";
         }
 
         List<FileEntity> files = fileRepository.findByOwnerAndPath(uuid, path);
@@ -80,10 +102,25 @@ public class FileService {
         return ResponseEntity.ok(result);
     }
 
-
-    public int saveChunk(int chunkId, MultipartFile file){
+    /**
+     * Saves chunks of a file
+     *
+     * @param chunkId the index of the current chunk
+     * @param file the chunked file
+     * @param path the full path to the destination
+     * @return the exit code
+     *
+     */
+    public int saveChunk(int chunkId, MultipartFile file, String path){
         try{
-            String uuid = appUserDetailsService.getUuidFromUsername();
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+            FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
+
+            if (fileEntity == null) {
+                return -1;
+            }
+
             Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
             Files.createDirectories(chunkDir);
 
@@ -100,13 +137,21 @@ public class FileService {
 
             return 0;
         } catch (Exception e){
-            e.printStackTrace();
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return -1;
         }
     }
+
+    /**
+     * Merges saved chunks into one file
+     *
+     * @param totalChunks total amount of chunks
+     * @return the internal file name
+     *
+     */
     public String mergeChunk(int totalChunks){
         try{
-            String uuid = appUserDetailsService.getUuidFromUsername();
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
             Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
 
             String fileName = UUID.randomUUID().toString();
@@ -128,14 +173,23 @@ public class FileService {
             }
             return fileName;
         }catch (Exception e){
-            e.printStackTrace();
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return null;
         }
     }
 
-    public int saveFile(String path, String filePath, String fileName) {
+    /**
+     * Saves file to database
+     *
+     * @param internalName the internal file name
+     * @param filePath the folder the file should be saved in
+     * @param fileName the name of the saved file
+     * @return exit code
+     *
+     */
+    public int saveFile(String internalName, String filePath, String fileName) {
         try{
-            String uuid = appUserDetailsService.getUuidFromUsername();
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
 
             String extension;
 
@@ -146,10 +200,10 @@ public class FileService {
                 extension = "";
             }
 
-            String internalPath = rootPath + uuid + "/storage/" + path;
+            String internalPath = rootPath + uuid + "/storage/" + internalName;
 
             FileEntity fileEntity = new FileEntity();
-            fileEntity.setUuid(path);
+            fileEntity.setUuid(internalName);
             fileEntity.setOwner(uuid);
             fileEntity.setName(fileName);
             fileEntity.setExtension(extension);
@@ -162,8 +216,70 @@ public class FileService {
             fileRepository.save(fileEntity);
             return 0;
         }catch (Exception e){
-            e.printStackTrace();
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return -1;
+        }
+    }
+
+    /**
+     * Downloads the file
+     *
+     * @param path the internal file name
+     * @param rangeHeader the folder the file should be saved in
+     * @return response entity
+     *
+     */
+    public ResponseEntity<?> downloadFile(String path, String rangeHeader) {
+        try{
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+            FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
+
+            if (fileEntity == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+            }
+
+
+            Path file = Paths.get(fileEntity.getInternalPath());
+            Resource resource = new UrlResource(file.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+            }
+
+            long fileSize = Files.size(file);
+            long start = 0, end = fileSize - 1;
+
+            if (rangeHeader != null && rangeHeader.startsWith("bytes=")) {
+                String[] ranges = rangeHeader.replace("bytes=", "").split("-");
+                start = Long.parseLong(ranges[0]);
+                if (ranges.length > 1 && !ranges[1].isEmpty()) {
+                    end = Long.parseLong(ranges[1]);
+                }
+            }
+
+            long contentLength = end - start + 1;
+            InputStream inputStream = Files.newInputStream(file);
+
+            long skipped = 0;
+            while (skipped < start) {
+                long bytes = inputStream.skip(start - skipped);
+                if (bytes <= 0) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception()));
+                skipped += bytes;
+            }
+
+            BoundedInputStream limited = new BoundedInputStream(inputStream, contentLength);
+            InputStreamResource inputStreamResource = new InputStreamResource(limited);
+
+            return ResponseEntity.status(rangeHeader == null ? 200 : 206)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
+                    .header(HttpHeaders.ACCEPT_RANGES, "bytes")
+                    .contentLength(contentLength)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(inputStreamResource);
+        }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }
 }

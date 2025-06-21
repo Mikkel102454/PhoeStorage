@@ -33,6 +33,7 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
 
     implementation("org.json:json:20171018")
+    implementation("commons-io:commons-io:2.15.1")
 }
 
 tasks.withType<Test> {

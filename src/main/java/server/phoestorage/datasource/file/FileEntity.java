@@ -2,8 +2,10 @@ package server.phoestorage.datasource.file;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
+/**
+ * File entity is data of a file
+ *
+ */
 @Entity(name = "file")
 public class FileEntity {
     @Id
@@ -25,10 +27,10 @@ public class FileEntity {
     @Column(unique = false, nullable = false, name = "path")
     String path;
 
-    @Column(unique = false, nullable = false, name = "fullPath")
+    @Column(unique = true, nullable = false, name = "fullPath")
     String fullPath;
 
-    @Column(unique = false, nullable = false, name = "internalPath")
+    @Column(unique = true, nullable = false, name = "internalPath")
     String internalPath;
 
     @Column(unique = false, nullable = false, name = "created")

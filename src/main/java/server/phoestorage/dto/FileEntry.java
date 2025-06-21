@@ -1,5 +1,9 @@
 package server.phoestorage.dto;
 
+/**
+ * File entry hold file data that are being send to the client
+ *
+ */
 public class FileEntry {
     private String uuid;
     private String owner;
