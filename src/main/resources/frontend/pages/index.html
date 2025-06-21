@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+
+  <script src="/code/index.js"></script>
 </head>
 <body>
-  Hello World
+  <div>
+    <label>Select a file:</label>
+    <input type="file" name="file" id="fileInput">
+    <input type="text" id="fileDirectoryInput">
+    <button onclick="uploadFile()">Upload</button>
+  </div>
+  <div>
+    <input type="text" id="directoryInput">
+    <button onclick="browseDirectory()">Browse</button>
+    <div></div>
+  </div>
 </body>
 </html>

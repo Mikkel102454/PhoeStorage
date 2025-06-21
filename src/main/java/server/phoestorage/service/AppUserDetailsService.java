@@ -25,8 +25,16 @@ public class AppUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    public String getUuidFromUsername(SecurityContext securityContext) {
-        Authentication authentication = securityContext.getAuthentication();
-        return userRepository.findUuidByUsername(authentication.getName()).get();
+    public String getUuidFromUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user");
+        }
+
+        String username = auth.getName();
+
+        return userRepository.findUuidByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
     }
 }

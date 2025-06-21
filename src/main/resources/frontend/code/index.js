@@ -1,0 +1,51 @@
+async function uploadFile() {
+    const file = document.getElementById("fileInput").files[0];
+    const chunkSize = 10 * 1024 * 1024; // 10 MB
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    const filename = file.name;
+    const filepath = document.getElementById("fileDirectoryInput").value;
+
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append("file", chunk);
+        formData.append("chunkIndex", chunkIndex);
+        formData.append("totalChunks", totalChunks);
+        formData.append("filename", filename);
+        formData.append("filepath", filepath);
+
+        const response = await fetch("/api/files/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            alert("Upload failed: " + error);
+            return;
+        }
+    }
+
+    alert("Upload complete!");
+}
+
+
+async function browseDirectory() {
+    const path = document.getElementById("directoryInput").value;
+
+    const response = await fetch(`/api/files/browse?path=${encodeURIComponent(path)}`, {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        alert("Failed to browse directory.");
+        return;
+    }
+
+    const result = await response.json(); // or .text() if your endpoint returns plain text
+    console.log("Directory contents:", result);
+    alert("Directory browsed successfully!");
+}

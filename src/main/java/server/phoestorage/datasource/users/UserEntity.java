@@ -11,6 +11,9 @@ import java.util.List;
 @Entity(name = "users")
 public class UserEntity implements UserDetails {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(unique = true, nullable = false, name = "uuid")
     private String uuid;
 
@@ -25,6 +28,14 @@ public class UserEntity implements UserDetails {
 
     @Column(unique = false, nullable = false, name = "admin")
     private boolean admin;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUuid() {
         return uuid;
