@@ -65,7 +65,7 @@ public class FileController {
 
         if(chunkIndex >= totalChunks - 1) {
             String internalFileName = fileService.mergeChunk(totalChunks);
-            if(fileService.saveFile(internalFileName, filepath, filename) != 0){
+            if(fileService.saveFileDatabase(internalFileName, filepath, filename) != 0){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception("error while saving file to database")));
             }
         }
@@ -78,5 +78,12 @@ public class FileController {
             @RequestHeader(value = "Range", required = false) String rangeHeader
     ){
         return fileService.downloadFile(filePath, rangeHeader);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteFile(
+            @RequestParam("path") String filePath
+    ){
+        return fileService.deleteFile(filePath);
     }
 }

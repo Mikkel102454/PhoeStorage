@@ -117,7 +117,7 @@ public class FileService {
 
             FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
 
-            if (fileEntity == null) {
+            if (fileEntity != null) {
                 return -1;
             }
 
@@ -187,7 +187,7 @@ public class FileService {
      * @return exit code
      *
      */
-    public int saveFile(String internalName, String filePath, String fileName) {
+    public int saveFileDatabase(String internalName, String filePath, String fileName) {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
 
@@ -277,6 +277,34 @@ public class FileService {
                     .contentLength(contentLength)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(inputStreamResource);
+        }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    /**
+     * Deletes the file local and on database
+     *
+     * @param path path to the files that should be deleted
+     * @return response entity
+     *
+     */
+    public ResponseEntity<?> deleteFile(String path) {
+        try{
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+            FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
+            if (fileEntity == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+            }
+
+            if (Files.exists(Paths.get(fileEntity.getInternalPath()))) {
+                Files.delete(Paths.get(fileEntity.getInternalPath()));
+            } else { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
+
+            fileRepository.delete(fileEntity);
+
+            return ResponseEntity.ok().build();
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));

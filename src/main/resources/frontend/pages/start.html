@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+
+    <link rel="stylesheet" href="/style/index.css">
+    <link rel="stylesheet" href="/style/preset.css">
+</head>
+<body>
+    <nav class="menu-nav">
+        <ul>
+            <div class="category">
+                <li>
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-solid fa-house"></i></div>
+                    <div class="text">Home</div>
+                </li>
+                <li>
+                    <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                    <div class="icon"><i class="fa-solid fa-hard-drive fa-inverse"></i></div>
+                    <div class="text">My Drive</div>
+                </li>
+                <div class="folder">
+                    <li>
+                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
+                        <div class="text">Folder</div>
+                        <li>
+                            <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                            <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
+                            <div class="text">Folder</div>
+                        </li>
+                        <li>
+                            <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                            <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
+                            <div class="text">Folder</div>
+                        </li>
+                    </li>
+                    <li>
+                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
+                        <div class="text">Folder</div>
+                    </li>
+                    <li>
+                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
+                        <div class="text">Folder</div>
+                    </li>
+                </div>
+            </div>
+
+            <div class="category">
+                <li>
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-regular fa-user-group fa-inverse"></i></div>
+                    <div class="text">Shared with me</div>
+                </li>
+                <li>
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-regular fa-clock fa-inverse"></i></div>
+                    <div class="text">Recent</div>
+                </li>
+                <li>
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-regular fa-star fa-inverse"></i></div>
+                    <div class="text">Starred</div>
+                </li>
+                <li>
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-regular fa-trash fa-inverse"></i></div>
+                    <div class="text">Trash</div>
+                </li>
+            </div>
+            
+            <div class="storage-container">
+                <div class="bar">
+                    <div class="bar-fill"></div>
+                </div>
+                <div class="text">2.17 GB of 1000 GB used</div>
+            </div>
+            <button class="button-1 create-new"><i class="fa-solid fa-plus-large"></i>Create New</button>
+        </ul>
+        <div class="divider"></div>
+        <div class="logout">
+            <button><i class="fa-regular fa-arrow-right-from-bracket"></i>Log Out</button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="home">
+            <div>
+                <input placeholder="Search">
+                <div class="profile">
+
+                </div>
+            </div>
+            <!--
+            List of all file icons
+
+            .docx -     <i class="fa-solid fa-file-word icon" style="color: #4285f8;"></i>
+            .xlsx -     <i class="fa-solid fa-file-excel icon" style="color: #07a85f;"></i>
+            .pptx -     <i class="fa-solid fa-file-powerpoint icon" style="color: #f06741;"></i>
+
+            .img -      <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
+            .music -    <i class="fa-solid fa-file-music icon" style="color: #e6a10c;"></i>
+            .video -    <i class="fa-solid fa-file-video icon" style="color: #2e3eac;"></i>
+
+            .zip -      <i class="fa-solid fa-file-zipper icon" style="color: #ffc640;"></i>
+
+            .unokwn -   <i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i>
+            -->
+            <div class="files">
+                <h3 class="title">Recent Files</h3>
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-file-powerpoint icon" style="color: #f06741;"></i>
+                        <h4 class="text">document.docx</h4>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i>
+                        <h4 class="text">document.xlsx</h4>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-zipper icon" style="color: #ffc640;"></i>
+                        <h4 class="text">document.zip</h4>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-video icon" style="color: #2e3eac;"></i>
+                        <h4 class="text">document.docx</h4>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-music icon" style="color: #e6a10c;"></i>
+                        <h4 class="text">document.docx</h4>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
+                        <h4 class="text">document.docx</h4>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <i>Quick Access</i>
+                <div></div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

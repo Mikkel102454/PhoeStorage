@@ -69,3 +69,17 @@ function downloadFile() {
         })
         .catch(err => alert("Error downloading file: " + err));
 }
+
+async function deleteFile() {
+    const path = document.getElementById("fileDeleteInput").value;
+
+    const response = await fetch(`/api/files/delete?path=${encodeURIComponent(path)}`, {
+        method: "DELETE"
+    });
+
+    if (!response.ok) {
+        alert("Failed to delete file.");
+        return;
+    }
+    alert("Deleted file.");
+}
