@@ -3,6 +3,7 @@ body {
     margin: 0;
     background-color: rgb(9, 10, 12);
     display: flex;
+    user-select: none
 }
 .menu-nav{
     font-size: 1vw;
@@ -11,10 +12,10 @@ body {
     margin: 0;
     padding: 0;
     width: 13vw;
-    height: 93vh;
+    height: 91.5vh;
     display: flex;
     flex-direction: column;
-    padding-top: 7vh;
+    padding-top: 8.5vh;
 }
 
 .menu-nav ul{
@@ -135,13 +136,114 @@ body {
 
 main {
     margin: auto;
-    background-color: rgb(16, 18, 19);
     margin: 1.5vh;
     flex-grow: 1;
+}
+
+main .section{
+    background-color: rgb(16, 18, 19);
+    height: fit-content;
     border-radius: 2vh;
     padding: 1.5vh;
 }
+main .section-2{
+    margin-top: 1vh;
+    color: white;
+}
 
+main .my-drive .header,
+main .home .header{
+    height: fit-content;
+    display: flex;
+}
+main .my-drive .input,
+main .home .input{
+    height: 3.5vh;
+    width: 60%;
+    border-radius: 2vh;
+    background-color: rgb(32, 32, 32);
+    display: flex;
+}
+main .my-drive .input input,
+main .home .input input{
+    height: 100%;
+    border-style: none;
+    padding: 0;
+    width: 94%;
+    flex-grow: 1;
+    background-color: transparent;
+    outline: none;
+    color: white;
+    font-size: 1.4vh;
+}
+main .my-drive .input input::placeholder,
+main .home .input input::placeholder{
+    color:rgb(148, 148, 148);
+    font-size: 1.4vh;
+}
+main .my-drive .input i,
+main .home .input i{
+    margin: auto 2vh;
+    margin-right: 1vh;
+    padding: 0;
+    color: rgb(148, 148, 148);;
+    font-size: 1.7vh;
+}
+main .my-drive .profile,
+main .home .profile{
+    margin: auto 0 auto auto;
+    display: flex;
+    font-size: 2.5vh;
+}
+
+main .my-drive .profile div,
+main .home .profile div {
+    display: inline-block;
+    position: relative;
+    margin-right: 2vh;
+}
+
+main .my-drive .profile div:hover,
+main .home .profile div:hover {
+    cursor: pointer;
+}
+
+main .my-drive .profile .fa-bell,
+main .home .profile .fa-bell {
+    margin-right: 1vh;
+    pointer-events: none;
+}
+
+main .my-drive .profile .fa-circle,
+main .home .profile .fa-circle {
+    position: absolute;
+    top: 0.5vh;
+    right: 0.5vh;
+    font-size: 70%;
+    text-align: center;
+    line-height: 1.5em;
+    pointer-events: none;
+}
+
+main .my-drive .profile .fa-circle span,
+main .home .profile .fa-circle span {
+    position: absolute;
+    font-size: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    pointer-events: none;
+}
+
+main .my-drive .profile .fa-gear,
+main .home .profile .fa-gear{
+    margin: 0;
+}
+main .my-drive .profile .fa-gear:hover,
+main .home .profile .fa-gear:hover{
+    cursor: pointer;
+}
 
 main .home .files{
     width: 100%;
@@ -151,7 +253,7 @@ main .home .files{
 
 main .home .files h3{
     font-size: 2vh;
-    margin-bottom: 1vh;
+    margin-bottom: 2vh;
 }
 
 main .home .files ul{
@@ -160,21 +262,18 @@ main .home .files ul{
     display: flex;
     padding: 0;
     justify-content: space-between;
+    margin: 0;
 }
 
 main .home .files li{
-    background: linear-gradient(rgb(58, 58, 58), rgb(32, 32, 32));
+    background-color: rgb(32, 32, 32);
     width: 15%;
     aspect-ratio: 1;
     border-radius: 2vh;
     display: flex;
     flex-direction: column;
-    border-style: solid;
-    border-color: rgb(133, 133, 133);
-    border-width: 0.1vh;
 }
 main .home .files li:hover{
-    background: linear-gradient(rgb(65, 65, 65), rgb(32, 32, 32));
     cursor: pointer;
 }
 main .home .files li .icon{
@@ -186,4 +285,116 @@ main .home .files li .text{
     font-weight: 300;
     margin: 0 auto auto auto;
     font-size: 1.8vh;
+}
+
+
+main .my-drive .section-2 h3,
+main .home .section-2 h3{
+    font-size: 2vh;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+}
+
+main .my-drive .section-2 .main,
+main .home .section-2 .main{
+    font-size: 1.8vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+main .my-drive .section-2 .header,
+main .home .section-2 .header{
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 0.7fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2vh;
+}
+
+main .my-drive .section-2 ul,
+main .home .section-2 ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+main .my-drive .section-2 ul:first-child,
+main .home .section-2 ul li:first-child{
+    border-top-style: solid;
+}
+
+main .my-drive .section-2 ul li,
+main .home .section-2 ul li{
+    height: 5.5vh;
+    border-bottom-style: solid;
+    border-color: rgb(148, 148, 148);
+    border-width: 0.1vh;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 0.7fr 1fr;
+    gap: 1rem;
+    align-items: center;
+}
+
+main .my-drive .section-2 ul li .icon,
+main .home .section-2 ul li .icon{
+    font-size: 2vh;
+    margin-right: 1.5vh;
+}
+
+
+main .my-drive .section-2 ul li:hover,
+main .home .section-2 ul li:hover{
+    background-color: rgba(73, 73, 73, 0.3);
+}
+
+main .my-drive .section-2 ul li .control,
+main .home .section-2 ul li .control{
+    display: flex;
+    gap: 2vh;
+}
+
+main .my-drive .section-2 ul li .control *,
+main .home .section-2 ul li .control *{
+    transition: 0.1s;
+    width: 3.5vh;
+    height: 3.5vh;
+    display: flex;
+    border-radius: 2vh;
+}
+main .my-drive .section-2 ul li .control *:hover,
+main .home .section-2 ul li .control *:hover{
+    transition: 0.1s;
+    background-color: rgba(92, 92, 92, 0.3);
+    cursor: pointer;
+}
+
+main .my-drive .section-2 ul li .control i,
+main .home .section-2 ul li .control i{
+    margin: auto;
+    height: fit-content;
+    width: fit-content;
+}
+
+main .my-drive .section-2 .full-path{
+    display: flex;
+    margin-bottom: 1vh;
+}
+main .my-drive .section-2 .path{
+    display: flex;
+}
+main .my-drive .section-2 .path .path-name{
+    transition: 0.1s;
+    font-size: 2.8vh;
+    border-radius: 1vh;
+    padding: .5vh 0;
+}
+main .my-drive .section-2 .path .path-name:hover{
+    transition: 0.1s;
+    background-color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+main .my-drive .section-2 .path span{
+    font-size: 1.5vh;
+    margin: auto 2vh;
 }

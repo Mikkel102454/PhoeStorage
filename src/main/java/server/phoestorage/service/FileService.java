@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,7 +79,7 @@ public class FileService {
             path = path.substring(1);
         }
 
-        if(!path.endsWith("/")) {
+        if(path.length() > 1 && !path.endsWith("/")) {
             path += "/";
         }
 
@@ -97,7 +98,18 @@ public class FileService {
             fileEntry.setModified(file.getModified());
             fileEntry.setAccessed(file.getAccessed());
             fileEntry.setSize(file.getSize());
+            fileEntry.setIsFolder(false);
             result.add(fileEntry);
+        }
+
+        List<String> subfolders = fileRepository.findImmediateSubfolders(uuid, path);
+        for (String folderName : subfolders) {
+            FileEntry folderEntry = new FileEntry();
+            folderEntry.setName(folderName);
+            folderEntry.setOwner(uuid);
+            folderEntry.setFullPath(path + folderName + "/");
+            folderEntry.setIsFolder(true);
+            result.add(folderEntry);
         }
         return ResponseEntity.ok(result);
     }
@@ -193,9 +205,9 @@ public class FileService {
 
             String extension;
 
-            int dotIndex = fileName.lastIndexOf(".");
-            if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-                extension = fileName.substring(dotIndex + 1);
+            String[] parts = fileName.split("\\.");
+            if (parts.length > 1) {
+                extension = String.join(".", Arrays.copyOfRange(parts, 1, parts.length));
             } else {
                 extension = "";
             }

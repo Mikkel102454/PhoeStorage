@@ -9,17 +9,21 @@
 
     <link rel="stylesheet" href="/style/index.css">
     <link rel="stylesheet" href="/style/preset.css">
+
+    <script src="/code/util.js"></script>
+    <script src="/code/fileHandler.js"></script>
+    <script src="/code/file.js"></script>
 </head>
 <body>
     <nav class="menu-nav">
         <ul>
             <div class="category">
-                <li>
+                <li onclick="loadHome()">
                     <div class="caret"></div>
                     <div class="icon"><i class="fa-solid fa-house"></i></div>
                     <div class="text">Home</div>
                 </li>
-                <li>
+                <li onclick="loadDrive()">
                     <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
                     <div class="icon"><i class="fa-solid fa-hard-drive fa-inverse"></i></div>
                     <div class="text">My Drive</div>
@@ -90,12 +94,63 @@
         </div>
     </nav>
 
-    <main>
-        <div class="home">
-            <div>
-                <input placeholder="Search">
-                <div class="profile">
+    <main id="main">
 
+    </main>
+</body>
+
+<template id="drive-file-temp">
+    <div class="my-drive">
+        <div class="section">
+            <div class="header">
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
+
+                <div class="profile">
+                    <div>
+                        <i class="fa-regular fa-bell fa-inverse">
+                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
+                        </i>
+                    </div>
+                    <i class="fa-solid fa-gear fa-inverse"></i>
+                </div>
+            </div>
+        </div>
+        <div class="section section-2">
+            <div class="full-path">
+                <div class="path">
+                    <div class="path-name">
+                        My Drive
+                    </div>
+                </div>
+            </div>
+            <div class="main">
+                <div class="header">
+                    <div>Name</div>
+                    <div>Owner</div>
+                    <div>Last modified</div>
+                    <div>File size</div>
+                </div>
+                <ul class="content file-content">
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="home-section-temp">
+    <div class="home">
+        <div class="section">
+            <div class="header">
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
+                
+                <div class="profile">
+                    <div>
+                        <i class="fa-regular fa-bell fa-inverse">
+                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
+                        </i>
+                    </div>
+
+                    <i class="fa-solid fa-gear fa-inverse"></i>
                 </div>
             </div>
             <!--
@@ -115,38 +170,58 @@
             -->
             <div class="files">
                 <h3 class="title">Recent Files</h3>
-                <ul>
-                    <li>
-                        <i class="fa-solid fa-file-powerpoint icon" style="color: #f06741;"></i>
-                        <h4 class="text">document.docx</h4>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i>
-                        <h4 class="text">document.xlsx</h4>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-file-zipper icon" style="color: #ffc640;"></i>
-                        <h4 class="text">document.zip</h4>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-file-video icon" style="color: #2e3eac;"></i>
-                        <h4 class="text">document.docx</h4>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-file-music icon" style="color: #e6a10c;"></i>
-                        <h4 class="text">document.docx</h4>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
-                        <h4 class="text">document.docx</h4>
-                    </li>
+                <ul id="recent-content">
+
                 </ul>
             </div>
-            <div>
-                <i>Quick Access</i>
-                <div></div>
+        </div>
+        <div class="section section-2">
+            <h3>Quick Access</h3>
+            <div class="main">
+                <div class="header">
+                    <div>Name</div>
+                    <div>Owner</div>
+                    <div>Last modified</div>
+                    <div>File size</div>
+                </div>
+                <ul class="content file-content">
+
+                </ul>
             </div>
         </div>
-    </main>
-</body>
+    </div>
+</template>
+
+
+<template id="recent-file-temp">
+    <li>
+        <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
+        <h4 class="text">document.docx</h4>
+    </li>
+</template>
+
+<template id="file-card-temp">
+    <li>
+        <div class="file-name"><i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i>document.docx</div>
+        <div class="file-owner">me</div>
+        <div class="file-modified">now</div>
+        <div class="file-size">1.0 GB</div>
+        <div class="control">
+            <div><i class="fa-light fa-user-plus fa-inverse"></i></div>
+            <div><i class="fa-light fa-down-to-bracket fa-inverse"></i></div>
+            <div><i class="fa-light fa-pen-line fa-inverse"></i></div>
+            <div style="visibility: hidden;"><i class="fa-regular fa-star fa-inverse"></i></div>
+            <div><i class="fa-light fa-ellipsis-vertical fa-inverse"></i></div>
+        </div>
+    </li>
+</template>
+
+<template id="folder-path-temp">
+    <div class="path" value="folder-name">
+        <span><i class="fa-solid fa-angle-right"></i></span>
+        <div class="path-name">
+            folder_name
+        </div>
+    </div>
+</template>
 </html>

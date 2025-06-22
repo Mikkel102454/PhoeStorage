@@ -15,6 +15,7 @@ public class FileEntry {
     private String modified;
     private String accessed;
     private long size;
+    private boolean isFolder;
 
     public String getUuid() {
         return uuid;
@@ -94,5 +95,13 @@ public class FileEntry {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public boolean getIsFolder() {
+        return isFolder;
+    }
+
+    public void setIsFolder(boolean isFolder) {
+        this.isFolder = isFolder;
     }
 }

@@ -5,6 +5,11 @@ async function uploadFile() {
     const filename = file.name;
     const filepath = document.getElementById("fileDirectoryInput").value;
 
+    if (!file || file.size === 0) {
+        alert("Invalid file selected or file is empty.");
+        return;
+    }
+
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
@@ -33,9 +38,7 @@ async function uploadFile() {
 }
 
 
-async function browseDirectory() {
-    const path = document.getElementById("directoryInput").value;
-
+async function browseDirectory(path) {
     const response = await fetch(`/api/files/browse?path=${encodeURIComponent(path)}`, {
         method: "GET"
     });
@@ -45,13 +48,28 @@ async function browseDirectory() {
         return;
     }
 
-    const result = await response.json(); // or .text() if your endpoint returns plain text
-    console.log("Directory contents:", result);
-    alert("Directory browsed successfully!");
+    const result = await response.json();
+    const files = [];
+    for (const key in result) {
+        files.push(new File(
+            result[key].uuid,
+            result[key].owner,
+            result[key].name,
+            result[key].extension,
+            result[key].path,
+            result[key].fullPath,
+            result[key].created,
+            result[key].modified,
+            result[key].accessed,
+            result[key].size,
+            result[key].isFolder
+        ));
+    }
+
+    return files;
 }
 
-function downloadFile() {
-    const path = document.getElementById("fileDownloadInput").value;
+function downloadFile(path) {
     fetch(`/api/files/download?path=${encodeURIComponent(path)}`, {
         method: "GET",
 
@@ -64,14 +82,13 @@ function downloadFile() {
         .then(blob => {
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = path.split("/").pop(); // use filename from path
+            link.download = path.split("/").pop();
             link.click();
         })
         .catch(err => alert("Error downloading file: " + err));
 }
 
-async function deleteFile() {
-    const path = document.getElementById("fileDeleteInput").value;
+async function deleteFile(path) {
 
     const response = await fetch(`/api/files/delete?path=${encodeURIComponent(path)}`, {
         method: "DELETE"
@@ -81,5 +98,4 @@ async function deleteFile() {
         alert("Failed to delete file.");
         return;
     }
-    alert("Deleted file.");
 }
