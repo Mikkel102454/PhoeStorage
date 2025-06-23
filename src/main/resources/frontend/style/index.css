@@ -3,7 +3,8 @@ body {
     margin: 0;
     background-color: rgb(9, 10, 12);
     display: flex;
-    user-select: none
+    user-select: none;
+    overflow: hidden;
 }
 .menu-nav{
     font-size: 1vw;
@@ -108,6 +109,7 @@ body {
 .menu-nav .logout{
     height: 7%;
     display: flex;
+    margin-bottom: 1vh;
 }
 .menu-nav .logout button{
     padding: 1.2vh;
@@ -287,6 +289,13 @@ main .home .files li .text{
     font-size: 1.8vh;
 }
 
+main .my-drive .section-2,
+main .home .section-2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
 
 main .my-drive .section-2 h3,
 main .home .section-2 h3{
@@ -299,6 +308,8 @@ main .my-drive .section-2 .main,
 main .home .section-2 .main{
     font-size: 1.8vh;
     display: flex;
+    flex: 1;
+    overflow: hidden;
     flex-direction: column;
     width: 100%;
 }
@@ -310,16 +321,57 @@ main .home .section-2 .header{
     gap: 1rem;
     align-items: center;
     margin-bottom: 2vh;
+    padding-left: 2vh;
+    padding-right: 2vh;
 }
 
 main .my-drive .section-2 ul,
+main .home .section-2 ul {
+    /* Firefox support */
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+main .my-drive .section-2 ul::-webkit-scrollbar,
+main .home .section-2 ul::-webkit-scrollbar {
+    width: 4px;
+}
+
+main .my-drive .section-2 ul::-webkit-scrollbar-track,
+main .home .section-2 ul::-webkit-scrollbar-track {
+    background: transparent; /* or #f5f5f5 if you want a visible track */
+}
+
+main .my-drive .section-2 ul::-webkit-scrollbar-thumb,
+main .home .section-2 ul::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 4px;
+}
+
+main .my-drive .section-2 ul::-webkit-scrollbar-thumb:hover,
+main .home .section-2 ul::-webkit-scrollbar-thumb:hover {
+    background-color: #444;
+}
+
+main .my-drive .section-2 ul::-webkit-scrollbar-button,
+main .home .section-2 ul::-webkit-scrollbar-button {
+    display: none;
+}
+
+
+main .my-drive .section-2 ul,
 main .home .section-2 ul{
+    overflow-y: auto;
     list-style: none;
     padding: 0;
     margin: 0;
+    flex: 1;
+    max-height: 75vh;
+    min-height: 75vh;
 }
 
-main .my-drive .section-2 ul:first-child,
+main .my-drive .section-2 ul li:first-child,
 main .home .section-2 ul li:first-child{
     border-top-style: solid;
 }
@@ -334,6 +386,8 @@ main .home .section-2 ul li{
     grid-template-columns: 2fr 1fr 1.5fr 0.7fr 1fr;
     gap: 1rem;
     align-items: center;
+    padding-left: 2vh;
+    padding-right: 2vh;
 }
 
 main .my-drive .section-2 ul li .icon,
@@ -378,7 +432,7 @@ main .home .section-2 ul li .control i{
 
 main .my-drive .section-2 .full-path{
     display: flex;
-    margin-bottom: 1vh;
+    margin-bottom: 3vh;
 }
 main .my-drive .section-2 .path{
     display: flex;

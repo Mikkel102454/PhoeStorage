@@ -1,16 +1,15 @@
-async function uploadFile() {
-    const file = document.getElementById("fileInput").files[0];
+async function uploadFile(file, path) {
     const chunkSize = 10 * 1024 * 1024; // 10 MB
     const totalChunks = Math.ceil(file.size / chunkSize);
     const filename = file.name;
-    const filepath = document.getElementById("fileDirectoryInput").value;
 
     if (!file || file.size === 0) {
         alert("Invalid file selected or file is empty.");
         return;
     }
-
+    console.log(chunkSize + " : " + totalChunks + " : " + filename + " : " + file.size)
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        console.log("upload chunk")
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
         const chunk = file.slice(start, end);
@@ -20,12 +19,17 @@ async function uploadFile() {
         formData.append("chunkIndex", chunkIndex);
         formData.append("totalChunks", totalChunks);
         formData.append("filename", filename);
-        formData.append("filepath", filepath);
+        formData.append("filepath", path);
 
         const response = await fetch("/api/files/upload", {
             method: "POST",
             body: formData
         });
+
+        if (response.status === 409) {
+            alert("Upload failed: File already exists");
+            return;
+        }
 
         if (!response.ok) {
             const error = await response.text();
@@ -33,8 +37,6 @@ async function uploadFile() {
             return;
         }
     }
-
-    alert("Upload complete!");
 }
 
 

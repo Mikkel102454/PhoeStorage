@@ -70,6 +70,21 @@ public class HandlerService {
         }
     }
 
+    @Cacheable("static-responses")
+    public String get409(String msg) {
+        Resource resource = resourceLoader.getResource("classpath:handlers/409.html");
+        if (!resource.exists()) {
+            return "409 conflict was not found (??? classpath issue. contact support)";
+        }
+
+        try {
+            InputStream in = resource.getInputStream();
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return get500(e);
+        }
+    }
+
     @Cacheable(cacheNames = "resources", key = "#throwable")
     public String get500(Throwable throwable) {
         Context context = new Context();

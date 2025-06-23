@@ -26,28 +26,67 @@ class File{
 }
 
 let fileCardTemplate
+let folderPathTemplate
 
-function createFile(file, temp){
+async function createFile(file, fileParent){
     if(!fileCardTemplate){
         fileCardTemplate = document.getElementById("file-card-temp");
     }
     let fileTemp = fileCardTemplate.content.cloneNode(true);
-    let fileParent = temp.querySelector(".file-content");
+
+    fileTemp.querySelector(".file-owner").innerHTML = isMe(file.owner) ? "me" : await getUsernameFromUuid(file.owner);
 
     if (file.isFolder){
-        fileTemp.querySelector(".file-name").innerHTML = fileIcon(file.extension) + file.name
-        fileTemp.querySelector(".file-owner").innerHTML = file.owner
-        fileTemp.querySelector(".file-size").innerHTML = "-"
+        fileTemp.querySelector(".file-name").innerHTML = "<i class='fa-solid fa-folder icon' style = 'color: #FFD43B;'></i>" + file.name
+        fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
+        fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
+
+        fileTemp.querySelector(".fa-down-to-bracket").parentElement.style.visibility = "hidden";
+        const fileElement = fileTemp.querySelector("li");
+        fileElement.addEventListener("dblclick", function() {
+            addParameter("jbd", file.name + "/");
+            loadDirectory(getParameter("jbd"));
+
+
+            if(!folderPathTemplate){
+                folderPathTemplate = document.getElementById("folder-path-temp");
+            }
+            let folderPathTemp = folderPathTemplate.content.cloneNode(true);
+            let pathName = folderPathTemp.querySelector(".path-name");
+            pathName.innerHTML = file.name
+            pathName.setAttribute('data_path', getParameter("jbd"));
+            pathName.addEventListener("click", function() {
+                let path = this.getAttribute('data_path')
+                loadDirectory(path);
+                setParameter('jbd', path)
+                modifyPathView(this.parentElement)
+            })
+            document.querySelector(".path").appendChild(folderPathTemp)
+        });
+
     }else{
-        fileTemp.querySelector(".file-name").innerHTML = file.name
-        fileTemp.querySelector(".file-owner").innerHTML = file.owner
-        fileTemp.querySelector(".file-modified").innerHTML = file.modified
+        fileTemp.querySelector(".file-name").innerHTML = fileIcon(file.extension) + file.name
+        fileTemp.querySelector(".file-modified").innerHTML = file.modified ? formatDate(file.modified) : formatDate(file.created)
         fileTemp.querySelector(".file-size").innerHTML = formatSize(file.size)
+
+        const fileElement = fileTemp.querySelector("li");
+        fileElement.setAttribute("data_file_dest", file.fullPath)
     }
 
     fileParent.appendChild(fileTemp);
-    return temp;
 }
+
+function modifyPathView(element) {
+    const allPaths = Array.from(document.querySelector(".path").children);
+    const index = allPaths.indexOf(element);
+
+    if (index === -1) return;
+
+    for (let i = allPaths.length - 1; i > index; i--) {
+        allPaths[i].remove();
+    }
+}
+
 
 function formatSize(bytes) {
     const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -62,6 +101,7 @@ function formatSize(bytes) {
 }
 
 function fileIcon(extension) {
+
     const units = [
         "<i class=\"fa-solid fa-file-word icon\" style=\"color: #4285f8;\"></i>",
         "<i class=\"fa-solid fa-file-excel icon\" style=\"color: #07a85f;\"></i>",
@@ -72,6 +112,7 @@ function fileIcon(extension) {
         "<i class=\"fa-solid fa-file-zipper icon\" style=\"color: #ffc640;\"></i>",
         "<i class=\"fa-solid fa-file icon\" style=\"color: #a5a5a5;\"></i>",
     ];
+    if(!extension){return units[7]}
     extension = extension.toLowerCase();
     return {
         "doc": units[0],
@@ -126,4 +167,15 @@ function fileIcon(extension) {
         "xapk": units[6],
         "zipx": units[6],
     }[extension] || units[7];
+}
+
+function formatDate(raw){
+    const trimmed = raw.replace(/(\.\d{3})\d+/, '$1'); // Keep only milliseconds
+    const date = new Date(trimmed);
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }

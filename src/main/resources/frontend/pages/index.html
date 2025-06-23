@@ -15,20 +15,20 @@
   </div>
   <div>
     <input type="text" id="directoryInput">
-    <button onclick="browseDirectory()">Browse</button>
+    <button onclick="browseDirectory(document.getElementById('browseDirectory').value)">Browse</button>
     <div></div>
   </div>
 
   <label>Download a file:</label>
   <input type="text" id="fileDownloadInput">
-  <button onclick="downloadFile()">Download</button>
+  <button onclick="downloadFile(document.getElementById('fileDownloadInput').value)">Download</button>
   </div>
 
   </div>
 
   <label>Delete a file:</label>
   <input type="text" id="fileDeleteInput">
-  <button onclick="deleteFile()">Delete</button>
+  <button onclick="deleteFile(document.getElementById('fileDeleteInput').value)">Delete</button>
   </div>
 </body>
 </html>

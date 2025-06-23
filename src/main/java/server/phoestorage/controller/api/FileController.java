@@ -1,22 +1,12 @@
-package server.phoestorage.api;
+package server.phoestorage.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import server.phoestorage.datasource.users.UserRepository;
-import server.phoestorage.dto.FileEntry;
-import server.phoestorage.service.AppUserDetailsService;
 import server.phoestorage.service.FileService;
 import server.phoestorage.service.HandlerService;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -33,6 +23,13 @@ public class FileController {
 
     @GetMapping("/browse")
     public ResponseEntity<?> browseDirectory(@RequestParam() String path) {
+        if(path.startsWith("/")) {
+            path = path.substring(1);
+        }
+
+        if(path.length() > 1 && !path.endsWith("/")) {
+            path += "/";
+        }
         return fileService.BrowseDirectory(path);
     }
 
@@ -59,6 +56,9 @@ public class FileController {
         }
 
         int chunkCode = fileService.saveChunk(chunkIndex, file, filepath + filename);
+        if(chunkCode == -2) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(handlerService.get409("There is already a file named: " + filename + " here"));
+        }
         if(chunkCode != 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception(String.valueOf(chunkCode))));
         }

@@ -75,13 +75,6 @@ public class FileService {
      */
     public ResponseEntity<?> BrowseDirectory(String path) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
-        if(path.startsWith("/")) {
-            path = path.substring(1);
-        }
-
-        if(path.length() > 1 && !path.endsWith("/")) {
-            path += "/";
-        }
 
         List<FileEntity> files = fileRepository.findByOwnerAndPath(uuid, path);
         List<FileEntry> result = new ArrayList<>();
@@ -130,7 +123,7 @@ public class FileService {
             FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
 
             if (fileEntity != null) {
-                return -1;
+                return -2;
             }
 
             Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
@@ -207,7 +200,7 @@ public class FileService {
 
             String[] parts = fileName.split("\\.");
             if (parts.length > 1) {
-                extension = String.join(".", Arrays.copyOfRange(parts, 1, parts.length));
+                extension = parts[parts.length - 1];
             } else {
                 extension = "";
             }
@@ -243,6 +236,10 @@ public class FileService {
      */
     public ResponseEntity<?> downloadFile(String path, String rangeHeader) {
         try{
+            if(path.startsWith("/")) {
+                path = path.substring(1);
+            }
+
             String uuid = appUserDetailsService.getUserEntity().getUuid();
             FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
 
@@ -304,6 +301,10 @@ public class FileService {
      */
     public ResponseEntity<?> deleteFile(String path) {
         try{
+            if(path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            System.out.println(path);
             String uuid = appUserDetailsService.getUserEntity().getUuid();
             FileEntity fileEntity = fileRepository.findByOwnerAndFullPath(uuid, path);
             if (fileEntity == null) {
