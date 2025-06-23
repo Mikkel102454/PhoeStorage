@@ -3,40 +3,50 @@ class File{
     owner // string
     name // string
     extension // string
-    path // string
-    fullPath // string
+    folderId // string
     created // string
     modified // string
     accessed // string
     size // long
-    isFolder // boolean
-    constructor(uuid, owner, name, extension, path, fullPath, created, modified, accessed, size, isFolder){
+    constructor(uuid, owner, name, extension, folderId, created, modified, accessed, size){
         this.uuid = uuid;
         this.owner = owner;
         this.name = name;
         this.extension = extension;
-        this.path = path;
-        this.fullPath = fullPath;
+        this.folderId = folderId;
         this.created = created;
         this.modified = modified;
         this.accessed = accessed;
         this.size = size;
-        this.isFolder = isFolder
+    }
+}
+
+class Folder{
+    uuid // string
+    owner // string
+    name // string
+    folderId // string
+    constructor(uuid, owner, name, folderId){
+        this.uuid = uuid;
+        this.owner = owner;
+        this.name = name;
+        this.folderId = folderId;
     }
 }
 
 let fileCardTemplate
 let folderPathTemplate
 
-async function createFile(file, fileParent){
+async function createFile(file, fileParent, isFolder){
     if(!fileCardTemplate){
         fileCardTemplate = document.getElementById("file-card-temp");
     }
+
     let fileTemp = fileCardTemplate.content.cloneNode(true);
 
     fileTemp.querySelector(".file-owner").innerHTML = isMe(file.owner) ? "me" : await getUsernameFromUuid(file.owner);
 
-    if (file.isFolder){
+    if (isFolder){
         fileTemp.querySelector(".file-name").innerHTML = "<i class='fa-solid fa-folder icon' style = 'color: #FFD43B;'></i>" + file.name
         fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
@@ -49,7 +59,8 @@ async function createFile(file, fileParent){
 
         const fileElement = fileTemp.querySelector("li");
         fileElement.addEventListener("dblclick", function() {
-            addParameter("jbd", file.name + "/");
+            setParameter("jbd", file.uuid);
+            console.log(file.uuid)
             loadDirectory(getParameter("jbd"));
 
             addPathView(file.name, getParameter("jbd"))
@@ -96,6 +107,12 @@ function deletePathAfter(element){
     }
 }
 
+async function resetPath(element) {
+    const uuid = await getMyUuid();
+    await loadDirectory(uuid);
+    deletePathAfter(element);
+    setParameter('jbd', uuid);
+}
 
 function formatSize(bytes) {
     const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];

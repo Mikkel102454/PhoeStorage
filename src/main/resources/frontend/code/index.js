@@ -37,7 +37,7 @@ function loadHome(){
 
 async function loadDrive(){
     setParameter("jbm", "drive")
-    setParameterIfNotExist("jbd", "/")
+    setParameterIfNotExist("jbd", await getMyUuid())
     if(!drivePageTemplate){
         drivePageTemplate = document.getElementById("drive-file-temp");
     }
@@ -52,13 +52,13 @@ async function loadDrive(){
     await loadDirectoryInit(temp)
     mainElement.appendChild(temp);
 
-    const directories = getParameter("jbd").split('/').filter(p => p !== '');
-    let currentPath = "/"
-    for(let directory of directories){
-        if(!directory.length > 0) continue
-        currentPath += directory + "/"
-        addPathView(directory, currentPath)
-    }
+    // const directories = getParameter("jbd").split('/').filter(p => p !== '');
+    // let currentPath = "/"
+    // for(let directory of directories){
+    //     if(!directory.length > 0) continue
+    //     currentPath += directory + "/"
+    //     addPathView(directory, currentPath)
+    // }
 
 
     await initDragnDrop(document.getElementById("drop-zone"))
@@ -66,20 +66,26 @@ async function loadDrive(){
 
 async function loadDirectoryInit(temp){
     const params = new URLSearchParams(window.location.search);
-    files = await browseDirectory(params.get('jbd'))
+    const { files, folders } = await browseDirectory(params.get('jbd'))
     let fileParent = temp.querySelector(".file-content");
     fileParent.innerHTML = "";
+    for(const key in folders){
+        await createFile(folders[key], fileParent, true);
+    }
     for(const key in files){
-        await createFile(files[key], fileParent);
+        await createFile(files[key], fileParent, false);
     }
 }
 
 async function loadDirectory(path){
     if(!path){path = await browseDirectory(getParameter('jbd'))}
-    const files = await browseDirectory(path)
+    const { files, folders } = await browseDirectory(path)
     let fileParent = document.querySelector(".file-content");
     fileParent.innerHTML = "";
+    for(const key in folders){
+        await createFile(folders[key], fileParent, true);
+    }
     for(const key in files){
-        await createFile(files[key], fileParent);
+        await createFile(files[key], fileParent, false);
     }
 }

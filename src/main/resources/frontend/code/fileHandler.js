@@ -1,4 +1,4 @@
-async function uploadFile(file, path) {
+async function uploadFile(file, folderId) {
     const chunkSize = 10 * 1024 * 1024; // 10 MB
     const totalChunks = Math.ceil(file.size / chunkSize);
     const filename = file.name;
@@ -9,7 +9,6 @@ async function uploadFile(file, path) {
     }
     console.log(chunkSize + " : " + totalChunks + " : " + filename + " : " + file.size)
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-        console.log("upload chunk")
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
         const chunk = file.slice(start, end);
@@ -18,9 +17,9 @@ async function uploadFile(file, path) {
         formData.append("file", chunk);
         formData.append("chunkIndex", chunkIndex);
         formData.append("totalChunks", totalChunks);
-        formData.append("filename", filename);
-        formData.append("filepath", path);
-
+        formData.append("fileName", filename);
+        formData.append("folderId", folderId);
+        console.log(formData)
         const response = await fetch("/api/files/upload", {
             method: "POST",
             body: formData
@@ -40,8 +39,8 @@ async function uploadFile(file, path) {
 }
 
 
-async function browseDirectory(path) {
-    const response = await fetch(`/api/files/browse?path=${encodeURIComponent(path)}`, {
+async function browseDirectory(folderId) {
+    const response = await fetch(`/api/files/browse?folderId=${encodeURIComponent(folderId)}`, {
         method: "GET"
     });
 
@@ -51,28 +50,31 @@ async function browseDirectory(path) {
     }
 
     const result = await response.json();
-    const files = [];
-    for (const key in result) {
-        files.push(new File(
-            result[key].uuid,
-            result[key].owner,
-            result[key].name,
-            result[key].extension,
-            result[key].path,
-            result[key].fullPath,
-            result[key].created,
-            result[key].modified,
-            result[key].accessed,
-            result[key].size,
-            result[key].isFolder
-        ));
-    }
 
-    return files;
+    const files = result.files.map(file => new File(
+        file.uuid,
+        file.owner,
+        file.name,
+        file.extension,
+        file.folderId,
+        file.created,
+        file.modified,
+        file.accessed,
+        file.size
+    ));
+
+    const folders = result.folders.map(folder => new Folder(
+        folder.uuid,
+        folder.owner,
+        folder.name,
+        folder.folderId
+    ));
+
+    return { files, folders };
 }
 
-function downloadFile(path) {
-    fetch(`/api/files/download?path=${encodeURIComponent(path)}`, {
+function downloadFile(folderId, fileId) {
+    fetch(`/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
         method: "GET",
 
     })
@@ -122,9 +124,9 @@ function downloadZipFile(path) {
         .catch(err => alert("Error downloading file: " + err));
 }
 
-async function deleteFile(path) {
+async function deleteFile(folderId, fileId) {
 
-    const response = await fetch(`/api/files/delete?path=${encodeURIComponent(path)}`, {
+    const response = await fetch(`/api/files/delete?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
         method: "DELETE"
     });
 

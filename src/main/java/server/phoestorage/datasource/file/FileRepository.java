@@ -8,19 +8,7 @@ import server.phoestorage.dto.FileEntry;
 import java.util.List;
 
 public interface FileRepository extends JpaRepository<FileEntity, Integer> {
-    List<FileEntity> findByOwnerAndPath(String userId, String relativePath);
-
-    FileEntity findByOwnerAndFullPath(String uuid, String fullPath);
-
-    @Query(
-            value = """
-        SELECT DISTINCT SUBSTRING_INDEX(SUBSTRING(path, LENGTH(:path) + 1), '/', 1)
-        FROM file
-        WHERE owner = :owner AND path LIKE CONCAT(:path, '%') AND path != :path
-    """,
-            nativeQuery = true
-    )
-    List<String> findImmediateSubfolders(@Param("owner") String owner, @Param("path") String path);
-
-    List<FileEntity> findByOwnerAndFullPathStartingWith(String owner, String path);
+    List<FileEntity> findByOwnerAndFolderId(String userId, String folderId);
+    FileEntity findByOwnerAndFolderIdAndName(String userId, String folderId, String name);
+    FileEntity findByOwnerAndFolderIdAndUuid(String userId, String folderId, String fileId);
 }

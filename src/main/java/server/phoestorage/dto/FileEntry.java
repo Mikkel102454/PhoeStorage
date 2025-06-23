@@ -9,8 +9,7 @@ public class FileEntry {
     private String owner;
     private String name;
     private String extension;
-    private String path;
-    private String fullPath;
+    private String folderId;
     private String created;
     private String modified;
     private String accessed;
@@ -49,20 +48,12 @@ public class FileEntry {
         this.extension = extension;
     }
 
-    public String getPath() {
-        return path;
+    public String getFolderId() {
+        return folderId;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getFullPath() {
-        return fullPath;
-    }
-
-    public void setFullPath(String fullPath) {
-        this.fullPath = fullPath;
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
     }
 
     public String getCreated() {

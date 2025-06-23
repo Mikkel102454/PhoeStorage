@@ -23,15 +23,8 @@ public class FileController {
     }
 
     @GetMapping("/browse")
-    public ResponseEntity<?> browseDirectory(@RequestParam() String path) {
-        if(path.startsWith("/")) {
-            path = path.substring(1);
-        }
-
-        if(path.length() > 1 && !path.endsWith("/")) {
-            path += "/";
-        }
-        return fileService.BrowseDirectory(path);
+    public ResponseEntity<?> browseDirectory(@RequestParam() String folderId) {
+        return fileService.BrowseDirectory(folderId);
     }
 
     @PostMapping("/upload")
@@ -39,26 +32,17 @@ public class FileController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("chunkIndex") int chunkIndex,
             @RequestParam("totalChunks") int totalChunks,
-            @RequestParam("filename") String filename,
-            @RequestParam("filepath") String filepath
+            @RequestParam("fileName") String fileName,
+            @RequestParam("folderId") String folderId
     ){
         if (file.getSize() > 10 * 1024 * 1024) {
             return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                     .body("Chunk too large (max 10 MB) the chunk was " + file.getSize() + " Bytes");
         }
 
-
-        if(filepath.startsWith("/")) {
-            filepath = filepath.substring(1);
-        }
-
-        if(!filepath.isEmpty() && !filepath.endsWith("/")){
-            filepath += "/";
-        }
-
-        int chunkCode = fileService.saveChunk(chunkIndex, file, filepath + filename);
+        int chunkCode = fileService.saveChunk(chunkIndex, file, folderId, fileName);
         if(chunkCode == -2) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(handlerService.get409("There is already a file named: " + filename + " here"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(handlerService.get409("There is already a file named: " + fileName + " here"));
         }
         if(chunkCode != 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception(String.valueOf(chunkCode))));
@@ -66,7 +50,7 @@ public class FileController {
 
         if(chunkIndex >= totalChunks - 1) {
             String internalFileName = fileService.mergeChunk(totalChunks);
-            if(fileService.saveFileDatabase(internalFileName, filepath, filename) != 0){
+            if(fileService.saveFileDatabase(internalFileName, folderId, fileName) != 0){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception("error while saving file to database")));
             }
         }
@@ -75,25 +59,27 @@ public class FileController {
 
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(
-            @RequestParam("path") String filePath,
+            @RequestParam("fileId") String fileId,
+            @RequestParam("folderId") String FolderId,
             @RequestHeader(value = "Range", required = false) String rangeHeader
     ){
-        return fileService.downloadFile(filePath, rangeHeader);
+        return fileService.downloadFile(fileId, FolderId, rangeHeader);
     }
 
     @GetMapping("/folder/download")
     public void downloadFolder(
-            @RequestParam("path") String filePath,
+            @RequestParam("folderId") String folderId,
             HttpServletResponse response
     ){
-        fileService.downloadZipFile(filePath, response);
+        //fileService.downloadZipFile(folderId, response);
     }
 
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(
-            @RequestParam("path") String filePath
+            @RequestParam("folderId") String folderId,
+            @RequestParam("fileId") String fileId
     ){
-        return fileService.deleteFile(filePath);
+        return fileService.deleteFile(folderId, fileId);
     }
 }

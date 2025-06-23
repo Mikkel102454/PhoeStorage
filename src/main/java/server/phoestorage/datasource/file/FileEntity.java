@@ -24,11 +24,8 @@ public class FileEntity {
     @Column(unique = false, nullable = false, name = "extension")
     String extension;
 
-    @Column(unique = false, nullable = false, name = "path")
-    String path;
-
-    @Column(unique = true, nullable = false, name = "fullPath")
-    String fullPath;
+    @Column(unique = false, nullable = false, name = "folderId")
+    String folderId;
 
     @Column(unique = true, nullable = false, name = "internalPath")
     String internalPath;
@@ -85,20 +82,12 @@ public class FileEntity {
         this.extension = extension;
     }
 
-    public String getPath() {
-        return path;
+    public String getFolderId() {
+        return folderId;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getFullPath() {
-        return fullPath;
-    }
-
-    public void setFullPath(String fullPath) {
-        this.fullPath = fullPath;
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
     }
 
     public String getInternalPath() {
