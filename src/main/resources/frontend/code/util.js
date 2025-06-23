@@ -24,8 +24,6 @@ async function getUsernameFromUuid(uuid) {
 }
 
 async function isMe(uuid) {
-    console.log(uuid);
-    console.log(await getMyUuid());
     return uuid === myUuid;
 }
 
@@ -57,5 +55,5 @@ function addParameter(parameter, value){
 }
 function getParameter(parameter){
     const params = new URLSearchParams(window.location.search);
-    return params.get(parameter)
+    return decodeURIComponent(params.get(parameter))
 }

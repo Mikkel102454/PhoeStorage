@@ -22,7 +22,8 @@ onload = function(){
 }
 
 function loadHome(){
-    setParameter("jbm", "home")
+    setParameter("jbm", "home");
+    deleteParameter("jbd");
     if(!homePageTemplate){
         homePageTemplate = document.getElementById("home-section-temp");
     }
@@ -51,7 +52,16 @@ async function loadDrive(){
     await loadDirectoryInit(temp)
     mainElement.appendChild(temp);
 
-    initDragnDrop(document.getElementById("drop-zone"))
+    const directories = getParameter("jbd").split('/').filter(p => p !== '');
+    let currentPath = "/"
+    for(let directory of directories){
+        if(!directory.length > 0) continue
+        currentPath += directory + "/"
+        addPathView(directory, currentPath)
+    }
+
+
+    await initDragnDrop(document.getElementById("drop-zone"))
 }
 
 async function loadDirectoryInit(temp){

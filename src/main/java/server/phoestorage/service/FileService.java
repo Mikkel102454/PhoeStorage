@@ -1,6 +1,7 @@
 package server.phoestorage.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -8,11 +9,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -321,6 +322,72 @@ public class FileService {
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    public void downloadZipFile(String path, HttpServletResponse response) {
+        try {
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+            List<FileEntity> allFiles = fileRepository.findByOwnerAndFullPathStartingWith(uuid, path);
+
+            List<FileEntity> validFiles = allFiles.stream()
+                    .filter(f -> Files.exists(Paths.get(f.getInternalPath())))
+                    .toList();
+
+            if (validFiles.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No files found to zip.");
+                return;
+            }
+
+            String zipFileName = Paths.get(path).getFileName().toString() + ".zip";
+
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFileName + "\"");
+
+            try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
+                Set<String> addedFolders = new HashSet<>();
+
+                for (FileEntity file : validFiles) {
+                    Path internalPath = Paths.get(file.getInternalPath());
+
+                    String relativePath = file.getPath().startsWith(path)
+                            ? file.getPath().substring(path.length())
+                            : file.getPath();
+
+                    String virtualPath = relativePath + file.getName();
+                    if (!file.getExtension().isEmpty()) {
+                        virtualPath += "." + file.getExtension();
+                    }
+
+                    // folder creations
+                    String[] pathParts = relativePath.split("/");
+                    String folderPath = "";
+                    for (String part : pathParts) {
+                        if (part.isEmpty()) continue;
+                        folderPath += part + "/";
+                        if (addedFolders.add(folderPath)) {
+                            zos.putNextEntry(new ZipEntry(folderPath));
+                            zos.closeEntry();
+                        }
+                    }
+
+                    zos.putNextEntry(new ZipEntry(virtualPath));
+                    Files.copy(internalPath, zos);
+                    zos.closeEntry();
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("ZIP generation failed: " + e.getMessage());
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate zip.");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 }

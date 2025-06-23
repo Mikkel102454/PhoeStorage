@@ -41,42 +41,51 @@ async function createFile(file, fileParent){
         fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
 
-        fileTemp.querySelector(".fa-down-to-bracket").parentElement.style.visibility = "hidden";
+        const fileElement1 = fileTemp.querySelector(".fa-down-to-bracket");
+        fileElement1.addEventListener("click", function (){
+            downloadZipFile(getParameter("jbd") + file.name + "/")
+        })
+
+
         const fileElement = fileTemp.querySelector("li");
         fileElement.addEventListener("dblclick", function() {
             addParameter("jbd", file.name + "/");
             loadDirectory(getParameter("jbd"));
 
-
-            if(!folderPathTemplate){
-                folderPathTemplate = document.getElementById("folder-path-temp");
-            }
-            let folderPathTemp = folderPathTemplate.content.cloneNode(true);
-            let pathName = folderPathTemp.querySelector(".path-name");
-            pathName.innerHTML = file.name
-            pathName.setAttribute('data_path', getParameter("jbd"));
-            pathName.addEventListener("click", function() {
-                let path = this.getAttribute('data_path')
-                loadDirectory(path);
-                setParameter('jbd', path)
-                modifyPathView(this.parentElement)
-            })
-            document.querySelector(".path").appendChild(folderPathTemp)
+            addPathView(file.name, getParameter("jbd"))
         });
 
     }else{
         fileTemp.querySelector(".file-name").innerHTML = fileIcon(file.extension) + file.name
         fileTemp.querySelector(".file-modified").innerHTML = file.modified ? formatDate(file.modified) : formatDate(file.created)
         fileTemp.querySelector(".file-size").innerHTML = formatSize(file.size)
-
-        const fileElement = fileTemp.querySelector("li");
-        fileElement.setAttribute("data_file_dest", file.fullPath)
+        const fileElement = fileTemp.querySelector(".fa-down-to-bracket");
+        fileElement.addEventListener("click", function (){
+            downloadFile(file.fullPath)
+        })
     }
 
     fileParent.appendChild(fileTemp);
 }
 
-function modifyPathView(element) {
+function addPathView(name, redirect) {
+    if(!folderPathTemplate){
+        folderPathTemplate = document.getElementById("folder-path-temp");
+    }
+    let folderPathTemp = folderPathTemplate.content.cloneNode(true);
+    let pathName = folderPathTemp.querySelector(".path-name");
+    pathName.innerHTML = name
+
+    pathName.addEventListener("click", function() {
+        setParameter('jbd', redirect)
+        loadDirectory(redirect);
+        deletePathAfter(this.parentElement);
+    })
+
+    document.querySelector(".path").appendChild(folderPathTemp)
+}
+
+function deletePathAfter(element){
     const allPaths = Array.from(document.querySelector(".path").children);
     const index = allPaths.indexOf(element);
 

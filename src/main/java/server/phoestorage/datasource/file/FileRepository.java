@@ -21,4 +21,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
             nativeQuery = true
     )
     List<String> findImmediateSubfolders(@Param("owner") String owner, @Param("path") String path);
+
+    List<FileEntity> findByOwnerAndFullPathStartingWith(String owner, String path);
 }

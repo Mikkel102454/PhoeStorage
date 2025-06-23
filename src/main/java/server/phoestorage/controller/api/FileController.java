@@ -1,5 +1,6 @@
 package server.phoestorage.controller.api;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,15 @@ public class FileController {
     ){
         return fileService.downloadFile(filePath, rangeHeader);
     }
+
+    @GetMapping("/folder/download")
+    public void downloadFolder(
+            @RequestParam("path") String filePath,
+            HttpServletResponse response
+    ){
+        fileService.downloadZipFile(filePath, response);
+    }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(

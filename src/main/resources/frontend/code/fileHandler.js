@@ -90,6 +90,38 @@ function downloadFile(path) {
         .catch(err => alert("Error downloading file: " + err));
 }
 
+function downloadZipFile(path) {
+    fetch(`/api/files/folder/download?path=${encodeURIComponent(path)}`, {
+        method: "GET"
+    })
+        .then(async response => {
+            if (!response.ok) throw new Error("Download failed");
+
+            // Try to get filename from the Content-Disposition header
+            const contentDisposition = response.headers.get("Content-Disposition");
+            let fileName = "download.zip";
+
+            if (contentDisposition && contentDisposition.includes("filename=")) {
+                const match = contentDisposition.match(/filename="?(.+?)"?$/);
+                if (match && match[1]) {
+                    fileName = match[1];
+                }
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(err => alert("Error downloading file: " + err));
+}
+
 async function deleteFile(path) {
 
     const response = await fetch(`/api/files/delete?path=${encodeURIComponent(path)}`, {
