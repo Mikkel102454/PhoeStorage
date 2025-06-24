@@ -32,21 +32,25 @@ public class UserService {
      *
      */
     public int addUser(String username, String password, boolean admin) {
-        if(userRepository.existsByUsername(username)) { return 1; }
-        if(password.length() < 3) { return 2; }
+        try{
+            if(userRepository.existsByUsername(username)) { return 1; }
+            if(password.length() < 3) { return 2; }
 
-        String uuid = UUID.randomUUID().toString();
+            String uuid = UUID.randomUUID().toString();
 
-        UserEntity user = new UserEntity();
-        user.setUuid(uuid);
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setAdmin(admin);
-        user.setEnabled(true);
+            UserEntity user = new UserEntity();
+            user.setUuid(uuid);
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setAdmin(admin);
+            user.setEnabled(true);
 
-        userRepository.save(user);
+            userRepository.save(user);
 
-        folderService.createUserFolder(user);
-        return 0;
+            folderService.createUserFolder(user);
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

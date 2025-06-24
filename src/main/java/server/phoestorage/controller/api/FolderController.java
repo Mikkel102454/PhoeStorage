@@ -32,21 +32,17 @@ public class FolderController {
             @RequestParam("folderId") String folderId
     ){
         if(folderName.isEmpty()) { folderName = "New Folder"; }
-        int code = folderService.createFolder(folderId, folderName);
 
-        if(code == 409) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(handlerService.get409("There is already a folder named: " + folderName + " here"));
-        }
-        return ResponseEntity.ok("");
+        return folderService.createFolder(folderId, folderName);
     }
 
     @GetMapping("/download")
     public void downloadFolder(
             @RequestParam("folderId") String folderId,
+            @RequestParam("folderUuid") String folderUuid,
             HttpServletResponse response
     ){
-        //fileService.downloadZipFile(folderId, response);
+        folderService.downloadZipFile(folderId, folderUuid, response);
     }
 
     @GetMapping("/delete")

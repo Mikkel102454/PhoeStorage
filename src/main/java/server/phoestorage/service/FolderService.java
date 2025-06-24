@@ -1,5 +1,6 @@
 package server.phoestorage.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,9 +13,15 @@ import server.phoestorage.datasource.folder.FolderRepository;
 import server.phoestorage.datasource.users.UserEntity;
 import server.phoestorage.dto.FileEntry;
 import server.phoestorage.dto.FolderEntry;
+import server.phoestorage.zip.ZipBridge;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class FolderService {
@@ -121,22 +128,27 @@ public class FolderService {
      * @return exit code
      *
      */
-    public int createFolder(String folderId, String folderName) {
+    public ResponseEntity<String> createFolder(String folderId, String folderName) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
 
         if(folderExistByName(uuid, folderId, folderName)) { folderName = getValidFolderName(folderId, folderName, uuid); }
 
-        if(folderName.equals("nil")) { return 409; }
+        if(folderName.equals("nil")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(handlerService.get409("There is already a folder named: " + folderName + " here"));
+        }
+
+        String folderUuid = UUID.randomUUID().toString();
 
         FolderEntity folderEntity = new FolderEntity();
-        folderEntity.setUuid(UUID.randomUUID().toString());
+        folderEntity.setUuid(folderUuid);
         folderEntity.setName(folderName);
         folderEntity.setFolderId(folderId);
         folderEntity.setOwner(uuid);
         folderEntity.setUserCreated(true);
 
         folderRepository.save(folderEntity);
-        return 0;
+        return ResponseEntity.ok(folderUuid);
     }
     public String getValidFolderName(String folderId, String folderName, String owner) {
         List<String> existingNames = folderRepository
@@ -187,8 +199,7 @@ public class FolderService {
     public ResponseEntity<String> getParentFolder(String folderId, String folderName) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
         if(!folderExistByName(uuid, folderId, folderName)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(handlerService.get404());
+            return ResponseEntity.ok(null);
         }
 
         FolderEntity folderEntity = folderRepository.findByOwnerAndFolderIdAndName(uuid, folderId, folderName).get();
@@ -223,4 +234,71 @@ public class FolderService {
 
         return folderEntity.isPresent();
     }
+
+    public void downloadZipFile(String folderId, String folderUuid, HttpServletResponse response) {
+        try {
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+            List<FolderEntity> allFolders = folderRepository.findAllDescendantFolders(uuid, folderId, folderUuid);
+            List<FileEntity> allFiles = fileRepository.findAllFilesUnderFolderTree(uuid, folderId, folderUuid);
+
+            List<FileEntity> validFiles = allFiles.stream()
+                    .filter(f -> Files.exists(Paths.get(f.getInternalPath())))
+                    .toList();
+
+            if (validFiles.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No files found to zip.");
+                return;
+            }
+
+            String zipFileName = allFolders.stream()
+                    .filter(f -> f.getUuid().equals(folderUuid))
+                    .map(FolderEntity::getName)
+                    .findFirst()
+                    .orElse("download") + ".zip";
+
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFileName + "\"");
+
+            Map<String, String> zipMap = buildZipPathMap(validFiles, allFolders, folderUuid);
+
+            String[] zipNames = zipMap.keySet().toArray(new String[0]);
+            String[] diskPaths = zipMap.values().toArray(new String[0]);
+
+            new ZipBridge().streamZip(zipNames, diskPaths, response.getOutputStream());
+
+        } catch (Exception e) {
+            System.err.println("ZIP generation failed: " + e.getMessage());
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate zip.");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    }
+
+    public Map<String, String> buildZipPathMap(List<FileEntity> files, List<FolderEntity> folders, String rootFolderId) {
+        Map<String, FolderEntity> folderMap = folders.stream()
+                .collect(Collectors.toMap(FolderEntity::getUuid, f -> f));
+
+        Map<String, String> result = new LinkedHashMap<>();
+
+        for (FileEntity file : files) {
+            String zipPath = file.getName();
+            String parentId = file.getFolderId();
+
+            while (parentId != null) {
+                FolderEntity parent = folderMap.get(parentId);
+                if (parent == null || parent.getUuid().equals(rootFolderId)) break;
+
+                zipPath = parent.getName() + "/" + zipPath;
+                parentId = parent.getFolderId();
+            }
+
+            result.put(zipPath, file.getInternalPath());
+        }
+
+        return result;
+    }
+
 }

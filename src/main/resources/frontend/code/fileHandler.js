@@ -8,7 +8,7 @@ async function uploadFile(file, folderId) {
     const fileName = file.name;
 
     if (!file || file.size === 0) {
-        alert("Invalid file selected or file is empty.");
+        console.warn("Invalid file selected or file is empty.");
         return;
     }
     console.log(chunkSize + " : " + totalChunks + " : " + fileName + " : " + file.size)
@@ -100,6 +100,7 @@ async function uploadFolder(folderId, folderName) {
         const error = await response.text();
         alert("Upload failed: " + error);
     }
+    return response.text();
 }
 
 async function browseDirectory(folderId) {
@@ -136,8 +137,8 @@ async function browseDirectory(folderId) {
     return { files, folders };
 }
 
-function downloadZipFile(path) {
-    fetch(`/api/folders/download?path=${encodeURIComponent(path)}`, {
+function downloadZipFile(folderId, folderUuid) {
+    fetch(`/api/folders/download?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}`, {
         method: "GET"
     })
         .then(async response => {
@@ -175,13 +176,13 @@ async function deleteFolder(folderId, folderUuid) {
 }
 
 async function getFolderId(folderId, folderName){
-    const response = await fetch(`/api/folders/browse?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
+    const response = await fetch(`/api/folders/parent?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
         method: "GET"
     });
 
     if (!response.ok) {
         alert("Failed get folder id");
-        return;
+        return null;
     }
 
     return await response.text();

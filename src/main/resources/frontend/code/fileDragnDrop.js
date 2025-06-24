@@ -14,13 +14,24 @@ async function initDragnDrop(dropZone){
     });
 
     dropZone.addEventListener("drop", async (e) => {
-        const files = e.dataTransfer.files;
+        e.preventDefault();
+        const allFiles = Array.from(e.dataTransfer.files);
 
-        if (files.length > 0) {
-            for (const file of files) {
-                await uploadFile(file, getParameter("jbd"));
-            }
-            await loadDirectory(getParameter("jbd"))
+        if (allFiles.length === 0) return;
+
+        const folderFiles = allFiles.filter(file => file.webkitRelativePath && file.webkitRelativePath.includes("/"));
+        const singleFiles = allFiles.filter(file => !file.webkitRelativePath || !file.webkitRelativePath.includes("/"));
+
+        // Upload individual files directly
+        for (const file of singleFiles) {
+            await uploadFile(file, getParameter("jbd"));
         }
+
+        // Upload folders if any
+        if (folderFiles.length > 0) {
+            // uploaded folder
+        }
+
+        await loadDirectory(getParameter("jbd"));
     });
 }

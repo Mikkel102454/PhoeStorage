@@ -138,7 +138,9 @@ public class FileService {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
 
-            if(!fileExistByUuid(uuid, folderId, internalName)) {return -2;}
+            String internalPath = rootPath + uuid + "/storage/" + internalName;
+
+            if(fileExistByUuid(uuid, folderId, internalName)) {return -2;}
 
             String extension;
 
@@ -148,8 +150,6 @@ public class FileService {
             } else {
                 extension = "";
             }
-
-            String internalPath = rootPath + uuid + "/storage/" + internalName;
 
             FileEntity fileEntity = new FileEntity();
             fileEntity.setUuid(internalName);
@@ -295,66 +295,4 @@ public class FileService {
         return fileEntity.isPresent();
 
     }
-
-//    public void downloadZipFile(String folderId, HttpServletResponse response) {
-//        try {
-//            String uuid = appUserDetailsService.getUserEntity().getUuid();
-//            List<FileEntity> allFiles = fileRepository.findByOwnerAndFullPathStartingWith(uuid, path);
-//
-//            List<FileEntity> validFiles = allFiles.stream()
-//                    .filter(f -> Files.exists(Paths.get(f.getInternalPath())))
-//                    .toList();
-//
-//            if (validFiles.isEmpty()) {
-//                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No files found to zip.");
-//                return;
-//            }
-//
-//            String zipFileName = Paths.get(path).getFileName().toString() + ".zip";
-//
-//            response.setContentType("application/zip");
-//            response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFileName + "\"");
-//
-//            try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
-//                Set<String> addedFolders = new HashSet<>();
-//
-//                for (FileEntity file : validFiles) {
-//                    Path internalPath = Paths.get(file.getInternalPath());
-//
-//                    String relativePath = file.getPath().startsWith(path)
-//                            ? file.getPath().substring(path.length())
-//                            : file.getPath();
-//
-//                    String virtualPath = relativePath + file.getName();
-//                    if (!file.getExtension().isEmpty()) {
-//                        virtualPath += "." + file.getExtension();
-//                    }
-//
-//                    // folder creations
-//                    String[] pathParts = relativePath.split("/");
-//                    String folderPath = "";
-//                    for (String part : pathParts) {
-//                        if (part.isEmpty()) continue;
-//                        folderPath += part + "/";
-//                        if (addedFolders.add(folderPath)) {
-//                            zos.putNextEntry(new ZipEntry(folderPath));
-//                            zos.closeEntry();
-//                        }
-//                    }
-//
-//                    zos.putNextEntry(new ZipEntry(virtualPath));
-//                    Files.copy(internalPath, zos);
-//                    zos.closeEntry();
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("ZIP generation failed: " + e.getMessage());
-//            try {
-//                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate zip.");
-//            } catch (IOException ioException) {
-//                ioException.printStackTrace();
-//            }
-//        }
-//    }
 }

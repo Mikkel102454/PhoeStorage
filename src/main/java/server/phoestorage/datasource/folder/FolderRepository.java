@@ -20,4 +20,20 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
     List<String> findByOwnerAndFolderIdStartingWithName(@Param("owner") String owner,
                                        @Param("folderId") String folderId,
                                        @Param("folderName") String folderName);
+
+    @Query(value = """
+    WITH RECURSIVE folder_tree AS (
+        SELECT * FROM folder WHERE uuid = :folderId AND folder_id = :parentId AND owner = :owner
+        UNION ALL
+        SELECT f.* FROM folder f
+        JOIN folder_tree ft ON f.folder_id = ft.uuid
+        WHERE f.owner = :owner
+    )
+    SELECT * FROM folder_tree;
+    """, nativeQuery = true)
+    List<FolderEntity> findAllDescendantFolders(
+            @Param("owner") String owner,
+            @Param("parentId") String parentId,
+            @Param("folderId") String folderId
+    );
 }

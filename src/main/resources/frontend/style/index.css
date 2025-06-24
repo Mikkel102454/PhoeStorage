@@ -453,7 +453,7 @@ main .my-drive .section-2 .header,
 main .home .section-2 .header{
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 0.7fr 1fr;
-    gap: 1rem;
+    gap: 1vh;
     align-items: center;
     margin-bottom: 2vh;
     padding-left: 2vh;
@@ -519,7 +519,7 @@ main .home .section-2 ul li{
     border-width: 0.1vh;
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 0.7fr 1fr;
-    gap: 1rem;
+    gap: 1vh;
     align-items: center;
     padding-left: 2vh;
     padding-right: 2vh;

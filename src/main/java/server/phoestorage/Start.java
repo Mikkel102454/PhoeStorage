@@ -16,6 +16,6 @@ public class Start implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        userService.addUser("admin", "admin", true);
+        //userService.addUser("admin", "admin", true);
     }
 }

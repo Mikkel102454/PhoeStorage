@@ -53,7 +53,7 @@ async function createFile(file, fileParent, isFolder){
 
         const folderElement1 = fileTemp.querySelector(".fa-down-to-bracket");
         folderElement1.addEventListener("click", function (){
-            downloadZipFile(getParameter("jbd") + file.name + "/")
+            downloadZipFile(getParameter("jbd"), file.uuid)
         })
 
         const folderElement = fileTemp.querySelector("li");
@@ -231,7 +231,11 @@ document.getElementById('hiddenFileInput').addEventListener('change', async func
 });
 
 document.getElementById('hiddenFolderInput').addEventListener('change', async function () {
-    const files = Array.from(this.files);
+    FolderUploading(this.files)
+});
+
+async function FolderUploading(fileListOrArray) {
+    const files = Array.from(fileListOrArray); // Works with FileList or Array<File>
     const rootFolderId = getParameter("jbd");
 
     if (!rootFolderId || typeof rootFolderId !== "string") {
@@ -242,18 +246,28 @@ document.getElementById('hiddenFolderInput').addEventListener('change', async fu
     const folderIdCache = new Map();
 
     for (const file of files) {
+        if (!file.webkitRelativePath) continue; // skip loose files
+
         const parts = file.webkitRelativePath.split('/');
-        parts.pop(); // Remove the file name
+        parts.pop(); // Remove file name from path
         let parentId = rootFolderId;
 
-        for (const folderName of parts) {
+        for (let i = 0; i < parts.length; i++) {
+            const folderName = parts[i];
             const cacheKey = `${parentId}/${folderName}`;
 
             if (!folderIdCache.has(cacheKey)) {
-                let folderId = await getFolderId(parentId, folderName);
+                let folderId;
 
-                if (!folderId || typeof folderId !== "string") {
+                if (i === 0) {
+                    // Always create the top-level folder (e.g., "MyFolder")
                     folderId = await uploadFolder(parentId, folderName);
+                } else {
+                    // Try to fetch, or create if missing
+                    folderId = await getFolderId(parentId, folderName);
+                    if (!folderId || typeof folderId !== "string") {
+                        folderId = await uploadFolder(parentId, folderName);
+                    }
                 }
 
                 folderIdCache.set(cacheKey, folderId);
@@ -262,11 +276,13 @@ document.getElementById('hiddenFolderInput').addEventListener('change', async fu
             parentId = folderIdCache.get(cacheKey);
         }
 
-        // Ensure parentId is a valid string before upload
-        if (typeof parentId === "string") {
+        // Upload the file to its final parent folder
+        if (typeof parentId === "string" && file instanceof File) {
             await uploadFile(file, parentId);
         } else {
-            console.error("Invalid folderId for upload:", parentId);
+            console.warn("Skipped file:", file);
         }
     }
-});
+
+    await loadDirectory(rootFolderId);
+}
