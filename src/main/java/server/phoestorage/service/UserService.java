@@ -13,13 +13,13 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FileService fileService;
+    private final FolderService folderService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FolderService folderService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.fileService = fileService;
+        this.folderService = folderService;
     }
 
     /**
@@ -46,7 +46,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        fileService.createUserFolder(user);
+        folderService.createUserFolder(user);
         return 0;
     }
 }

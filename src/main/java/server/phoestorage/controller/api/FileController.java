@@ -22,11 +22,6 @@ public class FileController {
         this.handlerService = handlerService;
     }
 
-    @GetMapping("/browse")
-    public ResponseEntity<?> browseDirectory(@RequestParam() String folderId) {
-        return fileService.BrowseDirectory(folderId);
-    }
-
     @PostMapping("/upload")
     public ResponseEntity<?> uploadChunk(
             @RequestParam("file") MultipartFile file,
@@ -63,17 +58,8 @@ public class FileController {
             @RequestParam("folderId") String FolderId,
             @RequestHeader(value = "Range", required = false) String rangeHeader
     ){
-        return fileService.downloadFile(fileId, FolderId, rangeHeader);
+        return fileService.downloadFile(FolderId, fileId, rangeHeader);
     }
-
-    @GetMapping("/folder/download")
-    public void downloadFolder(
-            @RequestParam("folderId") String folderId,
-            HttpServletResponse response
-    ){
-        //fileService.downloadZipFile(folderId, response);
-    }
-
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(

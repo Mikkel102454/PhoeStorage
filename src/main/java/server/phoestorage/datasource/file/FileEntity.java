@@ -12,7 +12,7 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(unique = true, nullable = false, name = "uuid")
+    @Column(unique = false, nullable = false, name = "uuid")
     String uuid;
 
     @Column(unique = false, nullable = false, name = "owner")

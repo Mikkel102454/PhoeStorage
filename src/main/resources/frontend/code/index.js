@@ -50,7 +50,7 @@ async function loadDrive(){
 
 
     await loadDirectoryInit(temp)
-    mainElement.appendChild(temp);
+    await mainElement.appendChild(temp);
 
     // const directories = getParameter("jbd").split('/').filter(p => p !== '');
     // let currentPath = "/"
@@ -60,7 +60,7 @@ async function loadDrive(){
     //     addPathView(directory, currentPath)
     // }
 
-
+    loadContextMenu(document.getElementById("drop-zone"),  document.getElementById('context-menu-drive'))
     await initDragnDrop(document.getElementById("drop-zone"))
 }
 
@@ -88,4 +88,11 @@ async function loadDirectory(path){
     for(const key in files){
         await createFile(files[key], fileParent, false);
     }
+}
+
+
+async function createFolder(name){
+    await uploadFolder(getParameter('jbd'), name)
+    toggleFolderCreationMenu()
+    await loadDirectory(getParameter('jbd'))
 }

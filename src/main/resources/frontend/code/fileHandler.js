@@ -1,13 +1,17 @@
+// #################################################
+// ##                 FILE STUFF                  ##
+// #################################################
+
 async function uploadFile(file, folderId) {
     const chunkSize = 10 * 1024 * 1024; // 10 MB
     const totalChunks = Math.ceil(file.size / chunkSize);
-    const filename = file.name;
+    const fileName = file.name;
 
     if (!file || file.size === 0) {
         alert("Invalid file selected or file is empty.");
         return;
     }
-    console.log(chunkSize + " : " + totalChunks + " : " + filename + " : " + file.size)
+    console.log(chunkSize + " : " + totalChunks + " : " + fileName + " : " + file.size)
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
@@ -17,8 +21,8 @@ async function uploadFile(file, folderId) {
         formData.append("file", chunk);
         formData.append("chunkIndex", chunkIndex);
         formData.append("totalChunks", totalChunks);
-        formData.append("fileName", filename);
-        formData.append("folderId", folderId);
+        formData.append("fileName", encodeURIComponent(fileName));
+        formData.append("folderId", encodeURIComponent(folderId));
         console.log(formData)
         const response = await fetch("/api/files/upload", {
             method: "POST",
@@ -38,9 +42,68 @@ async function uploadFile(file, folderId) {
     }
 }
 
+function downloadFile(folderId, fileId) {
+    fetch(`/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
+        method: "GET",
+
+    })
+        .then(async response => {
+            if (!response.ok) throw new Error("Download failed");
+
+            // Try to get filename from the Content-Disposition header
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "downloaded_file";
+            if (disposition && disposition.includes("filename=")) {
+                const match = disposition.match(/filename="(.+)"/);
+                if (match && match[1]) filename = match[1];
+            }
+
+            return response.blob().then(blob => ({ blob, filename }));
+        })
+        .then(({ blob, filename }) => {
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            window.URL.revokeObjectURL(link.href);
+        })
+        .catch(err => alert("Error downloading file: " + err));
+}
+
+async function deleteFile(folderId, fileId) {
+
+    const response = await fetch(`/api/files/delete?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
+        method: "DELETE"
+    });
+
+    if (!response.ok) {
+        alert("Failed to delete file.");
+    }
+}
+
+
+// #################################################
+// ##               FOLDER STUFF                  ##
+// #################################################
+
+async function uploadFolder(folderId, folderName) {
+    const response = await fetch(`/api/folders/upload?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
+        method: "POST"
+    });
+
+    if (response.status === 409) {
+        alert("Folder creation: Folder already exists");
+        return;
+    }
+
+    if (!response.ok) {
+        const error = await response.text();
+        alert("Upload failed: " + error);
+    }
+}
 
 async function browseDirectory(folderId) {
-    const response = await fetch(`/api/files/browse?folderId=${encodeURIComponent(folderId)}`, {
+    const response = await fetch(`/api/folders/browse?folderId=${encodeURIComponent(folderId)}`, {
         method: "GET"
     });
 
@@ -73,65 +136,53 @@ async function browseDirectory(folderId) {
     return { files, folders };
 }
 
-function downloadFile(folderId, fileId) {
-    fetch(`/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
-        method: "GET",
-
-    })
-        .then(response => {
-            if (!response.ok) throw new Error("Download failed");
-
-            return response.blob();
-        })
-        .then(blob => {
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = path.split("/").pop();
-            link.click();
-        })
-        .catch(err => alert("Error downloading file: " + err));
-}
-
 function downloadZipFile(path) {
-    fetch(`/api/files/folder/download?path=${encodeURIComponent(path)}`, {
+    fetch(`/api/folders/download?path=${encodeURIComponent(path)}`, {
         method: "GET"
     })
         .then(async response => {
             if (!response.ok) throw new Error("Download failed");
 
             // Try to get filename from the Content-Disposition header
-            const contentDisposition = response.headers.get("Content-Disposition");
-            let fileName = "download.zip";
-
-            if (contentDisposition && contentDisposition.includes("filename=")) {
-                const match = contentDisposition.match(/filename="?(.+?)"?$/);
-                if (match && match[1]) {
-                    fileName = match[1];
-                }
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "downloaded_file";
+            if (disposition && disposition.includes("filename=")) {
+                const match = disposition.match(/filename="(.+)"/);
+                if (match && match[1]) filename = match[1];
             }
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-
+            return response.blob().then(blob => ({ blob, filename }));
+        })
+        .then(({ blob, filename }) => {
             const link = document.createElement("a");
-            link.href = url;
-            link.download = fileName;
-            document.body.appendChild(link);
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
             link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(link.href);
         })
         .catch(err => alert("Error downloading file: " + err));
 }
 
-async function deleteFile(folderId, fileId) {
+async function deleteFolder(folderId, folderUuid) {
 
-    const response = await fetch(`/api/files/delete?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
+    const response = await fetch(`/api/folders/delete?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}`, {
         method: "DELETE"
     });
 
     if (!response.ok) {
-        alert("Failed to delete file.");
+        alert("Failed to delete folder.");
+    }
+}
+
+async function getFolderId(folderId, folderName){
+    const response = await fetch(`/api/folders/browse?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        alert("Failed get folder id");
         return;
     }
+
+    return await response.text();
 }

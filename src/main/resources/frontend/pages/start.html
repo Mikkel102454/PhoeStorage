@@ -9,13 +9,31 @@
 
     <link rel="stylesheet" href="/style/index.css">
     <link rel="stylesheet" href="/style/preset.css">
-
-    <script src="/code/util.js"></script>
-    <script src="/code/index.js"></script>
-    <script src="/code/fileHandler.js"></script>
-    <script src="/code/file.js"></script>
 </head>
 <body>
+    <input type="file" id="hiddenFileInput" style="display: none;" multiple>
+    <input type="file" id="hiddenFolderInput" style="display: none;" webkitdirectory>
+    <div class="createFolder" id="createFolderMenu">
+        <div class="background" onclick="toggleFolderCreationMenu()"></div>
+        <div class="content">
+            <h3>New folder</h3>
+            <input placeholder="Unitled folder" id="createFolderMenuInput">
+            <div>
+                <span onclick="toggleFolderCreationMenu()">Cancel</span>
+                <span onclick="createFolder(document.getElementById('createFolderMenuInput').value)">Create</span>
+            </div>
+        </div>
+    </div>
+    <div class="customContextMenu" id="context-menu-drive">
+        <ul>
+            <li tabindex="0" onclick="toggleFolderCreationMenu()"><i class="fa-light fa-folder-plus"></i>Create folder</li>
+        </ul>
+        <div class="divider"></div>
+        <ul>
+            <li tabindex="0" onclick="openFileUploadMenu()"><i class="fa-light fa-file-arrow-up"></i>File upload</li>
+            <li tabindex="0" onclick="openFolderUploadMenu()"><i class="fa-light fa-folder-arrow-up"></i>Folder upload</li>
+        </ul>
+    </div>
     <nav class="menu-nav">
         <ul>
             <div class="category">
@@ -87,7 +105,6 @@
                 </div>
                 <div class="text">2.17 GB of 1000 GB used</div>
             </div>
-            <button class="button-1 create-new"><i class="fa-solid fa-plus-large"></i>Create New</button>
         </ul>
         <div class="divider"></div>
         <div class="logout">
@@ -212,7 +229,7 @@
             <div><i class="fa-light fa-down-to-bracket fa-inverse"></i></div>
             <div><i class="fa-light fa-pen-line fa-inverse"></i></div>
             <div><i class="fa-regular fa-star fa-inverse"></i></div>
-            <div><i class="fa-light fa-ellipsis-vertical fa-inverse"></i></div>
+            <div><!--<i class="fa-light fa-ellipsis-vertical fa-inverse"></i>--><i class="fa-light fa-trash"></i></div>
         </div>
     </li>
 </template>
@@ -226,5 +243,9 @@
     </div>
 </template>
 
+<script src="/code/util.js"></script>
+<script src="/code/index.js"></script>
+<script src="/code/fileHandler.js"></script>
+<script src="/code/file.js"></script>
 <script src="/code/fileDragnDrop.js"></script>
 </html>

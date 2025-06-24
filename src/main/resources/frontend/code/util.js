@@ -57,3 +57,58 @@ function getParameter(parameter){
     const params = new URLSearchParams(window.location.search);
     return decodeURIComponent(params.get(parameter))
 }
+
+
+
+function loadContextMenu(element, contextMenu, postop, posleft) {
+    let isFadingOut = false;
+
+    element.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+
+        const newTop = postop || `${e.clientY}px`;
+        const newLeft = posleft || `${e.clientX}px`;
+
+        if (contextMenu.classList.contains("visible")) {
+            // If already visible, fade it out first
+            isFadingOut = true;
+            contextMenu.classList.remove("visible");
+
+            // Wait for fade-out to finish
+            contextMenu.addEventListener("transitionend", function handler(event) {
+                if (event.propertyName === "opacity" && isFadingOut) {
+                    contextMenu.removeEventListener("transitionend", handler);
+                    isFadingOut = false;
+
+                    // Move to new position
+                    contextMenu.style.top = newTop;
+                    contextMenu.style.left = newLeft;
+
+                    // Now fade it back in
+                    requestAnimationFrame(() => {
+                        contextMenu.classList.add("visible");
+                    });
+                }
+            });
+        } else {
+            // If not visible, just show it at position
+            contextMenu.style.top = newTop;
+            contextMenu.style.left = newLeft;
+            contextMenu.classList.add("visible");
+        }
+    });
+
+    window.addEventListener("click", () => {
+        disableContextMenu(contextMenu);
+    });
+    window.addEventListener("contextmenu", (e) => {
+        if (!element.contains(e.target)) {
+            disableContextMenu(contextMenu);
+        }
+    });
+
+}
+
+function disableContextMenu(element){
+    element.classList.remove("visible");
+}

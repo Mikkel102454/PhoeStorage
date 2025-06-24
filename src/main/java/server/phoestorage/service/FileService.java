@@ -43,87 +43,14 @@ public class FileService {
     private final HandlerService handlerService;
 
     private final FileRepository fileRepository;
-    private final FolderRepository folderRepository;
 
     @Autowired
-    public FileService(AppUserDetailsService appUserDetailsService, HandlerService handlerService, FileRepository fileRepository, FolderRepository folderRepository) {
+    public FileService(AppUserDetailsService appUserDetailsService,
+                       HandlerService handlerService,
+                       FileRepository fileRepository) {
         this.appUserDetailsService = appUserDetailsService;
         this.handlerService = handlerService;
         this.fileRepository = fileRepository;
-        this.folderRepository = folderRepository;
-    }
-
-    /**
-     * Create user folders
-     *
-     * @param user the user
-     * @return true if successful and false if unsuccessful
-     *
-     */
-    public boolean createUserFolder(UserEntity user) {
-        try{
-            new File(rootPath + user.getUuid()).mkdirs();
-            new File(rootPath + user.getUuid() + "/temp").mkdirs();
-            new File(rootPath + user.getUuid() + "/storage").mkdirs();
-
-            FolderEntity folderEntity = new FolderEntity();
-            folderEntity.setUuid(user.getUuid());
-            folderEntity.setOwner(user.getUuid());
-            folderEntity.setFolderId("-1");
-            folderEntity.setName("My Drive");
-            folderEntity.setUserCreated(false);
-
-            folderRepository.save(folderEntity);
-            return true;
-        }catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
-            return false;
-        }
-    }
-
-    /**
-     * Browse directory
-     *
-     * @param folderId the current browsing directory
-     * @return response entity with list of FileEntry
-     *
-     */
-    public ResponseEntity<Map<String, Object>> BrowseDirectory(String folderId) {
-        String uuid = appUserDetailsService.getUserEntity().getUuid();
-
-        List<FileEntity> files = fileRepository.findByOwnerAndFolderId(uuid, folderId);
-        List<FileEntry> fileResult = new ArrayList<>();
-        List<FolderEntry> folderResult = new ArrayList<>();
-
-        for(FileEntity file : files) {
-            FileEntry fileEntry = new FileEntry();
-            fileEntry.setUuid(file.getUuid());
-            fileEntry.setOwner(file.getOwner());
-            fileEntry.setName(file.getName());
-            fileEntry.setExtension(file.getExtension());
-            fileEntry.setFolderId(file.getFolderId());
-            fileEntry.setCreated(file.getCreated());
-            fileEntry.setModified(file.getModified());
-            fileEntry.setAccessed(file.getAccessed());
-            fileEntry.setSize(file.getSize());
-            fileEntry.setIsFolder(false);
-            fileResult.add(fileEntry);
-        }
-
-        List<FolderEntity> folders = folderRepository.findByOwnerAndFolderId(uuid, folderId);
-        for (FolderEntity folder : folders) {
-            FolderEntry folderEntry = new FolderEntry();
-            folderEntry.setUuid(folder.getUuid());
-            folderEntry.setOwner(uuid);
-            folderEntry.setName(folder.getName());
-            folderEntry.setFolderId(folder.getFolderId());
-            folderResult.add(folderEntry);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("files", fileResult);
-        response.put("folders", folderResult);
-        return ResponseEntity.ok(response);
     }
 
     /**
@@ -139,12 +66,7 @@ public class FileService {
     public int saveChunk(int chunkId, MultipartFile file, String folderId, String fileName){
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
-
-            FileEntity fileEntity = fileRepository.findByOwnerAndFolderIdAndName(uuid, folderId, fileName);
-
-            if (fileEntity != null) {
-                return -2;
-            }
+            if(fileExistByName(uuid, folderId, fileName)) {return -2;}
 
             Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
             Files.createDirectories(chunkDir);
@@ -216,6 +138,8 @@ public class FileService {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
 
+            if(!fileExistByUuid(uuid, folderId, internalName)) {return -2;}
+
             String extension;
 
             String[] parts = fileName.split("\\.");
@@ -257,17 +181,16 @@ public class FileService {
     public ResponseEntity<?> downloadFile(String folderId, String fileId, String rangeHeader) {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
-            FileEntity fileEntity = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId);
 
-            if (fileEntity == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
-            }
+            if(!fileExistByUuid(uuid, folderId, fileId)) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
 
+            Optional<FileEntity> fileEntity = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId);
 
-            Path file = Paths.get(fileEntity.getInternalPath());
+            Path file = Paths.get(fileEntity.get().getInternalPath()); // warning is irrelevant because we call fileExistByUuid()
             Resource resource = new UrlResource(file.toUri());
 
             if (!resource.exists()) {
+                System.out.print("Could not find file in local files. send 404");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
             }
 
@@ -296,7 +219,7 @@ public class FileService {
             InputStreamResource inputStreamResource = new InputStreamResource(limited);
 
             return ResponseEntity.status(rangeHeader == null ? 200 : 206)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileEntity.get().getName() + "\"")
                     .header(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + end + "/" + fileSize)
                     .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                     .contentLength(contentLength)
@@ -319,11 +242,13 @@ public class FileService {
     public ResponseEntity<?> deleteFile(String folderId, String fileId) {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
-            FileEntity fileEntity = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId);
-            if (fileEntity == null) {
+
+            if (fileExistByUuid(uuid, folderId, fileId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
             }
 
+            Optional<FileEntity> response = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId);
+            FileEntity fileEntity = response.get();
             if (Files.exists(Paths.get(fileEntity.getInternalPath()))) {
                 Files.delete(Paths.get(fileEntity.getInternalPath()));
             } else { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
@@ -337,7 +262,39 @@ public class FileService {
         }
     }
 
+    /**
+     * File exist with uuid
+     *
+     * @param folderId the parent folder
+     * @param fileId uuid of the file
+     * @return exit code
+     *
+     */
+    public boolean fileExistByUuid(String owner, String folderId, String fileId) throws IOException {
+        Optional<FileEntity> fileEntity = fileRepository.findByOwnerAndFolderIdAndUuid(owner, folderId, fileId);
 
+        if(fileEntity.isEmpty()){ return false; }
+
+        Path file = Paths.get(fileEntity.get().getInternalPath());
+        Resource resource = new UrlResource(file.toUri());
+
+        return resource.exists();
+    }
+
+    /**
+     * File exist with name
+     *
+     * @param folderId the parent folder
+     * @param fileName name of the file
+     * @return exit code
+     *
+     */
+    public boolean fileExistByName(String owner, String folderId, String fileName) {
+        Optional<FileEntity> fileEntity = fileRepository.findByOwnerAndFolderIdAndName(owner, folderId, fileName);
+
+        return fileEntity.isPresent();
+
+    }
 
 //    public void downloadZipFile(String folderId, HttpServletResponse response) {
 //        try {

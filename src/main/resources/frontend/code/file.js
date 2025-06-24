@@ -51,14 +51,13 @@ async function createFile(file, fileParent, isFolder){
         fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
 
-        const fileElement1 = fileTemp.querySelector(".fa-down-to-bracket");
-        fileElement1.addEventListener("click", function (){
+        const folderElement1 = fileTemp.querySelector(".fa-down-to-bracket");
+        folderElement1.addEventListener("click", function (){
             downloadZipFile(getParameter("jbd") + file.name + "/")
         })
 
-
-        const fileElement = fileTemp.querySelector("li");
-        fileElement.addEventListener("dblclick", function() {
+        const folderElement = fileTemp.querySelector("li");
+        folderElement.addEventListener("dblclick", function() {
             setParameter("jbd", file.uuid);
             console.log(file.uuid)
             loadDirectory(getParameter("jbd"));
@@ -70,9 +69,9 @@ async function createFile(file, fileParent, isFolder){
         fileTemp.querySelector(".file-name").innerHTML = fileIcon(file.extension) + file.name
         fileTemp.querySelector(".file-modified").innerHTML = file.modified ? formatDate(file.modified) : formatDate(file.created)
         fileTemp.querySelector(".file-size").innerHTML = formatSize(file.size)
-        const fileElement = fileTemp.querySelector(".fa-down-to-bracket");
-        fileElement.addEventListener("click", function (){
-            downloadFile(file.fullPath)
+        const fileElementDownload = fileTemp.querySelector(".fa-down-to-bracket");
+        fileElementDownload.addEventListener("click", function (){
+            downloadFile(file.folderId, file.uuid)
         })
     }
 
@@ -205,3 +204,69 @@ function formatDate(raw){
         day: "numeric"
     });
 }
+
+
+function toggleFolderCreationMenu(){
+    const createFolder = document.getElementById("createFolderMenu")
+    document.getElementById("createFolderMenuInput").value = "";
+    createFolder.classList.toggle("visible");
+
+}
+
+function openFileUploadMenu() {
+    document.getElementById('hiddenFileInput').click();
+}
+
+function openFolderUploadMenu() {
+    document.getElementById('hiddenFolderInput').click();
+}
+
+document.getElementById('hiddenFileInput').addEventListener('change', async function () {
+    if (this.files.length > 0) {
+        for (const file of this.files) {
+            await uploadFile(file, getParameter("jbd"));
+        }
+        await loadDirectory(getParameter("jbd"))
+    }
+});
+
+document.getElementById('hiddenFolderInput').addEventListener('change', async function () {
+    const files = Array.from(this.files);
+    const rootFolderId = getParameter("jbd");
+
+    if (!rootFolderId || typeof rootFolderId !== "string") {
+        alert("Invalid root folder ID.");
+        return;
+    }
+
+    const folderIdCache = new Map();
+
+    for (const file of files) {
+        const parts = file.webkitRelativePath.split('/');
+        parts.pop(); // Remove the file name
+        let parentId = rootFolderId;
+
+        for (const folderName of parts) {
+            const cacheKey = `${parentId}/${folderName}`;
+
+            if (!folderIdCache.has(cacheKey)) {
+                let folderId = await getFolderId(parentId, folderName);
+
+                if (!folderId || typeof folderId !== "string") {
+                    folderId = await uploadFolder(parentId, folderName);
+                }
+
+                folderIdCache.set(cacheKey, folderId);
+            }
+
+            parentId = folderIdCache.get(cacheKey);
+        }
+
+        // Ensure parentId is a valid string before upload
+        if (typeof parentId === "string") {
+            await uploadFile(file, parentId);
+        } else {
+            console.error("Invalid folderId for upload:", parentId);
+        }
+    }
+});
