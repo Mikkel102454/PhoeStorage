@@ -29,7 +29,7 @@ async function initDragnDrop(dropZone){
 
         // Upload folders if any
         if (folderFiles.length > 0) {
-            // uploaded folder
+            await FolderUploading(e.dataTransfer.items)
         }
 
         await loadDirectory(getParameter("jbd"));

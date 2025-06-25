@@ -135,7 +135,7 @@ public class FolderService {
 
         if(folderName.equals("nil")) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(handlerService.get409("There is already a folder named: " + folderName + " here"));
+                    .body(folderName);
         }
 
         String folderUuid = UUID.randomUUID().toString();
@@ -167,6 +167,7 @@ public class FolderService {
 
         return "nil"; // fallback if all names are taken
     }
+
     /**
      * Delete folder
      *
@@ -180,20 +181,39 @@ public class FolderService {
 
         if(!folderExistByUuid(uuid, folderId, folderUuid)) { return 404; }
 
-        Optional<FolderEntity> folderEntity = folderRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, folderUuid);
-        if(folderEntity.isEmpty()) {return 404;}
+        List<FolderEntity> folders = folderRepository.findAllDescendantFolders(uuid, folderId, folderUuid);
+        List<FileEntity> files = fileRepository.findAllFilesUnderFolderTree(uuid, folderId, folderUuid);
 
-        Map<String, Object> folderResponse = BrowseDirectory(folderId).getBody();
-
-        for (FileEntity file : (FileEntity[]) folderResponse.get("files")){
+        for(FileEntity file : files) {
             fileService.deleteFile(file.getFolderId(), file.getUuid());
         }
-        for (FolderEntity folder : (FolderEntity[]) folderResponse.get("folders")){
-            deleteFolder(folder.getFolderId(), folder.getUuid());
+        folderRepository.deleteAll(folders);
+
+        return 0;
+    }
+
+    public ResponseEntity<?> renameFolder(String folderId, String folderUuid, String name){
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+        if(!folderExistByUuid(uuid, folderId, folderUuid)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
         }
 
-        folderRepository.delete(folderEntity.get());
-        return 0;
+        if(folderRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, folderUuid).get().getName().equals(name)) {
+            return ResponseEntity.ok().body("");
+        }
+
+        if(folderExistByName(uuid, folderId, name)) {
+            name = getValidFolderName(folderId, name, uuid);
+            if(name.equals("nil")){
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(name);
+            }
+        }
+
+        if(folderRepository.renameFolder(uuid, folderId, folderUuid, name) != 1){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception()));
+        }
+        return ResponseEntity.ok("");
     }
 
     public ResponseEntity<String> getParentFolder(String folderId, String folderName) {
@@ -206,6 +226,24 @@ public class FolderService {
         return ResponseEntity.ok(folderEntity.getFolderId());
     }
 
+    public ResponseEntity<List<FolderEntry>> getFolderLocation(String folderUuid) {
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+        List<FolderEntity> folders = folderRepository.findChainUntilUserRoot(folderUuid, uuid);
+
+        List<FolderEntry> entrys = new ArrayList<>();
+        for (FolderEntity folder : folders) {
+            FolderEntry folderEntry = new FolderEntry();
+
+            folderEntry.setUuid(folder.getUuid());
+            folderEntry.setName(folder.getName());
+            folderEntry.setFolderId(folder.getFolderId());
+            folderEntry.setOwner(folder.getOwner());
+
+            entrys.add(folderEntry);
+        }
+        return ResponseEntity.ok().body(entrys);
+    }
 
     /**
      * Folder exist with name
@@ -247,7 +285,7 @@ public class FolderService {
                     .toList();
 
             if (validFiles.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No files found to zip.");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND , "No files found to zip.");
                 return;
             }
 

@@ -1,0 +1,113 @@
+/* Add this at the top of your CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+#alertBox {
+    position: absolute;
+    right: 2vh;
+    bottom: 2vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    width: 40vh;
+    padding: 0;
+}
+
+/* Base alert style */
+#alertBox .alert {
+    display: flex;
+    align-items: center;
+    border-radius: 1.5vh;
+    padding: 1.5vh 2vh;
+    box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+
+.alert.info {
+    background-color: #d0e4d1;   /* soft sage green */
+    color: #2e4e2e;              /* warm forest green */
+}
+
+.alert.warning {
+    background-color: #ffe0a3;   /* warm amber */
+    color: #8a3c00;              /* deep burnt orange */
+}
+
+.alert.error {
+    background-color: #f7a5a5;   /* warm rose red */
+    color: #641313;              /* dark brick red */
+}
+
+.alert.success {
+    background-color: #b3e9a7;   /* warm soft green */
+    color: #2d5f2e;              /* rich earthy green */
+}
+
+
+/* Icon */
+.alert .icon {
+    font-size: 3.5vh;
+    margin-right: 1.5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Text container */
+.alert .text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.alert .text span:first-child {
+    font-weight: 700;
+    font-size: 2.2vh;
+}
+
+.alert .text span:last-child {
+    font-size: 1.8vh;
+    font-weight: 400;
+}
+
+/* Close button */
+.alert .close-btn {
+    position: absolute;
+    right: 1.5vh;
+    top: 1.5vh;
+    font-size: 2.2vh;
+    cursor: pointer;
+    color: inherit;
+    background: none;
+    border: none;
+    transition: opacity 0.2s;
+}
+
+.alert .close-btn:hover {
+    opacity: 0.6;
+}
+
+
+/* Animation */
+.alert {
+    opacity: 0;
+    transform: translateY(1vh);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.alert.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.alert.fade-out {
+    opacity: 0;
+    transform: translateY(1vh);
+}

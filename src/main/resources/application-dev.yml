@@ -1,7 +1,7 @@
 logging:
   level:
     root: info
-    org.hibernate.SQL: debug
+    org.hibernate.SQL: error
 
   file:
     path: logs/PhoeStorage.log
@@ -16,7 +16,7 @@ spring:
     hibernate:
       ddl-auto: update
 
-    show-sql: true
+    show-sql: false
 
     properties:
       hibernate:

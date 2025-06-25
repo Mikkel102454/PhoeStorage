@@ -1,8 +1,10 @@
 package server.phoestorage.datasource.file;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import server.phoestorage.dto.FileEntry;
 
 import java.util.List;
@@ -35,4 +37,14 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
             @Param("parentId") String parentId,
             @Param("folderId") String folderId
     );
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE file f SET f.name = :name, f.extension = :ext WHERE f.owner = :owner AND f.folderId = :folderId AND f.uuid = :fileId")
+    int renameFile(@Param("owner") String owner,
+                   @Param("folderId") String folderId,
+                   @Param("fileId") String fileId,
+                   @Param("name") String name,
+                   @Param("ext") String ext);
 }

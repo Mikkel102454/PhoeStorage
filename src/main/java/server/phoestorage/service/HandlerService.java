@@ -41,40 +41,10 @@ public class HandlerService {
     }
 
     @Cacheable("static-responses")
-    public String get403() {
-        Resource resource = resourceLoader.getResource("classpath:handlers/403.html");
-        if (!resource.exists()) {
-            return "403 forbidden was not found (??? classpath issue. contact support)";
-        }
-
-        try {
-            InputStream in = resource.getInputStream();
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            return get500(e);
-        }
-    }
-
-    @Cacheable("static-responses")
     public String get404() {
         Resource resource = resourceLoader.getResource("classpath:handlers/404.html");
         if (!resource.exists()) {
             return "404 not found was not found (??? classpath issue. contact support)";
-        }
-
-        try {
-            InputStream in = resource.getInputStream();
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            return get500(e);
-        }
-    }
-
-    @Cacheable("static-responses")
-    public String get409(String msg) {
-        Resource resource = resourceLoader.getResource("classpath:handlers/409.html");
-        if (!resource.exists()) {
-            return "409 conflict was not found (??? classpath issue. contact support)";
         }
 
         try {

@@ -52,13 +52,10 @@ async function loadDrive(){
     await loadDirectoryInit(temp)
     await mainElement.appendChild(temp);
 
-    // const directories = getParameter("jbd").split('/').filter(p => p !== '');
-    // let currentPath = "/"
-    // for(let directory of directories){
-    //     if(!directory.length > 0) continue
-    //     currentPath += directory + "/"
-    //     addPathView(directory, currentPath)
-    // }
+    const folders = await getFolderLocation(getParameter("jbd"))
+    for(let folder of folders){
+         addPathView(folder.name, folder.uuid)
+    }
 
     loadContextMenu(document.getElementById("drop-zone"),  document.getElementById('context-menu-drive'))
     await initDragnDrop(document.getElementById("drop-zone"))

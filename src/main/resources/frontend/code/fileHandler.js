@@ -7,8 +7,12 @@ async function uploadFile(file, folderId) {
     const totalChunks = Math.ceil(file.size / chunkSize);
     const fileName = file.name;
 
-    if (!file || file.size === 0) {
-        console.warn("Invalid file selected or file is empty.");
+    if (!file) {
+        throwWarning("You did not upload a file")
+        return;
+    }
+    if (file.size === 0) {
+        throwWarning("Your uploaded file is empty")
         return;
     }
     console.log(chunkSize + " : " + totalChunks + " : " + fileName + " : " + file.size)
@@ -21,8 +25,8 @@ async function uploadFile(file, folderId) {
         formData.append("file", chunk);
         formData.append("chunkIndex", chunkIndex);
         formData.append("totalChunks", totalChunks);
-        formData.append("fileName", encodeURIComponent(fileName));
-        formData.append("folderId", encodeURIComponent(folderId));
+        formData.append("fileName", fileName);
+        formData.append("folderId", folderId);
         console.log(formData)
         const response = await fetch("/api/files/upload", {
             method: "POST",
@@ -30,13 +34,12 @@ async function uploadFile(file, folderId) {
         });
 
         if (response.status === 409) {
-            alert("Upload failed: File already exists");
+            throwWarning("File already exists: " + fileName)
             return;
         }
 
         if (!response.ok) {
-            const error = await response.text();
-            alert("Upload failed: " + error);
+            throwError("Uplaod failed: " + await response.text())
             return;
         }
     }
@@ -67,17 +70,37 @@ function downloadFile(folderId, fileId) {
             link.click();
             window.URL.revokeObjectURL(link.href);
         })
-        .catch(err => alert("Error downloading file: " + err));
+        .catch(error => throwError("Download failed: " + error));
 }
 
 async function deleteFile(folderId, fileId) {
 
     const response = await fetch(`/api/files/delete?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
-        method: "DELETE"
+        method: "POST"
     });
 
+    if(response.status == 404){
+        throwWarning("Could not find the file")
+        return;
+    }
+
     if (!response.ok) {
-        alert("Failed to delete file.");
+        throwError("Failed to delete file: " + await response.text())
+    }
+}
+
+async function renameFile(folderId, fileId, name){
+    const response = await fetch(`/api/files/rename?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}&name=${encodeURIComponent(name)}`, {
+        method: "POST"
+    });
+
+    if (response.status === 409) {
+        throwWarning("File already exists: " + await response.text())
+        return;
+    }
+
+    if (!response.ok) {
+        throwError("Failed to rename file: " + await response.text())
     }
 }
 
@@ -85,6 +108,24 @@ async function deleteFile(folderId, fileId) {
 // #################################################
 // ##               FOLDER STUFF                  ##
 // #################################################
+async function getFolderLocation(folderUuid){
+    const response = await fetch(`/api/folders/location?folderUuid=${encodeURIComponent(folderUuid)}`, {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        throwError("Failed to get folder location: " + await response.text())
+    }
+
+    const result = await response.json();
+
+    return result.map(folder => new Folder(
+        folder.uuid,
+        folder.owner,
+        folder.name,
+        folder.folderId
+    ));
+}
 
 async function uploadFolder(folderId, folderName) {
     const response = await fetch(`/api/folders/upload?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
@@ -92,13 +133,12 @@ async function uploadFolder(folderId, folderName) {
     });
 
     if (response.status === 409) {
-        alert("Folder creation: Folder already exists");
+        throwWarning("Folder already exists: " + await response.text())
         return;
     }
 
     if (!response.ok) {
-        const error = await response.text();
-        alert("Upload failed: " + error);
+        throwError("Failed to upload folder: " + await response.text())
     }
     return response.text();
 }
@@ -108,8 +148,13 @@ async function browseDirectory(folderId) {
         method: "GET"
     });
 
+    if (response.status === 404) {
+        throwWarning("Could not find directory")
+        return;
+    }
+
     if (!response.ok) {
-        alert("Failed to browse directory.");
+        throwError("Failed to browse directory: " + await response.text());
         return;
     }
 
@@ -142,6 +187,7 @@ function downloadZipFile(folderId, folderUuid) {
         method: "GET"
     })
         .then(async response => {
+            if(response.status === 404) {throwWarning("No files found to zip"); return Promise.reject("No files found to zip");}
             if (!response.ok) throw new Error("Download failed");
 
             // Try to get filename from the Content-Disposition header
@@ -161,17 +207,31 @@ function downloadZipFile(folderId, folderUuid) {
             link.click();
             window.URL.revokeObjectURL(link.href);
         })
-        .catch(err => alert("Error downloading file: " + err));
+        .catch(error => {
+            if(error !== "No files found to zip"){
+                throwError("Download failed: " + error)
+            }
+        });
 }
 
 async function deleteFolder(folderId, folderUuid) {
 
     const response = await fetch(`/api/folders/delete?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}`, {
-        method: "DELETE"
+        method: "POST"
     });
 
     if (!response.ok) {
-        alert("Failed to delete folder.");
+        throwError("Failed to delete folder: " + await response.text())
+    }
+}
+
+async function renameFolder(folderId, folderUuid, name){
+    const response = await fetch(`/api/folders/rename?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}&name=${encodeURIComponent(name)}`, {
+        method: "POST"
+    });
+
+    if (!response.ok) {
+        throwError("Failed to rename folder: " + await response.text())
     }
 }
 
@@ -181,7 +241,7 @@ async function getFolderId(folderId, folderName){
     });
 
     if (!response.ok) {
-        alert("Failed get folder id");
+        throwError("Failed to get folder id: " + await response.text())
         return null;
     }
 

@@ -51,15 +51,23 @@ async function createFile(file, fileParent, isFolder){
         fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
 
-        const folderElement1 = fileTemp.querySelector(".fa-down-to-bracket");
-        folderElement1.addEventListener("click", function (){
+        const folderElementDownload = fileTemp.querySelector(".fa-down-to-bracket");
+        folderElementDownload.addEventListener("click", function (){
             downloadZipFile(getParameter("jbd"), file.uuid)
+        })
+        const folderElementRename = fileTemp.querySelector(".fa-pen-line");
+        folderElementRename.addEventListener("click", async function (){
+            openRenameMenu(file, true)
+        })
+        const folderElementDelete = fileTemp.querySelector(".fa-trash");
+        folderElementDelete.addEventListener("click", async function (){
+            await deleteFolder(getParameter("jbd"), file.uuid)
+            await loadDirectory(getParameter("jbd"));
         })
 
         const folderElement = fileTemp.querySelector("li");
         folderElement.addEventListener("dblclick", function() {
             setParameter("jbd", file.uuid);
-            console.log(file.uuid)
             loadDirectory(getParameter("jbd"));
 
             addPathView(file.name, getParameter("jbd"))
@@ -72,6 +80,15 @@ async function createFile(file, fileParent, isFolder){
         const fileElementDownload = fileTemp.querySelector(".fa-down-to-bracket");
         fileElementDownload.addEventListener("click", function (){
             downloadFile(file.folderId, file.uuid)
+        })
+        const fileElementRename = fileTemp.querySelector(".fa-pen-line");
+        fileElementRename.addEventListener("click", async function (){
+            openRenameMenu(file, false)
+        })
+        const fileElementDelete = fileTemp.querySelector(".fa-trash");
+        fileElementDelete.addEventListener("click", async function (){
+            await deleteFile(file.folderId, file.uuid)
+            await loadDirectory(getParameter("jbd"));
         })
     }
 
@@ -205,6 +222,47 @@ function formatDate(raw){
     });
 }
 
+let renameMenu;
+let renameMenuConfirm;
+let renameMenuInput;
+let currentRenameHandler; // store the current handler to remove it later
+
+function openRenameMenu(item, isFolder) {
+    if (!renameMenu) renameMenu = document.getElementById("renameMenu");
+    if (!renameMenuConfirm) renameMenuConfirm = renameMenu.querySelector("#confirmButton");
+    if (!renameMenuInput) renameMenuInput = renameMenu.querySelector("#renameMenuInput");
+
+    // Remove old click handler if any
+    if (currentRenameHandler) {
+        renameMenuConfirm.removeEventListener("click", currentRenameHandler);
+        currentRenameHandler = null;
+    }
+
+    renameMenuInput.value = item.name;
+
+    // Define and store the current handler so it can be removed next time
+    currentRenameHandler = async function () {
+        const newName = renameMenuInput.value.trim();
+        if (newName.length === 0) return;
+
+        if (isFolder) {
+            await renameFolder(item.folderId, item.uuid, newName);
+        } else {
+            await renameFile(item.folderId, item.uuid, newName);
+        }
+        await loadDirectory(getParameter("jbd"));
+        closeRenameMenu();
+    };
+
+    renameMenuConfirm.addEventListener("click", currentRenameHandler);
+
+    renameMenu.classList.add("visible");
+}
+
+function closeRenameMenu(){
+    if(!renameMenu) {renameMenu = document.getElementById("renameMenu")}
+    renameMenu.classList.remove("visible");
+}
 
 function toggleFolderCreationMenu(){
     const createFolder = document.getElementById("createFolderMenu")
@@ -276,12 +334,7 @@ async function FolderUploading(fileListOrArray) {
             parentId = folderIdCache.get(cacheKey);
         }
 
-        // Upload the file to its final parent folder
-        if (typeof parentId === "string" && file instanceof File) {
-            await uploadFile(file, parentId);
-        } else {
-            console.warn("Skipped file:", file);
-        }
+        await uploadFile(file, parentId);
     }
 
     await loadDirectory(rootFolderId);

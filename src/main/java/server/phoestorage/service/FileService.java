@@ -146,7 +146,7 @@ public class FileService {
 
             String[] parts = fileName.split("\\.");
             if (parts.length > 1) {
-                extension = parts[parts.length - 1];
+                extension = parts[parts.length - 1].toLowerCase();
             } else {
                 extension = "";
             }
@@ -243,7 +243,7 @@ public class FileService {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
 
-            if (fileExistByUuid(uuid, folderId, fileId)) {
+            if (!fileExistByUuid(uuid, folderId, fileId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
             }
 
@@ -257,6 +257,41 @@ public class FileService {
 
             return ResponseEntity.ok().build();
         }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    public ResponseEntity<?> renameFile(String folderId, String fileId, String name) {
+        try {
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+            if(!fileExistByUuid(uuid, folderId, fileId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+            }
+
+            if(fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId).get().getName().equals(name)) {
+                return ResponseEntity.ok().body("");
+            }
+
+            if(fileExistByName(uuid, folderId, name)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(name);
+            }
+
+            String extension;
+
+            String[] parts = name.split("\\.");
+            if (parts.length > 1) {
+                extension = parts[parts.length - 1].toLowerCase();
+            } else {
+                extension = "";
+            }
+
+            if(fileRepository.renameFile(uuid, folderId, fileId, name, extension) != 1){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception()));
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
