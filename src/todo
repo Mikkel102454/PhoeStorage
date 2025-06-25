@@ -1,5 +1,5 @@
 implement on frontend
 
-make so they cnt update name if not changed
-
-if user upload file with wrong folderId it get created locally but not in db
+maek searchh function
+make share function
+make storage limit function

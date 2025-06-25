@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 import server.phoestorage.service.FileService;
 import server.phoestorage.service.HandlerService;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
@@ -28,14 +30,19 @@ public class FileController {
             @RequestParam("chunkIndex") int chunkIndex,
             @RequestParam("totalChunks") int totalChunks,
             @RequestParam("fileName") String fileName,
-            @RequestParam("folderId") String folderId
+            @RequestParam("folderId") String folderId,
+            @RequestParam(name = "uploadId", required = false) String uploadId
     ){
         if (file.getSize() > 10 * 1024 * 1024) {
             return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                     .body("Chunk too large (max 10 MB) the chunk was " + file.getSize() + " Bytes");
         }
+
         fileName = fileName.replaceAll("\\s+", " ").trim();
-        int chunkCode = fileService.saveChunk(chunkIndex, file, folderId, fileName);
+
+        if(uploadId == null || uploadId.isEmpty()) {uploadId = UUID.randomUUID().toString();}
+
+        int chunkCode = fileService.saveChunk(chunkIndex, file, folderId, fileName, uploadId);
         if(chunkCode == -2) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(fileName);
         }
@@ -44,12 +51,18 @@ public class FileController {
         }
 
         if(chunkIndex >= totalChunks - 1) {
-            String internalFileName = fileService.mergeChunk(totalChunks);
-            if(fileService.saveFileDatabase(internalFileName, folderId, fileName) != 0){
+            int code = fileService.saveFileDatabase(folderId, fileName, uploadId, totalChunks);
+            if(code != 0){
+                if(code == 409){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+                }
+                if(code == 404){
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+                }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception("error while saving file to database")));
             }
         }
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(uploadId);
     }
 
     @GetMapping("/download")
@@ -78,5 +91,20 @@ public class FileController {
         if(name.isEmpty()) {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(handlerService.get400());}
         name = name.replaceAll("\\s+", " ").trim();
         return fileService.renameFile(folderId, fileId, name);
+    }
+
+    @GetMapping("/starred")
+    public ResponseEntity<?> getStarredFiles(
+    ){
+        return fileService.getStarredFiles();
+    }
+
+    @PostMapping("/starred")
+    public ResponseEntity<?> setStarredFile(
+            @RequestParam("folderId") String folderId,
+            @RequestParam("fileId") String fileId,
+            @RequestParam("value") boolean value
+    ){
+        return fileService.setStarredFile(folderId, fileId, value);
     }
 }

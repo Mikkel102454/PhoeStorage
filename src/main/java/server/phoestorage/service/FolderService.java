@@ -59,6 +59,7 @@ public class FolderService {
         try{
             new File(rootPath + user.getUuid()).mkdirs();
             new File(rootPath + user.getUuid() + "/temp").mkdirs();
+            new File(rootPath + user.getUuid() + "/temp/upload").mkdirs();
             new File(rootPath + user.getUuid() + "/storage").mkdirs();
 
             FolderEntity folderEntity = new FolderEntity();
@@ -100,7 +101,7 @@ public class FolderService {
             fileEntry.setModified(file.getModified());
             fileEntry.setAccessed(file.getAccessed());
             fileEntry.setSize(file.getSize());
-            fileEntry.setIsFolder(false);
+            fileEntry.setStarred(file.getStarred());
             fileResult.add(fileEntry);
         }
 

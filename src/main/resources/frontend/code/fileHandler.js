@@ -15,7 +15,8 @@ async function uploadFile(file, folderId) {
         throwWarning("Your uploaded file is empty")
         return;
     }
-    console.log(chunkSize + " : " + totalChunks + " : " + fileName + " : " + file.size)
+
+    let uploadId = "";
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
@@ -27,6 +28,7 @@ async function uploadFile(file, folderId) {
         formData.append("totalChunks", totalChunks);
         formData.append("fileName", fileName);
         formData.append("folderId", folderId);
+        formData.append("uploadId", uploadId);
         console.log(formData)
         const response = await fetch("/api/files/upload", {
             method: "POST",
@@ -37,11 +39,16 @@ async function uploadFile(file, folderId) {
             throwWarning("File already exists: " + fileName)
             return;
         }
-
-        if (!response.ok) {
-            throwError("Uplaod failed: " + await response.text())
+        if (response.status === 404) {
+            throwWarning("The folder you uploaded to does not exist")
             return;
         }
+
+        if (!response.ok) {
+            throwError("Upload failed: " + await response.text())
+            return;
+        }
+        uploadId = await response.text()
     }
 }
 
@@ -79,13 +86,14 @@ async function deleteFile(folderId, fileId) {
         method: "POST"
     });
 
-    if(response.status == 404){
+    if(response.status === 404){
         throwWarning("Could not find the file")
         return;
     }
 
     if (!response.ok) {
         throwError("Failed to delete file: " + await response.text())
+        return
     }
 }
 
@@ -101,6 +109,42 @@ async function renameFile(folderId, fileId, name){
 
     if (!response.ok) {
         throwError("Failed to rename file: " + await response.text())
+    }
+}
+
+async function getStarredFiles(){
+    const response = await fetch(`/api/files/starred`, {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        throwError("Failed to get starred files: " + await response.text())
+        return
+    }
+    const result = await response.json();
+
+    return result.map(file => new File(
+        file.uuid,
+        file.owner,
+        file.name,
+        file.extension,
+        file.folderId,
+        file.created,
+        file.modified,
+        file.accessed,
+        file.size,
+        file.starred
+    ));
+}
+
+async function setStarredFile(folderId, fileId, value){
+    const response = await fetch(`/api/files/starred?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}&value=${value}`, {
+        method: "POST"
+    });
+
+    if (!response.ok) {
+        throwError("Failed to star file: " + await response.text())
+        return
     }
 }
 
@@ -169,7 +213,8 @@ async function browseDirectory(folderId) {
         file.created,
         file.modified,
         file.accessed,
-        file.size
+        file.size,
+        file.starred
     ));
 
     const folders = result.folders.map(folder => new Folder(

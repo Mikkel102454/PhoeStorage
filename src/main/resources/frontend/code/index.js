@@ -1,5 +1,6 @@
 let homePageTemplate
 let drivePageTemplate
+let starredPageTemplate
 let mainElement
 
 onload = function(){
@@ -11,6 +12,9 @@ onload = function(){
                 break
             case 'drive':
                 loadDrive()
+                break
+            case 'starred':
+                loadStarred()
                 break
             default:
                 loadHome()
@@ -53,8 +57,8 @@ async function loadDrive(){
     await mainElement.appendChild(temp);
 
     const folders = await getFolderLocation(getParameter("jbd"))
-    for(let folder of folders){
-         addPathView(folder.name, folder.uuid)
+    for (let i = 1; i < folders.length; i++){
+        addPathView(folders[i].name, folders[i].uuid)
     }
 
     loadContextMenu(document.getElementById("drop-zone"),  document.getElementById('context-menu-drive'))
@@ -92,4 +96,34 @@ async function createFolder(name){
     await uploadFolder(getParameter('jbd'), name)
     toggleFolderCreationMenu()
     await loadDirectory(getParameter('jbd'))
+}
+
+
+
+// Starred
+
+async function loadStarred(){
+    setParameter("jbm", "starred")
+    if(!starredPageTemplate){
+        starredPageTemplate = document.getElementById("starred-file-temp");
+    }
+    if(!mainElement){
+        mainElement = document.getElementById("main");
+    }
+    let temp = starredPageTemplate.content.cloneNode(true);
+
+    mainElement.innerHTML = "";
+
+
+    await loadStarredDirectory(temp)
+    await mainElement.appendChild(temp);
+}
+
+async function loadStarredDirectory(temp){
+    const files = await getStarredFiles()
+    let fileParent = temp.querySelector(".file-content");
+    fileParent.innerHTML = "";
+    for(const key in files){
+        await createFile(files[key], fileParent, false);
+    }
 }

@@ -53,17 +53,22 @@
     <nav class="menu-nav">
         <ul>
             <div class="category">
-                <li onclick="loadHome()">
+                <!--<li onclick="loadHome()">
                     <div class="caret"></div>
                     <div class="icon"><i class="fa-solid fa-house"></i></div>
                     <div class="text">Home</div>
-                </li>
+                </li>-->
                 <li onclick="loadDrive()">
-                    <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
+                    <div class="caret"><!--<i class="fa-solid fa-caret-right"></i>--></div>
                     <div class="icon"><i class="fa-solid fa-hard-drive fa-inverse"></i></div>
                     <div class="text">My Drive</div>
                 </li>
-                <div class="folder">
+                <li onclick="loadStarred()">
+                    <div class="caret"></div>
+                    <div class="icon"><i class="fa-regular fa-star fa-inverse"></i></div>
+                    <div class="text">Starred</div>
+                </li>
+                <!--<div class="folder">
                     <li>
                         <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
                         <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
@@ -90,10 +95,10 @@
                         <div class="text">Folder</div>
                     </li>
                 </div>
-            </div>
+            </div>-->
 
             <div class="category">
-                <li>
+                <!--<li>
                     <div class="caret"></div>
                     <div class="icon"><i class="fa-regular fa-user-group fa-inverse"></i></div>
                     <div class="text">Shared with me</div>
@@ -102,17 +107,12 @@
                     <div class="caret"></div>
                     <div class="icon"><i class="fa-regular fa-clock fa-inverse"></i></div>
                     <div class="text">Recent</div>
-                </li>
-                <li>
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-regular fa-star fa-inverse"></i></div>
-                    <div class="text">Starred</div>
-                </li>
-                <li>
+                </li>-->
+                <!--<li>
                     <div class="caret"></div>
                     <div class="icon"><i class="fa-regular fa-trash fa-inverse"></i></div>
                     <div class="text">Trash</div>
-                </li>
+                </li>-->
             </div>
             
             <div class="storage-container">
@@ -132,6 +132,47 @@
 
     </main>
 </body>
+
+
+<template id="starred-file-temp">
+    <div class="my-drive">
+        <div class="section">
+            <div class="header">
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
+
+                <div class="profile">
+                    <!--
+                    <div>
+                        <i class="fa-regular fa-bell fa-inverse">
+                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
+                        </i>
+                    </div>
+                    <i class="fa-solid fa-gear fa-inverse"></i>
+                </div>-->
+            </div>
+        </div>
+        <div class="section section-2">
+            <div class="full-path">
+                <div class="path">
+                    <div class="path-name">
+                        Starred
+                    </div>
+                </div>
+            </div>
+            <div class="main" id="drop-zone">
+                <div class="header">
+                    <div>Name</div>
+                    <div>Owner</div>
+                    <div>Last modified</div>
+                    <div>File size</div>
+                </div>
+                <ul class="content file-content">
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
 
 <template id="drive-file-temp">
     <div class="my-drive">

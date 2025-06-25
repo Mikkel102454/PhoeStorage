@@ -36,6 +36,7 @@ import server.phoestorage.dto.FolderEntry;
 
 @Service
 public class FileService {
+    private final FolderRepository folderRepository;
     @Value("${server.root}")
     private String rootPath;
 
@@ -47,10 +48,11 @@ public class FileService {
     @Autowired
     public FileService(AppUserDetailsService appUserDetailsService,
                        HandlerService handlerService,
-                       FileRepository fileRepository) {
+                       FileRepository fileRepository, FolderRepository folderRepository) {
         this.appUserDetailsService = appUserDetailsService;
         this.handlerService = handlerService;
         this.fileRepository = fileRepository;
+        this.folderRepository = folderRepository;
     }
 
     /**
@@ -60,15 +62,16 @@ public class FileService {
      * @param file the chunked file
      * @param folderId the folder to save the file into
      * @param fileName the name of the file
+     * @param uploadId the current upload session id
      * @return the exit code
      *
      */
-    public int saveChunk(int chunkId, MultipartFile file, String folderId, String fileName){
+    public int saveChunk(int chunkId, MultipartFile file, String folderId, String fileName, String uploadId){
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
             if(fileExistByName(uuid, folderId, fileName)) {return -2;}
 
-            Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
+            Path chunkDir = Paths.get(rootPath, uuid, "temp", "upload", uploadId);
             Files.createDirectories(chunkDir);
 
             Path chunkPath = chunkDir.resolve("chunk_" + chunkId);
@@ -96,10 +99,10 @@ public class FileService {
      * @return the internal file name
      *
      */
-    public String mergeChunk(int totalChunks){
+    public String mergeChunk(int totalChunks, String uploadId){
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
-            Path chunkDir = Paths.get(rootPath, uuid, "temp", "chunk");
+            Path chunkDir = Paths.get(rootPath, uuid, "temp", "upload", uploadId);
 
             String fileName = UUID.randomUUID().toString();
 
@@ -117,6 +120,7 @@ public class FileService {
                     }
                     Files.deleteIfExists(chunkFile);
                 }
+                Files.delete(chunkDir);
             }
             return fileName;
         }catch (Exception e){
@@ -128,19 +132,23 @@ public class FileService {
     /**
      * Saves file to database
      *
-     * @param internalName the internal file name
      * @param folderId the folder the file should be saved in
      * @param fileName the name of the saved file
+     * @param uploadId the current upload session id
+     * @param totalChunks the total amount of chunks
      * @return exit code
      *
      */
-    public int saveFileDatabase(String internalName, String folderId, String fileName) {
+    public int saveFileDatabase(String folderId, String fileName, String uploadId, int totalChunks) {
         try{
             String uuid = appUserDetailsService.getUserEntity().getUuid();
 
+            String internalName = mergeChunk(totalChunks, uploadId);
             String internalPath = rootPath + uuid + "/storage/" + internalName;
 
-            if(fileExistByUuid(uuid, folderId, internalName)) {return -2;}
+            Path path = Paths.get(internalPath);
+            if(fileExistByUuid(uuid, folderId, internalName)) {Files.delete(path); return 409;}
+            if(folderRepository.findByOwnerAndFolderId(uuid, folderId) == null) {Files.delete(path); return 404;}
 
             String extension;
 
@@ -159,13 +167,15 @@ public class FileService {
             fileEntity.setFolderId(folderId);
             fileEntity.setInternalPath(internalPath);
             fileEntity.setCreated(LocalDateTime.now().toString());
-            fileEntity.setSize(Files.size(Paths.get(internalPath)));
+            fileEntity.setSize(Files.size(path));
+            fileEntity.setStarred(false);
 
             fileRepository.save(fileEntity);
             return 0;
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
-            return -1;
+
+            return 500;
         }
     }
 
@@ -330,4 +340,33 @@ public class FileService {
         return fileEntity.isPresent();
 
     }
+
+
+    public ResponseEntity<?> getStarredFiles() {
+        try{
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+            return ResponseEntity.ok(fileRepository.findByOwnerAndStarred(uuid, true));
+        }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    public ResponseEntity<?> setStarredFile(String folderId, String fileId, boolean starred) {
+        try{
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+            if(!fileExistByUuid(uuid, folderId, fileId)) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
+
+            FileEntity file = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId).get();
+            file.setStarred(starred);
+            fileRepository.save(file);
+
+            return ResponseEntity.ok("");
+        }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
 }

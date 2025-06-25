@@ -42,6 +42,9 @@ public class FileEntity {
     @Column(unique = false, nullable = false, name = "size")
     long size; // Bytes
 
+    @Column(unique = false, nullable = false, name = "starred")
+    boolean starred;
+
     public int getId() {
         return id;
     }
@@ -128,5 +131,13 @@ public class FileEntity {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public boolean getStarred() {
+        return starred;
+    }
+
+    public void setStarred(boolean starred) {
+        this.starred = starred;
     }
 }

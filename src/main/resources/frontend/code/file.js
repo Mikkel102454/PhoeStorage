@@ -8,7 +8,8 @@ class File{
     modified // string
     accessed // string
     size // long
-    constructor(uuid, owner, name, extension, folderId, created, modified, accessed, size){
+    starred // boolean
+    constructor(uuid, owner, name, extension, folderId, created, modified, accessed, size, starred){
         this.uuid = uuid;
         this.owner = owner;
         this.name = name;
@@ -18,6 +19,7 @@ class File{
         this.modified = modified;
         this.accessed = accessed;
         this.size = size;
+        this.starred = starred;
     }
 }
 
@@ -59,6 +61,9 @@ async function createFile(file, fileParent, isFolder){
         folderElementRename.addEventListener("click", async function (){
             openRenameMenu(file, true)
         })
+        const folderElementStar = fileTemp.querySelector(".fa-star");
+        folderElementStar.parentElement.style.visibility = "hidden"
+
         const folderElementDelete = fileTemp.querySelector(".fa-trash");
         folderElementDelete.addEventListener("click", async function (){
             await deleteFolder(getParameter("jbd"), file.uuid)
@@ -84,6 +89,23 @@ async function createFile(file, fileParent, isFolder){
         const fileElementRename = fileTemp.querySelector(".fa-pen-line");
         fileElementRename.addEventListener("click", async function (){
             openRenameMenu(file, false)
+        })
+        const fileElementStar = fileTemp.querySelector(".fa-star");
+        if(file.starred) {
+            fileElementStar.classList.add('fa-solid');
+            fileElementStar.classList.remove('fa-regular');
+        }
+
+        fileElementStar.addEventListener("click", async function (){
+            if(this.classList.contains('fa-regular')){
+                await setStarredFile(file.folderId, file.uuid, true);
+                this.classList.add('fa-solid');
+                this.classList.remove('fa-regular');
+            }else{
+                await setStarredFile(file.folderId, file.uuid, false);
+                this.classList.remove('fa-solid');
+                this.classList.add('fa-regular');
+            }
         })
         const fileElementDelete = fileTemp.querySelector(".fa-trash");
         fileElementDelete.addEventListener("click", async function (){
