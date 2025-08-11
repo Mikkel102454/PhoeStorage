@@ -22,6 +22,8 @@ public class DownloadEntity {
     String dateExpire;
     @Column(unique = false, nullable = false, name = "downloadLimit")
     int downloadLimit;
+    @Column(unique = false, nullable = false, name = "downloads")
+    int downloads;
 
     public int getId() {
         return id;
@@ -81,5 +83,13 @@ public class DownloadEntity {
 
     public void setDownloadLimit(int downloadLimit) {
         this.downloadLimit = downloadLimit;
+    }
+
+    public int getDownloads() {
+        return downloads;
+    }
+
+    public void setDownloads(int downloads) {
+        this.downloads = downloads;
     }
 }

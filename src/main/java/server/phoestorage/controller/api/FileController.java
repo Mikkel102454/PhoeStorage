@@ -74,6 +74,17 @@ public class FileController {
         return fileService.downloadFile(FolderId, fileId, rangeHeader);
     }
 
+    @PostMapping("/download")
+    public ResponseEntity<?> createDownload(
+            @RequestParam("folderId") String folderId,
+            @RequestParam("fileId") String fileId,
+            @RequestParam("limit") int downloadLimit,
+            @RequestParam("expire") String expireDate
+    ){
+        return ResponseEntity.ok(fileService.createDownloadLink(folderId, fileId, downloadLimit, expireDate));
+    }
+
+
     @PostMapping("/delete")
     public ResponseEntity<?> deleteFile(
             @RequestParam("folderId") String folderId,
@@ -107,4 +118,5 @@ public class FileController {
     ){
         return fileService.setStarredFile(folderId, fileId, value);
     }
+
 }

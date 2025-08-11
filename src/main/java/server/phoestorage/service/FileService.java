@@ -375,12 +375,9 @@ public class FileService {
         }
     }
 
-    public ResponseEntity<String> createDownloadLink(String owner, String folderId, String fileId, int downloadLimit, String date) {
+    public ResponseEntity<String> createDownloadLink(String folderId, String fileId, int downloadLimit, String date) {
         try {
             String uuid = appUserDetailsService.getUserEntity().getUuid();
-            if(!owner.equals(uuid)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(handlerService.get400());
-            }
             if (!fileExistByUuid(uuid, folderId, fileId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
             }
@@ -391,7 +388,7 @@ public class FileService {
             downloadEntity.setUuid(linkUuid);
             downloadEntity.setFileUuid(fileId);
             downloadEntity.setFolderUuid(folderId);
-            downloadEntity.setOwnerUuid(owner);
+            downloadEntity.setOwnerUuid(uuid);
             downloadEntity.setDateCreated(LocalDateTime.now().toString());
             downloadEntity.setDateExpire(date);
             downloadEntity.setDownloadLimit(downloadLimit);
