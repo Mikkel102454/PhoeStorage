@@ -26,6 +26,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import server.phoestorage.datasource.download.DownloadEntity;
+import server.phoestorage.datasource.download.DownloadRepository;
 import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
 import server.phoestorage.datasource.folder.FolderEntity;
@@ -45,14 +47,18 @@ public class FileService {
 
     private final FileRepository fileRepository;
 
+    private final DownloadRepository downloadRepository;
+
     @Autowired
     public FileService(AppUserDetailsService appUserDetailsService,
                        HandlerService handlerService,
-                       FileRepository fileRepository, FolderRepository folderRepository) {
+                       FileRepository fileRepository, FolderRepository folderRepository,
+                       DownloadRepository downloadRepository) {
         this.appUserDetailsService = appUserDetailsService;
         this.handlerService = handlerService;
         this.fileRepository = fileRepository;
         this.folderRepository = folderRepository;
+        this.downloadRepository = downloadRepository;
     }
 
     /**
@@ -365,6 +371,35 @@ public class FileService {
             return ResponseEntity.ok("");
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    public ResponseEntity<String> createDownloadLink(String owner, String folderId, String fileId, int downloadLimit, String date) {
+        try {
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+            if(!owner.equals(uuid)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(handlerService.get400());
+            }
+            if (!fileExistByUuid(uuid, folderId, fileId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+            }
+
+            String linkUuid = UUID.randomUUID().toString();
+
+            DownloadEntity downloadEntity = new DownloadEntity();
+            downloadEntity.setUuid(linkUuid);
+            downloadEntity.setFileUuid(fileId);
+            downloadEntity.setFolderUuid(folderId);
+            downloadEntity.setOwnerUuid(owner);
+            downloadEntity.setDateCreated(LocalDateTime.now().toString());
+            downloadEntity.setDateExpire(date);
+            downloadEntity.setDownloadLimit(downloadLimit);
+
+            downloadRepository.save(downloadEntity);
+
+            return ResponseEntity.ok(linkUuid);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }
