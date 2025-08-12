@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/login", "/api/public/**", "/style/**", "/resource/**").permitAll()
+                        .requestMatchers("/login", "/api/public/**", "/style/**", "/resource/**", "/pages/download.html", "/code/download.js").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

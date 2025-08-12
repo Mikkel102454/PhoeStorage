@@ -51,4 +51,18 @@ public class PublicController {
 
         folderService.downloadZipFile(downloadEntity.getFolderUuid(), downloadEntity.getFileUuid(), response, downloadEntity.getOwnerUuid());
     }
+
+    @GetMapping("/download/info")
+    public ResponseEntity<?> getInfoOfDownload(
+            @RequestParam("downloadId") String downloadId
+    ){
+        DownloadEntity downloadEntity = linkService.isLinkValid(downloadId);
+        if(downloadEntity == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+        }
+
+        return ResponseEntity.ok(downloadEntity);
+    }
+
+
 }

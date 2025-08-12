@@ -296,22 +296,17 @@ async function getFolderId(folderId, folderName){
 
 
 
-function createDownloadLink(folderId, itemId, maxDownloads, isFolder) {
-    let url
-    if(isFolder){
-        url = `/api/folders/download?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`
-    }else{
-        url = `/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`
-    }
-    fetch(url, {
-        method: "POST",
+async function createDownloadLink(folderId, itemId, maxDownloads, isFolder) {
+    const url = isFolder
+        ? `/api/folders/download?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`
+        : `/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`;
 
-    })
-        .then(async response => {
-            if (!response.ok) throw new Error("Something failed");
-
-        const data = await response.text();
-        return data;
+    return fetch(url, { method: "POST" })
+        .then(async (response) => {
+            if (!response.ok) throw new Error("Creating share link failed");
+            return await response.text();
         })
-        .catch(error => throwError("Something failed: " + error));
+        .catch((error) => {
+            throwError("Something failed: " + error);
+        });
 }

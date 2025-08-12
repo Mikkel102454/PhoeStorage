@@ -24,6 +24,8 @@ public class DownloadEntity {
     int downloadLimit;
     @Column(unique = false, nullable = false, name = "downloads")
     int downloads;
+    @Column(unique = false, nullable = false, name = "isFolder")
+    boolean isFolder;
 
     public int getId() {
         return id;
@@ -91,5 +93,13 @@ public class DownloadEntity {
 
     public void setDownloads(int downloads) {
         this.downloads = downloads;
+    }
+
+    public boolean getIsFolder() {
+        return isFolder;
+    }
+
+    public void setIsFolder(boolean isFolder) {
+        this.isFolder = isFolder;
     }
 }

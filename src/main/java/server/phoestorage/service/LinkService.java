@@ -34,14 +34,14 @@ public class LinkService {
         this.downloadRepository = downloadRepository;
     }
 
-    public ResponseEntity<String> createDownloadLink(String parentId, String childId, int downloadLimit, String date, boolean isFolder) {
+    public String createDownloadLink(String parentId, String childId, int downloadLimit, String date, boolean isFolder) {
         try {
             String uuid = appUserDetailsService.getUserEntity().getUuid();
             if (!isFolder && !fileService.fileExistByUuid(uuid, parentId, childId)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+                return "404 - NOT FOUND";
             }
             else if (isFolder && !folderService.folderExistByUuid(uuid, parentId, childId)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+                return "404 - NOT FOUND";
             }
 
             String linkUuid = UUID.randomUUID().toString();
@@ -54,13 +54,14 @@ public class LinkService {
             downloadEntity.setDateCreated(LocalDateTime.now().toString());
             downloadEntity.setDateExpire(date);
             downloadEntity.setDownloadLimit(downloadLimit);
+            downloadEntity.setIsFolder(isFolder);
 
             downloadRepository.save(downloadEntity);
 
 
-            return ResponseEntity.ok(linkUuid);
+            return linkUuid;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+            return "500 - INTERNAL SERVER ERROR";
         }
     }
 

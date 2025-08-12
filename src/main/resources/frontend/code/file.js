@@ -324,9 +324,17 @@ function openShareMenu(item, isFolder) {
 
     // Define and store the current handler so it can be removed next time
     currentShareHandler = async function () {
-        let downloadLimit = shareMenuInput.innerText ? shareMenuOutput.innerText : -1
+        let downloadLimit = shareMenuInput.value.trim()
+            ? Number(shareMenuInput.value.trim())
+            : -1;
 
-        shareMenuOutput.innerText = "media.miguel.nu/download/" + await createDownloadLink(item.folderId, item.uuid, downloadLimit, isFolder)
+        let link = await createDownloadLink(item.folderId, item.uuid, downloadLimit, isFolder)
+
+        if (link === "404 - NOT FOUND" || link === "500 - INTERNAL SERVER ERROR"){
+            throwError(link)
+        }
+
+        shareMenuOutput.innerText = "media.miguel.nu/download/" + link
         if (shareMenuOutput.innerText != ""){
             shareMenuConfirm.removeEventListener("click", currentShareHandler);
             currentShareHandler = null;

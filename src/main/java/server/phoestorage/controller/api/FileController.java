@@ -81,13 +81,13 @@ public class FileController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<?> createDownload(
+    public String createDownload(
             @RequestParam("folderId") String folderId,
             @RequestParam("fileId") String fileId,
             @RequestParam(value="limit", defaultValue = "-1", required = false) int limit,
             @RequestParam(value = "expire", defaultValue = "-1", required = false) String expire
     ){
-        return ResponseEntity.ok(linkService.createDownloadLink(folderId, fileId, limit, expire, false));
+        return linkService.createDownloadLink(folderId, fileId, limit, expire, false);
     }
 
 

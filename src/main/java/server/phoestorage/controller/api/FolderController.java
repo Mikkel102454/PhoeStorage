@@ -57,13 +57,13 @@ public class FolderController {
         folderService.downloadZipFile(folderId, folderUuid, response, appUserDetailsService.getUserEntity().getUuid());
     }
     @PostMapping("/download")
-    public ResponseEntity<?> createDownload(
+    public String createDownload(
             @RequestParam("folderId") String folderId,
             @RequestParam("folderUuid") String folderUuid,
             @RequestParam(value="limit", defaultValue = "-1", required = false) int downloadLimit,
             @RequestParam(value = "expire", defaultValue = "-1", required = false) String expireDate
     ){
-        return ResponseEntity.ok(linkService.createDownloadLink(folderId, folderUuid, downloadLimit, expireDate, true));
+        return linkService.createDownloadLink(folderId, folderUuid, downloadLimit, expireDate, true);
     }
 
     @PostMapping("/delete")
