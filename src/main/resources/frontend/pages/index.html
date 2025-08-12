@@ -40,6 +40,19 @@
             </div>
         </div>
     </div>
+        <div class="createFolder" id="shareMenu">
+        <div class="background" onclick="closeShareMenu()"></div>
+        <div class="content">
+            <h3 id="shareMenuTitle">Share "Item Name"</h3>
+            <input id="shareMenuInput" type="number" placeholder="Download limit (default: unlimited)">
+            <h5 id="shareMenuOutput" onclick="copyToClipboard(this.innerText)"></h5>
+
+            <div>
+                <span onclick="closeShareMenu()">Cancel</span>
+                <span onclick="" id="confirmButton">Share</span>
+            </div>
+        </div>
+    </div>
     <div class="customContextMenu" id="context-menu-drive">
         <ul>
             <li tabindex="0" onclick="toggleFolderCreationMenu()"><i class="fa-light fa-folder-plus"></i>Create folder</li>

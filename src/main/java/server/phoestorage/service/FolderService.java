@@ -274,10 +274,8 @@ public class FolderService {
         return folderEntity.isPresent();
     }
 
-    public void downloadZipFile(String folderId, String folderUuid, HttpServletResponse response) {
+    public void downloadZipFile(String folderId, String folderUuid, HttpServletResponse response, String uuid) {
         try {
-            String uuid = appUserDetailsService.getUserEntity().getUuid();
-
             List<FolderEntity> allFolders = folderRepository.findAllDescendantFolders(uuid, folderId, folderUuid);
             List<FileEntity> allFiles = fileRepository.findAllFilesUnderFolderTree(uuid, folderId, folderUuid);
 

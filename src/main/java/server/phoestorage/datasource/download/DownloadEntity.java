@@ -8,7 +8,7 @@ public class DownloadEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(unique = true, nullable = false, name = "fileUuid")
+    @Column(unique = true, nullable = false, name = "uuid")
     String uuid;
     @Column(unique = false, nullable = false, name = "fileUuid")
     String fileUuid;

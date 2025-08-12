@@ -16,6 +16,8 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
     Optional<FolderEntity> findByOwnerAndFolderIdAndName(String owner, String folderId, String name);
     Optional<FolderEntity> findByOwnerAndFolderIdAndUuid(String owner, String folderId, String uuid);
 
+    Optional<FolderEntity> findByOwnerAndUuid(String owner, String uuid);
+
     @Query("SELECT f.name FROM folder f " +
             "WHERE f.owner = :owner AND f.folderId = :folderId " +
             "AND f.name LIKE CONCAT(:folderName, '%')")

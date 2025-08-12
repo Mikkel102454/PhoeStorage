@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import server.phoestorage.service.AppUserDetailsService;
 import server.phoestorage.service.FileService;
 import server.phoestorage.service.HandlerService;
+import server.phoestorage.service.LinkService;
 
 import java.util.UUID;
 
@@ -17,11 +19,15 @@ public class FileController {
 
     private FileService fileService;
     private HandlerService handlerService;
+    private LinkService linkService;
+    private AppUserDetailsService appUserDetailsService;
 
     @Autowired
-    public FileController(FileService fileService, HandlerService handlerService) {
+    public FileController(FileService fileService, HandlerService handlerService, LinkService linkService, AppUserDetailsService appUserDetailsService) {
         this.fileService = fileService;
         this.handlerService = handlerService;
+        this.linkService = linkService;
+        this.appUserDetailsService = appUserDetailsService;
     }
 
     @PostMapping("/upload")
@@ -71,17 +77,17 @@ public class FileController {
             @RequestParam("folderId") String FolderId,
             @RequestHeader(value = "Range", required = false) String rangeHeader
     ){
-        return fileService.downloadFile(FolderId, fileId, rangeHeader);
+        return fileService.downloadFile(FolderId, fileId, rangeHeader, appUserDetailsService.getUserEntity().getUuid());
     }
 
     @PostMapping("/download")
     public ResponseEntity<?> createDownload(
             @RequestParam("folderId") String folderId,
             @RequestParam("fileId") String fileId,
-            @RequestParam("limit") int downloadLimit,
-            @RequestParam("expire") String expireDate
+            @RequestParam(value="limit", defaultValue = "-1", required = false) int limit,
+            @RequestParam(value = "expire", defaultValue = "-1", required = false) String expire
     ){
-        return ResponseEntity.ok(fileService.createDownloadLink(folderId, fileId, downloadLimit, expireDate));
+        return ResponseEntity.ok(linkService.createDownloadLink(folderId, fileId, limit, expire, false));
     }
 
 

@@ -53,6 +53,11 @@ async function createFile(file, fileParent, isFolder){
         fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
 
+        const fileElementShare = fileTemp.querySelector(".fa-user-plus");
+        fileElementShare.addEventListener("click", async function (){
+            openShareMenu(file, true)
+        })
+
         const folderElementDownload = fileTemp.querySelector(".fa-down-to-bracket");
         folderElementDownload.addEventListener("click", function (){
             downloadZipFile(getParameter("jbd"), file.uuid)
@@ -82,6 +87,11 @@ async function createFile(file, fileParent, isFolder){
         fileTemp.querySelector(".file-name").innerHTML = fileIcon(file.extension) + file.name
         fileTemp.querySelector(".file-modified").innerHTML = file.modified ? formatDate(file.modified) : formatDate(file.created)
         fileTemp.querySelector(".file-size").innerHTML = formatSize(file.size)
+        const fileElementShare = fileTemp.querySelector(".fa-user-plus");
+        fileElementShare.addEventListener("click", async function (){
+            openShareMenu(file, false)
+        })
+
         const fileElementDownload = fileTemp.querySelector(".fa-down-to-bracket");
         fileElementDownload.addEventListener("click", function (){
             downloadFile(file.folderId, file.uuid)
@@ -284,6 +294,53 @@ function openRenameMenu(item, isFolder) {
 function closeRenameMenu(){
     if(!renameMenu) {renameMenu = document.getElementById("renameMenu")}
     renameMenu.classList.remove("visible");
+}
+
+let shareMenu;
+let shareMenuTitle
+let shareMenuConfirm;
+let shareMenuInput;
+let shareMenuOutput;
+let currentShareHandler; // store the current handler to remove it later
+
+function openShareMenu(item, isFolder) {
+    if (!shareMenu) shareMenu = document.getElementById("shareMenu");
+    if (!shareMenuTitle) shareMenuTitle = shareMenu.querySelector("#shareMenuTitle");
+    if (!shareMenuConfirm) shareMenuConfirm = shareMenu.querySelector("#confirmButton");
+    if (!shareMenuInput) shareMenuInput = shareMenu.querySelector("#shareMenuInput");
+    if (!shareMenuOutput) shareMenuOutput = shareMenu.querySelector("#shareMenuOutput");
+    
+
+    // Remove old click handler if any
+    if (currentShareHandler) {
+        shareMenuConfirm.removeEventListener("click", currentShareHandler);
+        currentShareHandler = null;
+    }
+
+
+    shareMenuTitle.innerText = 'Share "' + item.name + '"'
+    shareMenuOutput.innerText = "";
+    shareMenuInput.value = "";
+
+    // Define and store the current handler so it can be removed next time
+    currentShareHandler = async function () {
+        let downloadLimit = shareMenuInput.innerText ? shareMenuOutput.innerText : -1
+
+        shareMenuOutput.innerText = "media.miguel.nu/download/" + await createDownloadLink(item.folderId, item.uuid, downloadLimit, isFolder)
+        if (shareMenuOutput.innerText != ""){
+            shareMenuConfirm.removeEventListener("click", currentShareHandler);
+            currentShareHandler = null;
+        }
+    };
+
+    shareMenuConfirm.addEventListener("click", currentShareHandler);
+
+    shareMenu.classList.add("visible");
+}
+
+function closeShareMenu(){
+    if(!shareMenu) {shareMenu = document.getElementById("shareMenu")}
+    shareMenu.classList.remove("visible");
 }
 
 function toggleFolderCreationMenu(){

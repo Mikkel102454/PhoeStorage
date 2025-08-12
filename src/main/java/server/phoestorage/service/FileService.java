@@ -194,9 +194,8 @@ public class FileService {
      * @return response entity
      *
      */
-    public ResponseEntity<?> downloadFile(String folderId, String fileId, String rangeHeader) {
+    public ResponseEntity<?> downloadFile(String folderId, String fileId, String rangeHeader, String uuid) {
         try{
-            String uuid = appUserDetailsService.getUserEntity().getUuid();
 
             if(!fileExistByUuid(uuid, folderId, fileId)) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
 
@@ -371,32 +370,6 @@ public class FileService {
             return ResponseEntity.ok("");
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
-        }
-    }
-
-    public ResponseEntity<String> createDownloadLink(String folderId, String fileId, int downloadLimit, String date) {
-        try {
-            String uuid = appUserDetailsService.getUserEntity().getUuid();
-            if (!fileExistByUuid(uuid, folderId, fileId)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
-            }
-
-            String linkUuid = UUID.randomUUID().toString();
-
-            DownloadEntity downloadEntity = new DownloadEntity();
-            downloadEntity.setUuid(linkUuid);
-            downloadEntity.setFileUuid(fileId);
-            downloadEntity.setFolderUuid(folderId);
-            downloadEntity.setOwnerUuid(uuid);
-            downloadEntity.setDateCreated(LocalDateTime.now().toString());
-            downloadEntity.setDateExpire(date);
-            downloadEntity.setDownloadLimit(downloadLimit);
-
-            downloadRepository.save(downloadEntity);
-
-            return ResponseEntity.ok(linkUuid);
-        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }

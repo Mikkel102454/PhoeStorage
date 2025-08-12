@@ -1,39 +1,54 @@
 package server.phoestorage.controller.api;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.phoestorage.datasource.download.DownloadEntity;
-import server.phoestorage.datasource.download.DownloadRepository;
-import server.phoestorage.service.FileService;
-import server.phoestorage.service.HandlerService;
+import server.phoestorage.service.*;
 
 @RestController
 @RequestMapping("/api/public")
 public class PublicController {
+    private final FolderService folderService;
     private FileService fileService;
-    private DownloadRepository downloadRepository;
     private HandlerService handlerService;
+    private LinkService linkService;
     @Autowired
-    public PublicController(FileService fileService, DownloadRepository downloadRepository, HandlerService handlerService) {
+    public PublicController(FileService fileService,
+                            HandlerService handlerService,
+                            FolderService folderService,
+                            LinkService linkService) {
         this.fileService = fileService;
-        this.downloadRepository = downloadRepository;
         this.handlerService = handlerService;
+        this.folderService = folderService;
+        this.linkService = linkService;
     }
-    @GetMapping("/download")
-    public ResponseEntity<?> download(
+    @GetMapping("/download/file")
+    public ResponseEntity<?> downloadFile(
             @RequestParam("downloadId") String downloadId,
             @RequestHeader(value = "Range", required = false) String rangeHeader
     ){
-        DownloadEntity downloadEntity = downloadRepository.findByUuid(downloadId);
-        if(downloadEntity.getDownloads() >= downloadEntity.getDownloadLimit()){
-            // max number of downloads reached
-            downloadRepository.delete(downloadEntity);
+        DownloadEntity downloadEntity = linkService.isLinkValid(downloadId);
+        if(downloadEntity == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
         }
-        // TODO
-        // check date
-        return fileService.downloadFile(downloadEntity.getFolderUuid(), downloadEntity.getFileUuid(), rangeHeader);
+
+        return fileService.downloadFile(downloadEntity.getFolderUuid(), downloadEntity.getFileUuid(), rangeHeader, downloadEntity.getOwnerUuid());
+    }
+
+    @GetMapping("/download/folder")
+    public void downloadFolder(
+            @RequestParam("downloadId") String downloadId,
+            HttpServletResponse response
+    ){
+        DownloadEntity downloadEntity = linkService.isLinkValid(downloadId);
+        if(downloadEntity == null) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return;
+        }
+
+        folderService.downloadZipFile(downloadEntity.getFolderUuid(), downloadEntity.getFileUuid(), response, downloadEntity.getOwnerUuid());
     }
 }

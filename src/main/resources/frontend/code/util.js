@@ -122,3 +122,9 @@ function sleep(milliseconds) {
     }
   }
 }
+
+function copyToClipboard(input) {
+  navigator.clipboard.writeText(input);
+
+  throwInformation("Copied to clipboard");
+}

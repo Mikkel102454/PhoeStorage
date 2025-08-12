@@ -292,3 +292,26 @@ async function getFolderId(folderId, folderName){
 
     return await response.text();
 }
+
+
+
+
+function createDownloadLink(folderId, itemId, maxDownloads, isFolder) {
+    let url
+    if(isFolder){
+        url = `/api/folders/download?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`
+    }else{
+        url = `/api/files/download?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(itemId)}&limit=${encodeURIComponent(maxDownloads)}`
+    }
+    fetch(url, {
+        method: "POST",
+
+    })
+        .then(async response => {
+            if (!response.ok) throw new Error("Something failed");
+
+        const data = await response.text();
+        return data;
+        })
+        .catch(error => throwError("Something failed: " + error));
+}

@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
-import server.phoestorage.service.FileService;
-import server.phoestorage.service.FolderService;
-import server.phoestorage.service.HandlerService;
+import server.phoestorage.service.*;
 
 import java.util.List;
 
@@ -19,12 +17,20 @@ public class FolderController {
     private final FileRepository fileRepository;
     private FolderService folderService;
     private HandlerService handlerService;
+    private LinkService linkService;
+    private AppUserDetailsService appUserDetailsService;
 
     @Autowired
-    public FolderController(FolderService folderService, HandlerService handlerService, FileRepository fileRepository) {
+    public FolderController(FolderService folderService,
+                            HandlerService handlerService,
+                            FileRepository fileRepository,
+                            LinkService linkService,
+                            AppUserDetailsService appUserDetailsService) {
         this.folderService = folderService;
         this.handlerService = handlerService;
         this.fileRepository = fileRepository;
+        this.linkService = linkService;
+        this.appUserDetailsService = appUserDetailsService;
     }
 
     @GetMapping("/browse")
@@ -48,7 +54,16 @@ public class FolderController {
             @RequestParam("folderUuid") String folderUuid,
             HttpServletResponse response
     ){
-        folderService.downloadZipFile(folderId, folderUuid, response);
+        folderService.downloadZipFile(folderId, folderUuid, response, appUserDetailsService.getUserEntity().getUuid());
+    }
+    @PostMapping("/download")
+    public ResponseEntity<?> createDownload(
+            @RequestParam("folderId") String folderId,
+            @RequestParam("folderUuid") String folderUuid,
+            @RequestParam(value="limit", defaultValue = "-1", required = false) int downloadLimit,
+            @RequestParam(value = "expire", defaultValue = "-1", required = false) String expireDate
+    ){
+        return ResponseEntity.ok(linkService.createDownloadLink(folderId, folderUuid, downloadLimit, expireDate, true));
     }
 
     @PostMapping("/delete")
