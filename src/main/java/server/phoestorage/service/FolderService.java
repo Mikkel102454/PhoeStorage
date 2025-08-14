@@ -285,6 +285,7 @@ public class FolderService {
 
             if (validFiles.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND , "No files found to zip.");
+                System.err.println("No files found to zip.");
                 return;
             }
 

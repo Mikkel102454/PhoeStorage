@@ -2,7 +2,7 @@
 // ##                 FILE STUFF                  ##
 // #################################################
 
-async function uploadFile(file, folderId) {
+async function uploadFile(file, folderId, notify) {
     const chunkSize = 10 * 1024 * 1024; // 10 MB
     const totalChunks = Math.ceil(file.size / chunkSize);
     const fileName = file.name;
@@ -15,7 +15,7 @@ async function uploadFile(file, folderId) {
         throwWarning("Your uploaded file is empty")
         return;
     }
-
+    if(notify){throwInformation("Upload Began")}
     let uploadId = "";
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * chunkSize;
@@ -35,6 +35,10 @@ async function uploadFile(file, folderId) {
             body: formData
         });
 
+        if (response.status === 507) {
+            throwWarning("You dont have enough space for this file")
+            return -1;
+        }
         if (response.status === 409) {
             throwWarning("File already exists: " + fileName)
             return;
@@ -50,6 +54,7 @@ async function uploadFile(file, folderId) {
         }
         uploadId = await response.text()
     }
+    if(notify){throwSuccess("Upload finished")}
 }
 
 function downloadFile(folderId, fileId) {
@@ -80,7 +85,7 @@ function downloadFile(folderId, fileId) {
         .catch(error => throwError("Download failed: " + error));
 }
 
-async function deleteFile(folderId, fileId) {
+async function deleteFile(folderId, fileId, notify) {
 
     const response = await fetch(`/api/files/delete?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}`, {
         method: "POST"
@@ -95,6 +100,7 @@ async function deleteFile(folderId, fileId) {
         throwError("Failed to delete file: " + await response.text())
         return
     }
+    if(notify){throwInformation("File deleted")}
 }
 
 async function renameFile(folderId, fileId, name){
@@ -259,7 +265,7 @@ function downloadZipFile(folderId, folderUuid) {
         });
 }
 
-async function deleteFolder(folderId, folderUuid) {
+async function deleteFolder(folderId, folderUuid, notify) {
 
     const response = await fetch(`/api/folders/delete?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}`, {
         method: "POST"
@@ -268,6 +274,8 @@ async function deleteFolder(folderId, folderUuid) {
     if (!response.ok) {
         throwError("Failed to delete folder: " + await response.text())
     }
+
+    if(notify){throwInformation("File deleted")}
 }
 
 async function renameFolder(folderId, folderUuid, name){

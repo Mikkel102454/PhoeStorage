@@ -5,14 +5,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import server.phoestorage.service.HandlerService;
+import server.phoestorage.service.LinkService;
 
 @Controller
 public class PageController {
 
     private final ResourceController resourceController;
+    private final LinkService linkService;
+    private final HandlerService handlerService;
 
-    public PageController(ResourceController resourceController) {
+    public PageController(ResourceController resourceController, LinkService linkService, HandlerService handlerService) {
         this.resourceController = resourceController;
+        this.linkService = linkService;
+        this.handlerService = handlerService;
     }
 
     @Cacheable("resources")
@@ -21,6 +27,18 @@ public class PageController {
         if (page.endsWith(".html")) page = page.substring(0, page.length() - 5);
         String path = "classpath:frontend/pages/" + page + ".html";
 
+        return resourceController.getResource(path);
+    }
+
+    @Cacheable("resources")
+    @GetMapping("/download/{uuid}")
+    public ResponseEntity<String> downloadPage(@PathVariable String uuid) {
+        String path;
+        if(linkService.isLinkValid(uuid) != null){
+            path = "classpath:frontend/pages/download.html";
+        }else{
+            return ResponseEntity.ok(handlerService.get404());
+        }
         return resourceController.getResource(path);
     }
 

@@ -24,7 +24,7 @@ async function initDragnDrop(dropZone){
 
         // Upload individual files directly
         for (const file of singleFiles) {
-            await uploadFile(file, getParameter("jbd"));
+            await uploadFile(file, getParameter("jbd"), true);
         }
 
         // Upload folders if any

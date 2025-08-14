@@ -40,4 +40,13 @@ public class UserController {
         }
         return ResponseEntity.ok(uuid);
     }
+
+    @GetMapping("/space")
+    public ResponseEntity<String> getSpace() {
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+        if(uuid == null || uuid.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userRepository.findByUuid(uuid).getDataUsed() + "-" + userRepository.findByUuid(uuid).getDataLimit());
+    }
 }

@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,12 +37,14 @@ import server.phoestorage.datasource.file.FileRepository;
 import server.phoestorage.datasource.folder.FolderEntity;
 import server.phoestorage.datasource.folder.FolderRepository;
 import server.phoestorage.datasource.users.UserEntity;
+import server.phoestorage.datasource.users.UserRepository;
 import server.phoestorage.dto.FileEntry;
 import server.phoestorage.dto.FolderEntry;
 
 @Service
 public class FileService {
     private final FolderRepository folderRepository;
+    private final UserRepository userRepository;
     @Value("${server.root}")
     private String rootPath;
 
@@ -47,19 +53,61 @@ public class FileService {
 
     private final FileRepository fileRepository;
 
-    private final DownloadRepository downloadRepository;
-
     @Autowired
     public FileService(AppUserDetailsService appUserDetailsService,
                        HandlerService handlerService,
-                       FileRepository fileRepository, FolderRepository folderRepository,
-                       DownloadRepository downloadRepository) {
+                       FileRepository fileRepository, FolderRepository folderRepository, UserRepository userRepository) {
         this.appUserDetailsService = appUserDetailsService;
         this.handlerService = handlerService;
         this.fileRepository = fileRepository;
         this.folderRepository = folderRepository;
-        this.downloadRepository = downloadRepository;
+        this.userRepository = userRepository;
     }
+
+
+    private static void addToMeta(Path metaPath, long delta) throws IOException {
+        // Open/create for read+write so we can lock and update in-place
+        try (FileChannel ch = FileChannel.open(metaPath,
+                StandardOpenOption.CREATE, StandardOpenOption.READ, StandardOpenOption.WRITE)) {
+
+            try (FileLock lock = ch.lock()) { // exclusive lock
+                ch.position(0);
+
+                // Read current value
+                ByteBuffer buf = ByteBuffer.allocate(64);
+                int read = ch.read(buf);
+                long current = 0L;
+                if (read > 0) {
+                    buf.flip();
+                    String s = StandardCharsets.UTF_8.decode(buf).toString().trim();
+                    if (!s.isEmpty()) {
+                        try {
+                            current = Long.parseLong(s);
+                        } catch (NumberFormatException ignored) {
+                            current = 0L; // corrupted/empty meta → treat as 0
+                        }
+                    }
+                }
+
+                long updated = Math.addExact(current, delta); // throws on overflow
+
+                // Rewrite atomically (truncate then write)
+                ch.truncate(0);
+                ch.position(0);
+                ByteBuffer out = StandardCharsets.UTF_8.encode(Long.toString(updated));
+                while (out.hasRemaining()) ch.write(out);
+                ch.force(true);
+            }
+        }
+    }
+
+    static long readMeta(Path metaPath) throws IOException {
+        if (!Files.exists(metaPath)) return 0L;
+        String s = Files.readString(metaPath, StandardCharsets.UTF_8).trim();
+        if (s.isEmpty()) return 0L;
+        try { return Long.parseLong(s); } catch (NumberFormatException e) { return 0L; }
+    }
+
 
     /**
      * Saves chunks of a file
@@ -80,16 +128,28 @@ public class FileService {
             Path chunkDir = Paths.get(rootPath, uuid, "temp", "upload", uploadId);
             Files.createDirectories(chunkDir);
 
+
+
             Path chunkPath = chunkDir.resolve("chunk_" + chunkId);
 
+            long written = 0L;
             try (InputStream is = file.getInputStream();
                  OutputStream os = Files.newOutputStream(chunkPath)) {
                 byte[] buffer = new byte[8192];
                 int bytesRead;
                 while ((bytesRead = is.read(buffer)) != -1) {
                     os.write(buffer, 0, bytesRead);
+                    written += bytesRead;
                 }
             }
+
+            Path metaPath = chunkDir.resolve("file.meta");
+            addToMeta(metaPath, written);
+
+            UserEntity userEntity = appUserDetailsService.getUserEntity();
+            long dataUsed = readMeta(metaPath);
+
+            if(userEntity.getDataUsed() + dataUsed > userEntity.getDataLimit()) {return -3;}
 
             return 0;
         } catch (Exception e){
@@ -124,6 +184,7 @@ public class FileService {
                             os.write(buffer, 0, bytesRead);
                         }
                     }
+                    Files.deleteIfExists(chunkDir.resolve("file.meta"));
                     Files.deleteIfExists(chunkFile);
                 }
                 Files.delete(chunkDir);
@@ -175,6 +236,9 @@ public class FileService {
             fileEntity.setCreated(LocalDateTime.now().toString());
             fileEntity.setSize(Files.size(path));
             fileEntity.setStarred(false);
+
+            UserEntity userEntity = appUserDetailsService.getUserEntity();
+            userEntity.setDataUsed(userEntity.getDataUsed() + Files.size(path));
 
             fileRepository.save(fileEntity);
             return 0;
@@ -269,6 +333,10 @@ public class FileService {
             } else { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());}
 
             fileRepository.delete(fileEntity);
+
+            UserEntity userEntity = appUserDetailsService.getUserEntity();
+            userEntity.setDataUsed(userEntity.getDataUsed() - fileEntity.getSize());
+            userRepository.save(userEntity);
 
             return ResponseEntity.ok().build();
         }catch (Exception e){
@@ -373,5 +441,4 @@ public class FileService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }
-
 }

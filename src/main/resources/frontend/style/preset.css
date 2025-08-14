@@ -12,3 +12,7 @@
     background-color: rgb(98, 103, 206);
     scale: 1.1;
 }
+
+.hidden{
+    display: none !important;
+}

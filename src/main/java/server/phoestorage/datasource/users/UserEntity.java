@@ -33,6 +33,11 @@ public class UserEntity implements UserDetails {
     @Column(unique = false, nullable = false, name = "admin")
     private boolean admin;
 
+    @Column(unique = false, nullable = false, name = "dataUsed")
+    private long dataUsed;
+    @Column(unique = false, nullable = false, name = "dataLimit")
+    private long dataLimit;
+
     public int getId() {
         return id;
     }
@@ -82,6 +87,22 @@ public class UserEntity implements UserDetails {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    public long getDataUsed() {
+        return dataUsed;
+    }
+
+    public void setDataUsed(long dataUsed) {
+        this.dataUsed = dataUsed;
+    }
+
+    public long getDataLimit() {
+        return dataLimit;
+    }
+
+    public void setDataLimit(long dataLimit) {
+        this.dataLimit = dataLimit;
     }
 
     @Override

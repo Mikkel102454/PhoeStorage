@@ -16,6 +16,10 @@ public class DownloadEntity {
     String folderUuid;
     @Column(unique = false, nullable = false, name = "ownerUuid")
     String ownerUuid;
+    @Column(unique = false, nullable = false, name = "fileName")
+    String fileName;
+    @Column(unique = false, nullable = false, name = "fileExtension")
+    String fileExtension;
     @Column(unique = false, nullable = false, name = "dateCreated")
     String dateCreated;
     @Column(unique = false, nullable = false, name = "dateExpire")
@@ -26,6 +30,8 @@ public class DownloadEntity {
     int downloads;
     @Column(unique = false, nullable = false, name = "isFolder")
     boolean isFolder;
+    @Column(unique = false, nullable = false, name = "size")
+    long size;
 
     public int getId() {
         return id;
@@ -101,5 +107,29 @@ public class DownloadEntity {
 
     public void setIsFolder(boolean isFolder) {
         this.isFolder = isFolder;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

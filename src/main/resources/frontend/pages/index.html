@@ -45,7 +45,7 @@
         <div class="content">
             <h3 id="shareMenuTitle">Share "Item Name"</h3>
             <input id="shareMenuInput" type="number" placeholder="Download limit (default: unlimited)">
-            <h5 id="shareMenuOutput" onclick="copyToClipboard('https://' + this.innerText)"></h5>
+            <h5 id="shareMenuOutput" onclick="copyToClipboard(window.location.protocol + '//' + this.innerText)"></h5>
 
             <div>
                 <span onclick="closeShareMenu()">Cancel</span>
@@ -130,9 +130,9 @@
             
             <div class="storage-container">
                 <div class="bar">
-                    <div class="bar-fill"></div>
+                    <div class="bar-fill" id="storageLimitFill"></div>
                 </div>
-                <div class="text">2.17 GB of 1000 GB used</div>
+                <div class="text" id="storageLimitText">loading. of loading. used</div>
             </div>
         </ul>
         <div class="divider"></div>
@@ -153,15 +153,14 @@
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
 
-                <div class="profile">
-                    <!--
+                <div class="profile hidden">
                     <div>
                         <i class="fa-regular fa-bell fa-inverse">
                             <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
                         </i>
                     </div>
                     <i class="fa-solid fa-gear fa-inverse"></i>
-                </div>-->
+                </div>
             </div>
         </div>
         <div class="section section-2">
@@ -193,7 +192,7 @@
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
 
-                <div class="profile">
+                <div class="profile hidden">
                     <div>
                         <i class="fa-regular fa-bell fa-inverse">
                             <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>

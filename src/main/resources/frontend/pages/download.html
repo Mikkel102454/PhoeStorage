@@ -13,28 +13,30 @@
 <body>
     <main>
         <div class="header">
-            <div class="iconContainer">
+            <div class="iconContainer" id="fileLogo">
                 <i class="fileLogo fa-solid fa-file-word icon" style="color: #4285f8;"></i>
             </div>
             
-            <span class="fileName">document.docx</span>
+            <span class="fileName" id="fileName">Loading...</span>
         </div>
         <div class="info">
             <ul class="infoHeader">
                 <li>Size</li>
                 <li>Type</li>
-                <li>Expires</li>
+                <li class="hidden">Expires</li>
             </ul>
             <ul class="infoValues">
-                <li>1.34 MB</li>
-                <li>Docx</li>
-                <li>1 Jan, 2025</li>
+                <li id="fileSize">Loading...</li>
+                <li id="fileType">Loading...</li>
+                <li id="dateExpire" class="hidden">Loading...</li>
             </ul>
         </div>
         <div class="buttonContainer">
-            <div class="download"><div><i class="fa-solid fa-download" style="margin-right: 1vh;"></i>Download</div></div>
-            <div class="copy"><div><i class="fa-solid fa-link" style="margin-right: 1vh;"></i>Copy Link</div></div>
+            <div class="download" id="downloadBtn"><div><i class="fa-solid fa-download" style="margin-right: 1vh;"></i>Download</div></div>
+            <div class="copy" id="copyBtn"><div><i class="fa-solid fa-link" style="margin-right: 1vh;"></i>Copy Link</div></div>
         </div>
     </main>
 </body>
+
+<script src="/code/download.js"></script>
 </html>

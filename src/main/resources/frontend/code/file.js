@@ -71,7 +71,7 @@ async function createFile(file, fileParent, isFolder){
 
         const folderElementDelete = fileTemp.querySelector(".fa-trash");
         folderElementDelete.addEventListener("click", async function (){
-            await deleteFolder(getParameter("jbd"), file.uuid)
+            await deleteFolder(getParameter("jbd"), file.uuid, true)
             await loadDirectory(getParameter("jbd"));
         })
 
@@ -119,7 +119,7 @@ async function createFile(file, fileParent, isFolder){
         })
         const fileElementDelete = fileTemp.querySelector(".fa-trash");
         fileElementDelete.addEventListener("click", async function (){
-            await deleteFile(file.folderId, file.uuid)
+            await deleteFile(file.folderId, file.uuid, true)
             await loadDirectory(getParameter("jbd"));
         })
     }
@@ -163,6 +163,18 @@ async function resetPath(element) {
 }
 
 function formatSize(bytes) {
+    if (typeof bytes === "bigint") {
+        // Convert to Number for math display — will clamp large values
+        if (bytes > BigInt(Number.MAX_SAFE_INTEGER)) {
+            console.warn("formatSize: value too large for exact conversion, showing approximate value");
+        }
+        bytes = Number(bytes);
+    }
+
+    if (typeof bytes !== "number" || isNaN(bytes) || bytes < 0) {
+        return "0 B";
+    }
+
     const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
     let i = 0;
 
@@ -171,8 +183,10 @@ function formatSize(bytes) {
         i++;
     }
 
-    return `${bytes.toFixed(1)} ${units[i]}`;
+    const value = bytes % 1 === 0 ? bytes.toFixed(0) : bytes.toFixed(1);
+    return `${value} ${units[i]}`;
 }
+
 
 function fileIcon(extension) {
 
@@ -332,10 +346,12 @@ function openShareMenu(item, isFolder) {
 
         if (link === "404 - NOT FOUND" || link === "500 - INTERNAL SERVER ERROR"){
             throwError(link)
+            closeShareMenu()
+            return
         }
 
-        shareMenuOutput.innerText = "media.miguel.nu/download/" + link
-        if (shareMenuOutput.innerText != ""){
+        shareMenuOutput.innerText = window.location.host + "/download/" + link
+        if (shareMenuOutput.innerText !== ""){
             shareMenuConfirm.removeEventListener("click", currentShareHandler);
             currentShareHandler = null;
         }
@@ -369,7 +385,7 @@ function openFolderUploadMenu() {
 document.getElementById('hiddenFileInput').addEventListener('change', async function () {
     if (this.files.length > 0) {
         for (const file of this.files) {
-            await uploadFile(file, getParameter("jbd"));
+            await uploadFile(file, getParameter("jbd"), true);
         }
         await loadDirectory(getParameter("jbd"))
     }
@@ -389,7 +405,7 @@ async function FolderUploading(fileListOrArray) {
     }
 
     const folderIdCache = new Map();
-
+    throwInformation("Upload began")
     for (const file of files) {
         if (!file.webkitRelativePath) continue; // skip loose files
 
@@ -423,6 +439,6 @@ async function FolderUploading(fileListOrArray) {
 
         await uploadFile(file, parentId);
     }
-
+    throwSuccess("Upload finished")
     await loadDirectory(rootFolderId);
 }

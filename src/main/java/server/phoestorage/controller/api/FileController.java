@@ -53,6 +53,9 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(fileName);
         }
         if(chunkCode != 0) {
+            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE).body("You dont have enough space for this file");
+        }
+        if(chunkCode != 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception(String.valueOf(chunkCode))));
         }
 

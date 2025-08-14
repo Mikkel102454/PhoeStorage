@@ -81,6 +81,9 @@ main{
 .info .infoValues * {
     width: 5vw;
 }
+.info .infoValues *:last-child {
+    width: auto;
+}
 
 .buttonContainer{
     user-select: none; /* Standard syntax */
@@ -127,5 +130,7 @@ main{
     cursor: pointer;
     background-color: oklab(0.250175 0.00000910461 0.00000399351 / 1);
 }
+
+
 
 
