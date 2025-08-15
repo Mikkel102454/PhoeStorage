@@ -71,8 +71,7 @@ async function createFile(file, fileParent, isFolder){
 
         const folderElementDelete = fileTemp.querySelector(".fa-trash");
         folderElementDelete.addEventListener("click", async function (){
-            await deleteFolder(getParameter("jbd"), file.uuid, true)
-            await loadDirectory(getParameter("jbd"));
+            await openDeleteModal(file, true, getParameter("jbd"), file.uuid)
         })
 
         const folderElement = fileTemp.querySelector("li");
@@ -119,8 +118,7 @@ async function createFile(file, fileParent, isFolder){
         })
         const fileElementDelete = fileTemp.querySelector(".fa-trash");
         fileElementDelete.addEventListener("click", async function (){
-            await deleteFile(file.folderId, file.uuid, true)
-            await loadDirectory(getParameter("jbd"));
+            await openDeleteModal(file, false, file.folderId, file.uuid)
         })
     }
 
@@ -441,4 +439,64 @@ async function FolderUploading(fileListOrArray) {
     }
     throwSuccess("Upload finished")
     await loadDirectory(rootFolderId);
+}
+
+let deleteModal
+let deleteModalTitle
+let deleteModalName
+let deleteModalSize
+let deleteModalLastModified
+let deleteModalButton
+let deleteModalButtonHandler
+async function openDeleteModal(file, isFolder, parentId, objectId){
+    initDeleteModal()
+
+    if(isFolder) { deleteModalTitle.innerText = "Delete folder permanently?" }
+    else { deleteModalTitle.innerText = "Delete file permanently?" }
+
+    deleteModalName.innerText = file.name
+    
+    if(isFolder) { deleteModalSize.innerText = formatSize(0)}
+    else { deleteModalSize.innerText = formatSize(file.size) }
+
+    if(isFolder) { deleteModalLastModified.innerText = ""}
+    else { deleteModalLastModified.innerText = formatDate(file.modified ? file.modified : file.created) }
+
+    if (deleteModalButtonHandler) {
+        deleteModalButton.removeEventListener("click", deleteModalButtonHandler);
+        deleteModalButtonHandler = null;
+    }
+
+    deleteModalButtonHandler = async function (){
+        deleteModalButton.disabled = true;
+        if(isFolder){await deleteFolder(parentId, objectId, true)}
+        else{await deleteFile(parentId, objectId, true)}
+
+        await loadDirectory(getParameter("jbd"));
+
+        closeDeleteModal()
+        deleteModalButton.disabled = false;
+    }
+    deleteModalButton.addEventListener("click", deleteModalButtonHandler)
+
+    deleteModal.classList.add("visible")
+}
+function closeDeleteModal(){
+    initDeleteModal()
+
+    deleteModalTitle.innerText = "Delete file permanently?"
+    deleteModalName.innerText = "Loading..."
+    deleteModalSize.innerText = "Loading..."
+    deleteModalLastModified.innerText = "Loading..."
+
+    deleteModal.classList.remove("visible")
+}
+
+function initDeleteModal(){
+    if(!deleteModal) deleteModal = document.getElementById("deleteModal");
+    if(!deleteModalTitle) deleteModalTitle = deleteModal.querySelector("#title");
+    if(!deleteModalName) deleteModalName = deleteModal.querySelector("#name");
+    if(!deleteModalSize) deleteModalSize = deleteModal.querySelector("#size");
+    if(!deleteModalLastModified) deleteModalLastModified = deleteModal.querySelector("#date");
+    if(!deleteModalButton) deleteModalButton = deleteModal.querySelector("#confirmBtn");
 }

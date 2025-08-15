@@ -275,7 +275,7 @@ async function deleteFolder(folderId, folderUuid, notify) {
         throwError("Failed to delete folder: " + await response.text())
     }
 
-    if(notify){throwInformation("File deleted")}
+    if(notify){throwInformation("Folder deleted")}
 }
 
 async function renameFolder(folderId, folderUuid, name){

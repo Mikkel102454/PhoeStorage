@@ -128,3 +128,11 @@ function copyToClipboard(input) {
 
   throwInformation("Copied to clipboard");
 }
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        closeDeleteModal()
+        closeShareMenu()
+        closeRenameMenu()
+    }
+});

@@ -291,6 +291,111 @@ main .section-2{
     color: white;
 }
 
+#deleteModal{
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    position:absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    justify-content: center;
+    display: none;
+}
+
+#deleteModal.visible{
+    opacity: 1;
+    display: flex !important;
+    pointer-events: auto !important;
+}
+
+#deleteModal .main{
+    background-color: rgb(18, 20, 23);
+    width: 33vw;
+    height: fit-content;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+    padding: 6vh;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
+
+    border-radius: 3vh;
+    border-color: rgba(255, 255, 255, 0.08);
+    border-style: solid;
+    border-width: 0.2vh;
+
+    font-size: 1.5vh;
+    color: rgb(229, 231, 235);
+}
+
+#deleteModal .main .note{
+    color: rgb(156, 163, 175);
+}
+#deleteModal .main .header{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1vh;
+}
+#deleteModal .main .header h2{
+    margin: 0;
+}
+
+#deleteModal .main .info{
+    background-color: rgba(255, 255, 255, .06);
+    border-radius: 3vh;
+    padding: 2vh;
+    gap: 2vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#deleteModal .main .info .infoRow{
+    display: flex;
+}
+
+#deleteModal .main .info .infoRow *:last-child{
+    margin-left: auto;
+    user-select:text;
+}
+
+#deleteModal .main .buttons{
+    display: flex;
+    flex-direction: row-reverse;
+    padding-top: 2vh;
+    gap: 1.5vh;
+}
+
+#deleteModal .main .buttons *{
+    padding: 1.5vh 3vh;
+    justify-content: center;
+    display: flex;
+
+    border-radius: 2vh;
+
+    font-weight: bold;
+}
+
+#deleteModal .main .buttons *:hover{
+    cursor: pointer;
+}
+
+#deleteModal .main .buttons .cancelBtn{
+    border-width: 0.2vh;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+#deleteModal .main .buttons .confirmBtn{
+    background: linear-gradient(90deg, #334155 0%, #1f2937 100%);
+}
+
 main .my-drive .header,
 main .home .header{
     height: fit-content;

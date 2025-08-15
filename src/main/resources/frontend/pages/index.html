@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/style/alert.css">
     <link rel="stylesheet" href="/style/preset.css">
 </head>
-<body>
+<body>    
     <div id="alertBox">
 
     </div>
@@ -149,6 +149,33 @@
 
 <template id="starred-file-temp">
     <div class="my-drive">
+        <div id="deleteModal">
+            <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
+            <div class="main">
+                <div class="header">
+                    <h2 id="title">Delete file permanently?</h2>
+                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
+                </div>
+                <div class="info">
+                    <div class="infoRow">
+                        <span class="note">Name</span>
+                        <span id="name">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Size</span>
+                        <span id="size">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Last modified</span>
+                        <span id="date">Loading...</span>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <div class="confirmBtn" id="confirmBtn">Delete</div>
+                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
+                </div>
+            </div>
+        </div>
         <div class="section">
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
@@ -188,6 +215,34 @@
 
 <template id="drive-file-temp">
     <div class="my-drive">
+        <div id="deleteModal">
+            <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
+            <div class="main">
+                <div class="header">
+                    <h2 id="title">Delete file permanently?</h2>
+                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
+                </div>
+                <div class="info">
+                    <div class="infoRow">
+                        <span class="note">Name</span>
+                        <span id="name">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Size</span>
+                        <span id="size">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Last modified</span>
+                        <span id="date">Loading...</span>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <div class="confirmBtn" id="confirmBtn">Delete</div>
+                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
+                </div>
+            </div>
+        </div>
+
         <div class="section">
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
@@ -226,6 +281,34 @@
 
 <template id="home-section-temp">
     <div class="home">
+        <div id="deleteModal">
+            <div class="main">
+                <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
+                <div class="header">
+                    <h2 id="title">Delete file permanently?</h2>
+                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
+                </div>
+                <div class="info">
+                    <div class="infoRow">
+                        <span class="note">Name</span>
+                        <span id="name">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Size</span>
+                        <span id="size">Loading...</span>
+                    </div>
+                    <div class="infoRow">
+                        <span class="note">Last modified</span>
+                        <span id="date">Loading...</span>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <div class="confirmBtn" id="confirmBtn">Delete</div>
+                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
+                </div>
+            </div>
+
+        </div>
         <div class="section">
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
