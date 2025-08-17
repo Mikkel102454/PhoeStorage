@@ -19,7 +19,14 @@ main{
     border-width: 0.1vh;
     border-style: solid;
     color: #e5e5e5;
-    padding: 4vh;
+    padding: 3vh;
+    display: flex;
+    flex-direction: column;
+}
+
+form{
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -41,14 +48,109 @@ h2{
     font-size: 1.8vh;
 }
 
+.values{
+    margin-top: auto;
+}
 .values div{
     display: flex;
     flex-direction: column;
 }
+.values div:last-child{
+    margin-top: 2vh;
+}
 .values div span{
-
+    font-size: 1.7vh;
+    margin-bottom: 1vh;
 }
 .values div input{
-    height: 4vh;
+    height: 5vh;
+    border-radius: 1.5vh;    
+    background-color: oklab(0.170175 0.00000910461 0.00000399351 / 0.9);
+    border-color: rgb(38, 38, 38);
+    border-width: 0.1vh;
+    border-style: solid;
+    color: whitesmoke;
+    outline: none;
+    padding-left: 1.8vh;
 }
 
+.error div input{
+    border-color: rgb(237, 52, 52) !important;
+}
+
+.label-ckb{
+  margin: 2vh 0;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  color:#a3a3a3;
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+}
+
+.label-ckb .ckb{
+  position:absolute;
+  opacity:0;
+  width:1px;
+  height:1px;
+  margin:0;
+}
+
+.label-ckb .ckb-box{
+  width:18px;
+  height:18px;
+  border:1px solid #262626;
+  border-radius:4px;
+  background:#0f0f0f;
+  display:grid;
+  place-items:center;
+  line-height:1;
+}
+
+.label-ckb .ckb-box .ckb-icon{
+  opacity:0;
+  transform:scale(0.9);
+  transition:opacity .12s ease, transform .12s ease;
+}
+
+.label-ckb .ckb:focus-visible + .ckb-box{
+  outline:2px solid #7c7fff;
+  outline-offset:2px;
+}
+
+.label-ckb .ckb:checked + .ckb-box{
+  background:#7c7fff;
+  border-color:#7c7fff;
+}
+
+.label-ckb .ckb:checked + .ckb-box .ckb-icon{
+  opacity:1;
+  transform:scale(1);
+}
+
+.interactive .signin{
+    color: rgb(29, 28, 28);
+    height: 5vh;
+    flex: 1;
+    background: linear-gradient(180deg, #7c7fff, #6ee7ff);
+    border-radius: 0.7vw;
+    text-align: center;
+    border-style: none;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    padding: auto;
+}
+
+.interactive .signin:hover{
+    transition: 0.2s;
+    cursor: pointer;
+    background: linear-gradient(180deg, #7c9fff, #6ee7ff);
+}

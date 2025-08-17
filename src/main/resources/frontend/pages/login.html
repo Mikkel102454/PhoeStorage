@@ -1,37 +1,45 @@
-    <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <script src="https://kit.fontawesome.com/f104e38812.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        
-    </head>
-    <body class="h-center">
-        <div class="w-fit h-center">
-            <form action="/login" method="post" class="w-fit h-center">
-                <div class="w-fit border-1 d-flex flex-column m-t-20px h-fit p-25px border-full border-r-6px">
-                    <div class="w-800px d-flex h-fit gray-text d-flex flex-column">
-                        <div class="m-r-10px">
-                            <label for="username" class="text-s-small m-b-6px">Brugernavn</label>
-                            <input type="text" id="username" name="username" placeholder="F.eks. Brugernavn" class="w-100p h-30px border-1 border-full border-r-6px p-l-10px outline-0" required>
-                        </div>
-                        <div class="m-r-10px m-t-10px">
-                            <label for=password class="text-s-small m-b-6px m-t-20px ">Password</label>
-                            <input type="password" id="password" name="password" placeholder="F.eks. ********" class="w-100p h-30px border-1 border-full border-r-6px p-l-10px outline-0" required>
-                        </div>
-                        <button class="a-left btn-2 border-1 border-full hover-1 border-r-6px hover-pointer m-t-20px w-fit h-center p-lr-100px" type="submit">Login</button>
-                    </div>  
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+    <link rel="stylesheet" href="/style/login.css">
+</head>
+<body>
+    <main>
+        <form th:action="@{/login}" method="post">
+            <div class="header">
+                <h2>Sign in</h2>
+                <p>Access your files through here</p>
+            </div>
+            <div class="values" th:classappend="${param.error} ? ' error' : ''">
+                <div>
+                    <span>Email</span>
+                    <input type="text" id="username" name="username" required>
                 </div>
-            </form>
-            <div th:if="${param.error}">
-                <p class="text-s-small" style="color: red;">Forkert brugernavn eller password.</p>
+                <div>
+                    <span>Password</span>
+                    <input type="password" id="password" name="password" required>
+                </div>
             </div>
-        
-            <div th:if="${param.logout}">
-                <p class="text-s-small" style="color: green;">Du blev logged ud.</p>
+            <div class="interactive">
+                <label class="label-ckb">
+                <input class="ckb" type="checkbox" name="remember-me" value="1">
+                <span class="ckb-box" aria-hidden="true">
+                    <!-- Made the tick 14x14 instead of 12x12 -->
+                    <svg class="ckb-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                    <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                    </svg>
+                </span>
+                <span>Remember me</span>
+                </label>
+
+                <button class="signin" type="submit">Sign in</button>
             </div>
-        </div>
-    </body>
+        </form>
+    </main>
+</body>
 </html>

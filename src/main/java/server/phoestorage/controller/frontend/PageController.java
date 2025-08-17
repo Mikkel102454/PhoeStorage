@@ -23,28 +23,27 @@ public class PageController {
 
     @Cacheable("resources")
     @GetMapping("/{page}")
-    public ResponseEntity<String> rootPage(@PathVariable String page) {
+    public String rootPage(@PathVariable String page) {
         if (page.endsWith(".html")) page = page.substring(0, page.length() - 5);
-        String path = "classpath:frontend/pages/" + page + ".html";
 
-        return resourceController.getResource(path);
+        return "frontend/pages/" + page;
     }
 
     @Cacheable("resources")
     @GetMapping("/download/{uuid}")
-    public ResponseEntity<String> downloadPage(@PathVariable String uuid) {
+    public String downloadPage(@PathVariable String uuid) {
         String path;
         if(linkService.isLinkValid(uuid) != null){
-            path = "classpath:frontend/pages/download.html";
+            return "frontend/pages/download";
         }else{
-            return ResponseEntity.ok(handlerService.get404());
+            return handlerService.get404();
         }
-        return resourceController.getResource(path);
+
     }
 
     @Cacheable("resources")
     @GetMapping("/")
-    public ResponseEntity<String> index() {
-        return resourceController.getResource("classpath:frontend/pages/index.html");
+    public String index() {
+        return "frontend/pages/index";
     }
 }

@@ -22,6 +22,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
