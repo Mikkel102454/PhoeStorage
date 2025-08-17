@@ -1,8 +1,8 @@
 body{
     margin: 0;
-    background: radial-gradient(100vw 60vh at 50% -10vh, rgba(124,127,255,0.12), transparent) no-repeat, rgb(9, 10, 12);
+    background: radial-gradient(100vw 40vh at 50% -10vh, rgba(124,127,255,0.12), transparent) no-repeat, rgb(9, 10, 12);
     background-position: top center;
-    background-size: 100vw 60vh; /* controls the half-circle size */
+    background-size: 100vw 40vh; /* controls the half-circle size */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,7 +16,7 @@ main{
     background-color: oklab(0.200175 0.00000910461 0.00000399351 / 0.9);
     border-radius: 2vh;
     border-color: rgb(38, 38, 38);
-    border-width: 0.3vh;
+    border-width: 0.1vh;
     border-style: solid;
     color: #e5e5e5;
     padding: 4vh;

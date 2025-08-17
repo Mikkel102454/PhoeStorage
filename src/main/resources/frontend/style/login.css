@@ -1,0 +1,54 @@
+body{
+    margin: 0;
+    background: radial-gradient(100vw 40vh at 50% -10vh, rgba(124,127,255,0.12), transparent) no-repeat, rgb(9, 10, 12);
+    background-position: top center;
+    background-size: 100vw 40vh; /* controls the half-circle size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+main{
+    width: 23vw;
+    height: 45vh;
+    background-color: oklab(0.200175 0.00000910461 0.00000399351 / 0.9);
+    border-radius: 2vh;
+    border-color: rgb(38, 38, 38);
+    border-width: 0.1vh;
+    border-style: solid;
+    color: #e5e5e5;
+    padding: 4vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+h2{
+    margin: 1vh auto;
+    font-weight: bold;
+    font-size: 3.5vh;
+}
+.header p{
+    margin: 2vh auto;
+    color: rgb(180, 180, 180);
+    font-size: 1.8vh;
+}
+
+.values div{
+    display: flex;
+    flex-direction: column;
+}
+.values div span{
+
+}
+.values div input{
+    height: 4vh;
+}
+
