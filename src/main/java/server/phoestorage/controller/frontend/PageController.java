@@ -1,7 +1,8 @@
 package server.phoestorage.controller.frontend;
 
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +15,13 @@ public class PageController {
     private final ResourceController resourceController;
     private final LinkService linkService;
     private final HandlerService handlerService;
+    private ResourceLoader resourceLoader;
 
-    public PageController(ResourceController resourceController, LinkService linkService, HandlerService handlerService) {
+    public PageController(ResourceController resourceController, LinkService linkService, HandlerService handlerService, ResourceLoader resourceLoader) {
         this.resourceController = resourceController;
         this.linkService = linkService;
         this.handlerService = handlerService;
+        this.resourceLoader = resourceLoader;
     }
 
     @Cacheable("resources")
@@ -26,7 +29,14 @@ public class PageController {
     public String rootPage(@PathVariable String page) {
         if (page.endsWith(".html")) page = page.substring(0, page.length() - 5);
 
-        return "frontend/pages/" + page;
+        String path = "classpath:/frontend/pages/" + page + ".html";
+        Resource resource = resourceLoader.getResource(path);
+
+        if (resource.exists()) {
+            return "frontend/pages/" + page;
+        } else {
+            return "handlers/404";
+        }
     }
 
     @Cacheable("resources")

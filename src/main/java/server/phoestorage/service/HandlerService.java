@@ -33,9 +33,8 @@ public class HandlerService {
         }
 
         try {
-            InputStream in = resource.getInputStream();
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
+            return "handlers/400";
+        } catch (Exception e) {
             return get500(e);
         }
     }
@@ -48,9 +47,8 @@ public class HandlerService {
         }
 
         try {
-            InputStream in = resource.getInputStream();
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
+            return "handlers/404";
+        } catch (Exception e) {
             return get500(e);
         }
     }
@@ -65,6 +63,6 @@ public class HandlerService {
         context.setVariable("errorType", type);
         context.setVariable("error", message);
 
-        return templateEngine.process("handlers/500", context);
+        return "handlers/500";
     }
 }

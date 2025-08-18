@@ -137,14 +137,21 @@ main{
     margin-left: auto;
     padding: 1vh;
     border-radius: 2vh;
+    border-width: 0.2vh;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.02);
+    width: 10vh;
+    text-align: center;
+
 }
 .createFolder .content div span:hover{
-    transition: 0.2s;
-    background-color: rgb(78, 83, 185);
     cursor: pointer;
 }
 .createFolder .content div span:last-child{
     margin-left: 2vh;
+    background: linear-gradient(180deg, #7c7fff, #6ee7ff);
+    width: 12vh;
 }
 
 
@@ -180,19 +187,36 @@ main{
     flex-direction: column;
     height: fit-content;
     padding-bottom: 3vh;
+    width: 80%;
+    margin: 0 auto;
 }
 .menu-nav ul li{
+    position: relative;
     transition: 0.2s;
-    padding-left: 10%;
     height: 4vh;
-    border-radius: .6vw;
+    border-radius: 0.7vw;
+    border-style: none;
     display: flex;
+    overflow: hidden;
 }
 
-.menu-nav ul li:hover{
-    transition: 0.2s;
-    background-color: rgb(78, 83, 185);
+.menu-nav ul li::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+
+    background: linear-gradient(180deg, #7c7fff, #6ee7ff);
+
+    opacity: 0; /* start hidden */
+    transition: opacity 0.2s ease;
+    z-index: -1; /* keep behind button text */
+
     cursor: pointer;
+}
+
+.menu-nav ul li:hover::after{
+    opacity: 1;
 }
 
 .menu-nav ul li .caret{
@@ -201,6 +225,7 @@ main{
 }
 .menu-nav ul li .icon{
     width: 12%;
+    margin-right: 5%;
 }
 .menu-nav ul li .text{
     font-size: 1.8vh;
@@ -237,9 +262,9 @@ main{
 
 .divider {
     background-color: #ffffff;
-    height: 0.3vh;
+    height: 0.1vh;
     width: 80%;
-    opacity: 0.3;
+    opacity: 1;
     margin: 1vh auto;
     margin-top: 3vh;
 }
@@ -250,27 +275,40 @@ main{
     margin-bottom: 1vh;
 }
 .menu-nav .logout button{
+    position: relative; /* needed so ::after can position inside */
     padding: 1.2vh;
     transition: 0.2s;
     color: white;
     background-color: transparent;
-    border: none;
     font-size: 0.8vw;
     margin: auto;
     width: 80%;
     height: fit-content;
     text-align: left;
-    border-radius: .6vw;
+    border-radius: 0.7vw;
+    border: none;
+    overflow: hidden; /* keep ::after inside rounded corners */
 }
 
 .menu-nav .logout i{
     margin-right: 5%;
 }
 
-.menu-nav .logout button:hover{
-    transition: 0.2s;
-    cursor: pointer;
-    background-color: rgb(78, 83, 185);
+.menu-nav .logout button::after {
+    content: ""; /* REQUIRED for pseudo-elements */
+    position: absolute;
+    inset: 0; /* stretch to fill button */
+    border-radius: inherit;
+
+    background: linear-gradient(180deg, #7c7fff, #6ee7ff);
+
+    opacity: 0; /* start hidden */
+    transition: opacity 0.2s ease;
+    z-index: -1; /* keep behind button text */
+}
+
+.menu-nav .logout button:hover::after {
+    opacity: 1;
 }
 
 
@@ -393,7 +431,7 @@ main .section-2{
 }
 
 #deleteModal .main .buttons .confirmBtn{
-    background: linear-gradient(90deg, #334155 0%, #1f2937 100%);
+    background: linear-gradient(180deg, #7c7fff, #6ee7ff);
 }
 
 main .my-drive .header,

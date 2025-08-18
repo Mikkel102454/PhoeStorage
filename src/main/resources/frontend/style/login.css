@@ -134,6 +134,7 @@ h2{
     color: rgb(29, 28, 28);
     height: 5vh;
     flex: 1;
+
     background: linear-gradient(180deg, #7c7fff, #6ee7ff);
     border-radius: 0.7vw;
     text-align: center;
