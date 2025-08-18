@@ -5,6 +5,7 @@ public class FolderEntry {
     private String owner;
     private String name;
     private String folderId;
+    private long size;
 
     public String getUuid() {
         return uuid;
@@ -36,5 +37,13 @@ public class FolderEntry {
 
     public void setFolderId(String folderId) {
         this.folderId = folderId;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 }

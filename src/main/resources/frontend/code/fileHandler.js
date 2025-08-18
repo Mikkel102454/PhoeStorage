@@ -227,7 +227,8 @@ async function browseDirectory(folderId) {
         folder.uuid,
         folder.owner,
         folder.name,
-        folder.folderId
+        folder.folderId,
+        folder.size
     ));
 
     return { files, folders };

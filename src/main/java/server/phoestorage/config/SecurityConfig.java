@@ -36,13 +36,14 @@ public class SecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
                 )
-                .logout(form -> form
+                .logout(form -> form.deleteCookies("JSESSIONID")
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .permitAll()
                 )
+                .rememberMe(rememberMe -> rememberMe.key("jsR8IZVS2M|6)wf"))
                 .build();
     }
 

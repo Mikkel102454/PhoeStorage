@@ -70,4 +70,31 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
             @Param("owner") String owner
     );
 
+    @Query(
+            value = """
+        WITH RECURSIVE folder_tree AS (
+            SELECT *
+            FROM `folder`
+            WHERE uuid      = :folderId
+              AND folder_id = :parentId
+              AND owner     = :owner
+            UNION ALL
+            SELECT f.*
+            FROM `folder` f
+            JOIN folder_tree ft ON f.folder_id = ft.uuid
+            WHERE f.owner = :owner
+        )
+        SELECT COALESCE(SUM(fi.size), 0)
+        FROM folder_tree ft
+        LEFT JOIN `file` fi
+          ON fi.folder_id = ft.uuid
+         AND fi.owner     = :owner
+        """,
+            nativeQuery = true
+    )
+    Long totalSizeUnderFolder(
+            @Param("folderId") String folderId,
+            @Param("parentId") String parentId,
+            @Param("owner")    String owner
+    );
 }

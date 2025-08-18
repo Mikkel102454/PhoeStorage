@@ -28,11 +28,13 @@ class Folder{
     owner // string
     name // string
     folderId // string
-    constructor(uuid, owner, name, folderId){
+    size // long
+    constructor(uuid, owner, name, folderId, size){
         this.uuid = uuid;
         this.owner = owner;
         this.name = name;
         this.folderId = folderId;
+        this.size = size;
     }
 }
 
@@ -50,7 +52,7 @@ async function createFile(file, fileParent, isFolder){
 
     if (isFolder){
         fileTemp.querySelector(".file-name").innerHTML = "<i class='fa-solid fa-folder icon' style = 'color: #FFD43B;'></i>" + file.name
-        fileTemp.querySelector(".file-size").innerHTML = "<i class='fa-regular fa-dash'></i>"
+        fileTemp.querySelector(".file-size").innerHTML = formatSize(file.size)
         fileTemp.querySelector(".file-modified").innerHTML = "<i class='fa-regular fa-dash'></i>"
 
         const fileElementShare = fileTemp.querySelector(".fa-user-plus");
@@ -455,11 +457,10 @@ async function openDeleteModal(file, isFolder, parentId, objectId){
     else { deleteModalTitle.innerText = "Delete file permanently?" }
 
     deleteModalName.innerText = file.name
-    
-    if(isFolder) { deleteModalSize.innerText = formatSize(0)}
-    else { deleteModalSize.innerText = formatSize(file.size) }
 
-    if(isFolder) { deleteModalLastModified.innerText = ""}
+    deleteModalSize.innerText = formatSize(file.size)
+
+    if(isFolder) { deleteModalLastModified.innerHTML = "<i class='fa-regular fa-dash'></i>"}
     else { deleteModalLastModified.innerText = formatDate(file.modified ? file.modified : file.created) }
 
     if (deleteModalButtonHandler) {
@@ -479,7 +480,7 @@ async function openDeleteModal(file, isFolder, parentId, objectId){
     }
     deleteModalButton.addEventListener("click", deleteModalButtonHandler)
 
-    deleteModal.classList.add("visible")
+    deleteModal.classList.add("visible");
 }
 function closeDeleteModal(){
     initDeleteModal()

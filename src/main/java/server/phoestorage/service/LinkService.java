@@ -67,7 +67,7 @@ public class LinkService {
             downloadEntity.setIsFolder(isFolder);
 
             if(isFolder){
-                downloadEntity.setSize(0);
+                downloadEntity.setSize(folderRepository.totalSizeUnderFolder(childId, parentId, uuid));
                 downloadEntity.setFileExtension("zip");
                 downloadEntity.setFileName(folderRepository.findByOwnerAndFolderIdAndUuid(uuid, parentId, childId).get().getName());
             }else{

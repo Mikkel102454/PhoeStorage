@@ -112,6 +112,7 @@ public class FolderService {
             folderEntry.setOwner(uuid);
             folderEntry.setName(folder.getName());
             folderEntry.setFolderId(folder.getFolderId());
+            folderEntry.setSize(folderRepository.totalSizeUnderFolder(folder.getUuid(), folder.getFolderId(), uuid));
             folderResult.add(folderEntry);
         }
 
