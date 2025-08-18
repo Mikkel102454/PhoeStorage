@@ -116,7 +116,6 @@ main{
 .buttonContainer .copy{
     height: 4.5vh;
     width: 7vw;
-    background-color: blue;
     background-color: oklab(0.220175 0.00000910461 0.00000399351 / 1);
     border-color: rgb(38, 38, 38);
     border-width: 0.3vh;
