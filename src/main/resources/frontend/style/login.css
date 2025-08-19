@@ -72,62 +72,67 @@ h2{
     color: whitesmoke;
     outline: none;
     padding-left: 1.8vh;
+    font-size: 1.6vh;
 }
 
 .error div input{
     border-color: rgb(237, 52, 52) !important;
 }
 
-.label-ckb{
-  margin: 2vh 0;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-size:14px;
-  color:#a3a3a3;
-  cursor:pointer;
-  user-select:none;
-  position:relative;
+.label-ckb {
+    margin: 2vh 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8vh;
+    font-size: 1.4vh;
+    color: #a3a3a3;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
 }
 
-.label-ckb .ckb{
-  position:absolute;
-  opacity:0;
-  width:1px;
-  height:1px;
-  margin:0;
+.label-ckb .ckb {
+    position: absolute;
+    opacity: 0;
+    width: 0.1vh;
+    height: 0.1vh;
+    margin: 0;
 }
 
-.label-ckb .ckb-box{
-  width:18px;
-  height:18px;
-  border:1px solid #262626;
-  border-radius:4px;
-  background:#0f0f0f;
-  display:grid;
-  place-items:center;
-  line-height:1;
+.label-ckb .ckb-box {
+    width: 2vh;
+    height: 2vh;
+    border: 0.1vh solid #262626;
+    border-radius: 0.8vh;
+    background: #0f0f0f;
+    display: grid;
+    place-items: center;
+    line-height: 1;
 }
 
-.label-ckb .ckb-box .ckb-icon{
-  opacity:0;
-  transform:scale(0.9);
-  transition:opacity .12s ease, transform .12s ease;
+.label-ckb .ckb-box .ckb-icon {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
-.label-ckb .ckb:focus-visible + .ckb-box{
-  outline:2px solid #7c7fff;
-  outline-offset:2px;
+.label-ckb .ckb:focus-visible + .ckb-box {
+    outline: 0.2vh solid #7c7fff;
+    outline-offset: 0.2vh;
 }
 
-.label-ckb .ckb:checked + .ckb-box{
-  background:#7c7fff;
-  border-color:#7c7fff;
+.label-ckb .ckb:checked + .ckb-box {
+    background: #7c7fff;
+    border-color: #7c7fff;
 }
 
-.label-ckb .ckb:checked + .ckb-box .ckb-icon{
-  opacity:1;
-  transform:scale(1);
+.label-ckb .ckb:checked + .ckb-box .ckb-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.interactive span{
+  font-size: 1.6vh;
 }
 
 .interactive .signin{
@@ -148,6 +153,7 @@ h2{
     font-size: medium;
     text-align: center;
     padding: auto;
+    font-size: 1.6vh;
 }
 
 .interactive .signin:hover{
