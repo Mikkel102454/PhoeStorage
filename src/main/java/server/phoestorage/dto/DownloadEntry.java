@@ -9,7 +9,10 @@ public class DownloadEntry {
     String fileName;
     String fileExtension;
     boolean isFolder;
+    String uuid;
     long size;
+    int downloads;
+    int maxDownloads;
 
     public String getOwnerUuid() {
         return ownerUuid;
@@ -57,5 +60,29 @@ public class DownloadEntry {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public int getMaxDownloads() {
+        return maxDownloads;
+    }
+
+    public void setMaxDownloads(int maxDownloads) {
+        this.maxDownloads = maxDownloads;
+    }
+
+    public int getDownloads() {
+        return downloads;
+    }
+
+    public void setDownloads(int downloads) {
+        this.downloads = downloads;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

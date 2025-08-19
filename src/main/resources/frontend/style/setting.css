@@ -10,6 +10,8 @@ body{
     flex-direction: row;
     gap: 2vh;
     box-sizing:border-box;
+    overflow: hidden;
+    user-select:none;
 }
 
 nav{
@@ -68,6 +70,7 @@ section{
 
 section h2{
     margin: .5vh 0;
+    font-size: 3vh;
 }
 
 section ul{padding: 0;}
@@ -98,6 +101,7 @@ section:target {display: flex;}
 
 section ul{
     list-style: none;
+    margin: 2vh 0;
 }
 
 
@@ -159,6 +163,9 @@ section .text1 input{
     border-width: 0.1vh;
     border-radius: 0.5vw;
 
+    font-size: 1.3vh;
+
+    padding: 0.5vh;
     padding-left: 1vh;
 
     outline: 0;
@@ -173,10 +180,30 @@ section .fileList{
 }
 
 section .fileList .fileRow{
+    user-select:text;
     padding: 1vh 1vw;
     border-color: rgb(38, 38, 38);
     border-width: 0.2vh;
     border-bottom-style: solid;
     display: grid;
     grid-template-columns: 2fr 1fr 1.5fr 2fr auto;
+}
+
+section .fileList .fileRow:last-child{
+    border: none;
+}
+section .fileList .fileRow:first-child{
+    user-select:none;
+}
+section .fileList .fileRow i{
+    cursor: pointer;
+}
+section .fileList #rowContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+section .fileList #rowContainer h3{
+    margin: 8vh auto;
+    color: #acacac;
 }

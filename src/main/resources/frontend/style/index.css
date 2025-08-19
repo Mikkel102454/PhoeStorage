@@ -168,6 +168,8 @@ main{
     margin: 0;
     padding: 0;
     width: 13vw;
+    max-width: 13vw;
+    min-width: 13vw;
     height: 91.5vh;
     display: flex;
     flex-direction: column;
@@ -662,6 +664,7 @@ main .home .section-2 ul li:first-child{
 
 main .my-drive .section-2 ul li,
 main .home .section-2 ul li{
+    max-width: inherit;
     height: 5.5vh;
     border-bottom-style: solid;
     border-color: rgb(148, 148, 148);

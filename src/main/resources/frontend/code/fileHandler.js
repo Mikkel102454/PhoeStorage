@@ -100,7 +100,7 @@ async function deleteFile(folderId, fileId, notify) {
         throwError("Failed to delete file: " + await response.text())
         return
     }
-    if(notify){throwInformation("File deleted")}
+    if(notify){throwSuccess("File deleted")}
 }
 
 async function renameFile(folderId, fileId, name){
@@ -276,7 +276,7 @@ async function deleteFolder(folderId, folderUuid, notify) {
         throwError("Failed to delete folder: " + await response.text())
     }
 
-    if(notify){throwInformation("Folder deleted")}
+    if(notify){throwSuccess("Folder deleted")}
 }
 
 async function renameFolder(folderId, folderUuid, name){

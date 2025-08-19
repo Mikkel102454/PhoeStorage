@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <title>Settings</title>
     <link rel="stylesheet" href="/style/setting.css">
-    
+    <link rel="stylesheet" href="/style/alert.css">
+
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 </head>
 <body>
+    <div id="alertBox">
+
+    </div>
     <nav>
         <a href="/">Back</a>
         <a href="#account">Account</a>
@@ -23,11 +27,10 @@
 
                 <div class="text1">
                     <span>Username</span>
-                    <input type="text" placeholder="Username">
+                    <input type="text" placeholder="Username" id="username">
                 </div>
                 <div style="display: flex; gap: .5vw; justify-content: right;">
-                    <div class="button1">Canncel</div>
-                    <div class="button2">Save</div>
+                    <div class="button2" onclick="setSettings('username', document.getElementById('username').value)">Save</div>
                 </div>
             </li>
         </ul>
@@ -40,15 +43,14 @@
 
                 <div class="text1">
                     <span>Current password</span>
-                    <input type="text" placeholder="Username">
+                    <input type="password" placeholder="*******" id="oldPassword">
                 </div>
                 <div class="text1">
                     <span>New password</span>
-                    <input type="text" placeholder="Username">
+                    <input type="password" placeholder="*******" id="newPassword">
                 </div>
                 <div style="display: flex; gap: .5vw; justify-content: right;">
-                    <div class="button1">Canncel</div>
-                    <div class="button2">Save</div>
+                    <div class="button2" onclick="setPassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Save</div>
                 </div>
             </li>
         </ul>
@@ -69,36 +71,78 @@
                     </div>
 
                     <!-- Data rows -->
-                    <div class="fileRow">
-                        <span>Document.docx</span>
-                        <span>2</span>
-                        <span>20</span>
-                        <span style="display: flex;">20 Mar, 2025 
-                            <i style="margin-left: auto;" class="fa-regular fa-link"></i>
-                            <i style="margin-left: .8vw;"class="fa-light fa-trash"></i>
-                        </span>
+                    <div id="rowContainer">
+                        <h3>Nothing to show here</h3>
                     </div>
-                    <div class="fileRow">
-                        <span>Document.docx</span>
-                        <span>2</span>
-                        <span>20</span>
-                        <span style="display: flex;">20 Mar, 2025 
-                            <i style="margin-left: auto;" class="fa-regular fa-link"></i>
-                            <i style="margin-left: .8vw;"class="fa-light fa-trash"></i>
-                        </span>
-                    </div>
-                    <div class="fileRow">
-                        <span>Document.docx</span>
-                        <span>2</span>
-                        <span>20</span>
-                        <span style="display: flex;">20 Mar, 2025 
-                            <i style="margin-left: auto;" class="fa-regular fa-link"></i>
-                            <i style="margin-left: .8vw;"class="fa-light fa-trash"></i>
-                        </span>
-                    </div>
+
                 </div>
             </li>
         </ul>
     </section>
 </body>
+
+<template id="fileRow">
+    <div class="fileRow">
+        <span id="name">Error.</span>
+        <span id="download">Error.</span>
+        <span id="maxDownload">Error.</span>
+        <span style="display: flex;"><span id="exp">Error.</span>
+            <i style="margin-left: auto;" id="link" class="fa-regular fa-link"></i>
+            <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
+        </span>
+    </div>
+</template>
+
+<template id="alertWarningTemp">
+    <div class="alert warning">
+        <span class="icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </span>
+        <div class="text">
+            <span>Warning!</span>
+            <span class="alert-msg">Some example warning message text here</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    </div>
+</template>
+<template id="alertErrorTemp">
+    <div class="alert error">
+        <span class="icon">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </span>
+        <div class="text">
+            <span>Error!</span>
+            <span class="alert-msg">Some example error message text here</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    </div>
+</template>
+<template id="alertInfoTemp">
+    <div class="alert info">
+        <span class="icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </span>
+        <div class="text">
+            <span>Information</span>
+            <span class="alert-msg">Some example message text here</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    </div>
+</template>
+<template id="alertSuccessTemp">
+    <div class="alert success">
+        <span class="icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </span>
+        <div class="text">
+            <span>Success</span>
+            <span class="alert-msg">Your action was successful</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    </div>
+</template>
+
+<script src="/code/alertService.js"></script>
+<script src="/code/util.js"></script>
+<script src="/code/setting.js"></script>
 </html>
