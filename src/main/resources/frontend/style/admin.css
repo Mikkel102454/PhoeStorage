@@ -73,8 +73,6 @@ section h2{
     font-size: 3vh;
 }
 
-section ul{padding: 0;}
-
 section:target {display: flex;}
 
 .border{
@@ -99,8 +97,12 @@ section:target {display: flex;}
 }
 
 section ul{
+    padding: 0;
+    display: flex;
+    flex-direction: column;
     list-style: none;
     margin: 2vh 0;
+    gap: 2vh;
 }
 
 
@@ -171,38 +173,48 @@ section .text1 input{
     color: #e5e5e5;
 }
 
-section .fileList{
+section .userList{
     border-color: rgb(38, 38, 38);
     border-width: 0.1vh;
     border-style: solid;
     border-radius: 0.7vw;
 }
 
-section .fileList .fileRow{
+section .userList .userRow{
     user-select:text;
     padding: 1vh 1vw;
     border-color: rgb(38, 38, 38);
     border-width: 0.2vh;
     border-bottom-style: solid;
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 2fr auto;
+    grid-template-columns: 3fr 1fr 1fr 1fr 2fr auto;
 }
 
-section .fileList .fileRow:last-child{
+section .userList .userRow:last-child{
     border: none;
 }
-section .fileList .fileRow:first-child{
+section .userList .userRow:first-child{
     user-select:none;
 }
-section .fileList .fileRow i{
+section .userList .userRow input{
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    outline: none;
+    color: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+}
+section .userList .userRow i{
     cursor: pointer;
 }
-section .fileList #rowContainer{
+section .userList #rowContainer{
     display: flex;
     flex-direction: column;
 }
 
-section .fileList #rowContainer h3{
+section .userList #rowContainer h3{
     margin: 8vh auto;
     color: #acacac;
 }
@@ -214,4 +226,57 @@ section .fileList #rowContainer h3{
 .tab[tab-current="page"]:hover{
     background-color: rgba(255, 255, 255, 0.06);
     color: rgb(158, 158, 158);
+}
+
+.label-ckb {
+    padding: 0;
+    margin: 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8vh;
+    font-size: 1.4vh;
+    color: #a3a3a3;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    height: fit-content;
+}
+.label-ckb .ckb {
+    position: absolute;
+    opacity: 0;
+    width: 0.1vh;
+    height: 0.1vh;
+    margin: 0;
+}
+
+.label-ckb .ckb-box {
+    width: 1.5vh;
+    height: 1.5vh;
+    border: 0.3vh solid #262626;
+    border-radius: 0.6vh;
+    background: #0f0f0f;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+}
+
+.label-ckb .ckb-box .ckb-icon {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.label-ckb .ckb:focus-visible + .ckb-box {
+    outline: 0.2vh solid #7c7fff;
+    outline-offset: 0.2vh;
+}
+
+.label-ckb .ckb:checked + .ckb-box {
+    background: #7c7fff;
+    border-color: #7c7fff;
+}
+
+.label-ckb .ckb:checked + .ckb-box .ckb-icon {
+    opacity: 1;
+    transform: scale(1);
 }

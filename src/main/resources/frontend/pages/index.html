@@ -53,6 +53,48 @@
             </div>
         </div>
     </div>
+    <div class="createFolder" id="passwordMenu">
+        <div class="background"></div>
+        <div class="content">
+            <h3>Please change you password</h3>
+            <div style="display: flex; flex-direction: column">
+                <input id="passwordInput" type="password" placeholder="New password">
+                <input id="confirmPasswordInput" type="password" placeholder="Repeat password">
+            </div>
+            <div>
+                <span style="margin-left: auto" id="confirmButton">Change</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal">
+        <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
+        <div class="main">
+            <div class="header">
+                <h2 id="title">Delete file permanently?</h2>
+                <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
+            </div>
+            <div class="info">
+                <div class="infoRow">
+                    <span class="note">Name</span>
+                    <span id="name">Loading...</span>
+                </div>
+                <div class="infoRow">
+                    <span class="note">Size</span>
+                    <span id="size">Loading...</span>
+                </div>
+                <div class="infoRow">
+                    <span class="note">Last modified</span>
+                    <span id="date">Loading...</span>
+                </div>
+            </div>
+            <div class="buttons">
+                <div class="confirmBtn" id="confirmBtn">Delete</div>
+                <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
+            </div>
+        </div>
+    </div>
+
     <div class="customContextMenu" id="context-menu-drive">
         <ul>
             <li tabindex="0" onclick="toggleFolderCreationMenu()"><i class="fa-light fa-folder-plus"></i>Create folder</li>
@@ -149,33 +191,6 @@
 
 <template id="starred-file-temp">
     <div class="my-drive">
-        <div id="deleteModal">
-            <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
-            <div class="main">
-                <div class="header">
-                    <h2 id="title">Delete file permanently?</h2>
-                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
-                </div>
-                <div class="info">
-                    <div class="infoRow">
-                        <span class="note">Name</span>
-                        <span id="name">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Size</span>
-                        <span id="size">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Last modified</span>
-                        <span id="date">Loading...</span>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <div class="confirmBtn" id="confirmBtn">Delete</div>
-                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
-                </div>
-            </div>
-        </div>
         <div class="section">
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
@@ -215,33 +230,7 @@
 
 <template id="drive-file-temp">
     <div class="my-drive">
-        <div id="deleteModal">
-            <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
-            <div class="main">
-                <div class="header">
-                    <h2 id="title">Delete file permanently?</h2>
-                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
-                </div>
-                <div class="info">
-                    <div class="infoRow">
-                        <span class="note">Name</span>
-                        <span id="name">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Size</span>
-                        <span id="size">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Last modified</span>
-                        <span id="date">Loading...</span>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <div class="confirmBtn" id="confirmBtn">Delete</div>
-                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
-                </div>
-            </div>
-        </div>
+
 
         <div class="section">
             <div class="header">
@@ -281,34 +270,6 @@
 
 <template id="home-section-temp">
     <div class="home">
-        <div id="deleteModal">
-            <div class="main">
-                <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
-                <div class="header">
-                    <h2 id="title">Delete file permanently?</h2>
-                    <p class="note">Note deleted file cannot be retrived after it's deletion.</p>
-                </div>
-                <div class="info">
-                    <div class="infoRow">
-                        <span class="note">Name</span>
-                        <span id="name">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Size</span>
-                        <span id="size">Loading...</span>
-                    </div>
-                    <div class="infoRow">
-                        <span class="note">Last modified</span>
-                        <span id="date">Loading...</span>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <div class="confirmBtn" id="confirmBtn">Delete</div>
-                    <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
-                </div>
-            </div>
-
-        </div>
         <div class="section">
             <div class="header">
                 <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
@@ -454,4 +415,5 @@
 <script src="/code/fileHandler.js"></script>
 <script src="/code/file.js"></script>
 <script src="/code/fileDragnDrop.js"></script>
+<script src="/code/security.js"></script>
 </html>

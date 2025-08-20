@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin panel</title>
+  <link rel="stylesheet" href="/style/admin.css">
+  <link rel="stylesheet" href="/style/alert.css">
+
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+</head>
+<body>
+<div id="alertBox">
+
+</div>
+<nav>
+  <a href="/">Back</a>
+  <a class="tab" href="#user">Users</a>
+  <a class="tab" href="#security">Security</a>
+  <a class="tab" href="#shared">Shared files</a>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="user">
+  <h2>Settings</h2>
+  <ul>
+    <li class="border">
+      <h3>Create user</h3>
+
+      <div class="text1">
+        <span>Username</span>
+        <input type="text" placeholder="Username" id="username">
+      </div>
+      <div class="text1">
+        <span>Password</span>
+        <input type="text" placeholder="Password" id="username">
+      </div>
+      <div class="text1">
+        <span>Data limit</span>
+        <input type="text" placeholder="100 GB" id="username">
+      </div>
+      <div style="display: flex; gap: .5vw; justify-content: right;">
+        <div class="button2" onclick="setSettings('username', document.getElementById('username').value)">Save</div>
+      </div>
+    </li>
+
+    <li class="border">
+      <h3>Shared files</h3>
+
+      <div class="userList">
+        <!-- Header row -->
+        <div class="userRow header">
+          <span>Username</span>
+          <span>Data limit</span>
+          <span>Data used</span>
+          <span>Is admin</span>
+          <span>Is enabled</span>
+        </div>
+
+        <!-- Data rows -->
+        <div id="rowContainer">
+
+        </div>
+
+      </div>
+    </li>
+  </ul>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="security">
+  <h2>Settings</h2>
+  <ul>
+    <li class="border">
+      <h3>Change password</h3>
+
+      <div class="text1">
+        <span>Current password</span>
+        <input type="password" placeholder="*******" id="oldPassword">
+      </div>
+      <div class="text1">
+        <span>New password</span>
+        <input type="password" placeholder="*******" id="newPassword">
+      </div>
+      <div style="display: flex; gap: .5vw; justify-content: right;">
+        <div class="button2" onclick="setPassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Save</div>
+      </div>
+    </li>
+  </ul>
+</section>
+<section id="shared">
+  <h2>Settings</h2>
+  <ul>
+    <li class="border">
+      <h3>Shared files</h3>
+
+      <div class="fileList">
+        <!-- Header row -->
+        <div class="fileRow header">
+          <span>Name</span>
+          <span>Downloads</span>
+          <span>Total Downloads</span>
+          <span>Expire</span>
+        </div>
+
+        <!-- Data rows -->
+        <div id="rowContainer">
+          <h3>Nothing to show here</h3>
+        </div>
+
+      </div>
+    </li>
+  </ul>
+</section>
+</body>
+
+<template id="userRow">
+    <div class="userRow">
+        <span id="username"><input type="text" placeholder="Loading..."></span>
+        <span id="dataLimit"><input type="text" placeholder="Loading..."></span>
+        <span id="dataUsed"><input type="text"placeholder="Loading..."></span>
+        <span id="isAdmin">
+            <label class="label-ckb">
+                <input class="ckb" type="checkbox" name="remember-me" value="1">
+                <span class="ckb-box" aria-hidden="true">
+                    <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+                        <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                    </svg>
+                </span>
+            </label>
+        </span>
+        <span style="display: flex; height: fit-content"><span id="isEnabled">
+            <label class="label-ckb">
+                <input class="ckb" type="checkbox" name="remember-me" value="1">
+                <span class="ckb-box" aria-hidden="true">
+                    <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+                        <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                    </svg>
+                </span>
+            </label>
+        </span>
+        <i style="margin-left: auto;" id="upload" class="fa-light fa-arrow-rotate-right"></i>
+        <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
+    </div>
+</template>
+
+<template id="alertWarningTemp">
+  <div class="alert warning">
+        <span class="icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </span>
+    <div class="text">
+      <span>Warning!</span>
+      <span class="alert-msg">Some example warning message text here</span>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+</template>
+<template id="alertErrorTemp">
+  <div class="alert error">
+        <span class="icon">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </span>
+    <div class="text">
+      <span>Error!</span>
+      <span class="alert-msg">Some example error message text here</span>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+</template>
+<template id="alertInfoTemp">
+  <div class="alert info">
+        <span class="icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </span>
+    <div class="text">
+      <span>Information</span>
+      <span class="alert-msg">Some example message text here</span>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+</template>
+<template id="alertSuccessTemp">
+  <div class="alert success">
+        <span class="icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </span>
+    <div class="text">
+      <span>Success</span>
+      <span class="alert-msg">Your action was successful</span>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+</template>
+
+<script src="/code/alertService.js"></script>
+<script src="/code/util.js"></script>
+</html>

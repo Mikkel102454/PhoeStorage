@@ -35,8 +35,12 @@ public class UserEntity implements UserDetails {
 
     @Column(unique = false, nullable = false, name = "dataUsed")
     private long dataUsed;
+
     @Column(unique = false, nullable = false, name = "dataLimit")
     private long dataLimit;
+
+    @Column(unique = false, nullable = false, name = "forceChangePassword")
+    private boolean forceChangePassword;
 
     public int getId() {
         return id;
@@ -103,6 +107,14 @@ public class UserEntity implements UserDetails {
 
     public void setDataLimit(long dataLimit) {
         this.dataLimit = dataLimit;
+    }
+
+    public boolean isForceChangePassword() {
+        return forceChangePassword;
+    }
+
+    public void setForceChangePassword(boolean forceChangePassword) {
+        this.forceChangePassword = forceChangePassword;
     }
 
     @Override

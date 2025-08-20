@@ -175,7 +175,7 @@ async function setPassword(oldPassword, newPassword){
             return
         }
         if(Number(response.status) === 400){
-            throwError("Password must be at least 8 characters")
+            throwError("Password must be at least 3 characters")
             return
         }
         throwError("Could not change password")
@@ -183,3 +183,19 @@ async function setPassword(oldPassword, newPassword){
 
     throwSuccess("Password updated")
 }
+
+const tabs = document.querySelectorAll('.tab');
+
+function syncTab() {
+    const h = location.hash || '#account';
+
+    tabs.forEach(t => t.removeAttribute('tab-current'));
+
+    const active = document.querySelector(`a.tab[href="${h}"]`);
+
+    if (active) active.setAttribute('tab-current', 'page');
+}
+
+window.addEventListener('hashchange', syncTab);
+
+syncTab();

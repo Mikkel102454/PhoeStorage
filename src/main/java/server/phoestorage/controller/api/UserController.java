@@ -124,4 +124,34 @@ public class UserController {
             default -> ResponseEntity.internalServerError().build();
         };
     }
+
+    @PostMapping("/forcePassword")
+    public ResponseEntity<String> forceSetPassword(
+            @RequestParam() String newPassword
+    ) {
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+        if(uuid == null || uuid.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        int code = userService.forceSetPassword(uuid, newPassword);
+        return switch (code) {
+            case 0 -> ResponseEntity.ok("");
+            case 400 -> ResponseEntity.badRequest().build();
+            case 404 -> ResponseEntity.notFound().build();
+            case 401 -> ResponseEntity.status(401).build();
+            default -> ResponseEntity.internalServerError().build();
+        };
+    }
+
+    @GetMapping("/forcePassword")
+    public ResponseEntity<String> getForcePassword(
+    ) {
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+        if(uuid == null || uuid.isEmpty()) {
+            return ResponseEntity.status(404).build();
+        }
+        boolean change = userService.passwordChangeForce(uuid);
+        if(change) {return ResponseEntity.ok("");}
+        return ResponseEntity.badRequest().build();
+    }
 }

@@ -51,6 +51,7 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(password));
             user.setAdmin(admin);
             user.setEnabled(true);
+            user.setForceChangePassword(true);
 
             userRepository.save(user);
 
@@ -59,6 +60,11 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean passwordChangeForce(String uuid){
+        UserEntity user = userRepository.findByUuid(uuid);
+        return user.isForceChangePassword();
     }
 
     public SettingsEntry getSettings(String uuid){
@@ -98,6 +104,18 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
 
+        userRepository.save(user);
+
+        return 0;
+    }
+
+    public int forceSetPassword(String uuid, String newPassword){
+        if(newPassword.length() < 3) { return 400; }
+        UserEntity user = userRepository.findByUuid(uuid);
+        if(!user.isForceChangePassword()) { return 401; }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setForceChangePassword(false);
         userRepository.save(user);
 
         return 0;

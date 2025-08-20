@@ -387,6 +387,39 @@ function closeDeleteModal(){
     deleteModal.classList.remove("visible")
 }
 
+let forcePasswordMenu;
+let forcePasswordMenuConfirm;
+let forcePasswordMenuInput;
+let forcePasswordMenuInputConfirm;
+function openForcePasswordMenu() {
+    if (!forcePasswordMenu) forcePasswordMenu = document.getElementById("passwordMenu");
+    if (!forcePasswordMenuConfirm) forcePasswordMenuConfirm = forcePasswordMenu.querySelector("#confirmButton");
+    if (!forcePasswordMenuInput) forcePasswordMenuInput = forcePasswordMenu.querySelector("#passwordInput");
+    if (!forcePasswordMenuInputConfirm) forcePasswordMenuInputConfirm = forcePasswordMenu.querySelector("#confirmPasswordInput");
+
+    forcePasswordMenuConfirm.addEventListener("click", async function(){
+        switch (await forceChangePassword(forcePasswordMenuInput.value, forcePasswordMenuInputConfirm.value)){
+            case 0:
+                closeForcePasswordMenu()
+                throwSuccess("Changed password")
+                break;
+            case 1:
+                throwError("Password need to be 3 character or longer")
+                break;
+            case 2:
+                throwError("Passwords is not the same")
+                break;
+        }
+    });
+
+    forcePasswordMenu.classList.add("visible");
+}
+
+function closeForcePasswordMenu(){
+    if(!forcePasswordMenu) {forcePasswordMenu = document.getElementById("renameMenu")}
+    forcePasswordMenu.classList.remove("visible");
+}
+
 function initDeleteModal(){
     if(!deleteModal) deleteModal = document.getElementById("deleteModal");
     if(!deleteModalTitle) deleteModalTitle = deleteModal.querySelector("#title");

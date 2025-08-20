@@ -1,8 +1,31 @@
-make admin panel - pri-1
-make search function - pri-2
-Make notification - pri-3
-make change password at login - pri-1
+make admin panel - pri-1:
+users tab:
+notification sender
 
-make so you can see what category you are in on settings - pri-0
-make so login screen dont fuck up when zoom - pri-0
+security:
+reset password
+force logout
+deactivate users
+
+storage tab:
+Start UGC service
+server storage limit
+server storage used
+all download links
+
+
+
+
+make search function - pri-2:
+extension
+filename
+
+
+
+
+Make notification - pri-3
+
+
+
+make change password at login - pri-1
 done!
