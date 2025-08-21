@@ -441,4 +441,34 @@ public class FileService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }
+
+    public List<FileEntry> searchFile(String query){
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+        List<FileEntity> result = new ArrayList<>();
+        if(query.startsWith(".")){
+            query = query.substring(1);
+            result = fileRepository.findTop100ByOwnerAndExtensionContainingIgnoreCase(uuid, query);
+        }else{
+            result = fileRepository.findTop100ByOwnerAndNameContainingIgnoreCase(uuid, query);
+        }
+
+        List<FileEntry> r = new ArrayList<>();
+        for (FileEntity fileEntity : result) {
+            FileEntry fileEntry = new FileEntry();
+            fileEntry.setUuid(fileEntity.getUuid());
+            fileEntry.setOwner(fileEntity.getOwner());
+            fileEntry.setName(fileEntity.getName());
+            fileEntry.setExtension(fileEntity.getExtension());
+            fileEntry.setFolderId(fileEntity.getFolderId());
+            fileEntry.setCreated(fileEntity.getCreated());
+            fileEntry.setModified(fileEntity.getModified());
+            fileEntry.setAccessed(fileEntity.getAccessed());
+            fileEntry.setSize(fileEntity.getSize());
+            fileEntry.setStarred(fileEntity.getStarred());
+
+            r.add(fileEntry);
+        }
+        return r;
+    }
 }

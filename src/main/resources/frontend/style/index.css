@@ -497,6 +497,11 @@ main .home .profile div:hover {
     cursor: pointer;
 }
 
+main .my-drive .profile i:hover,
+main .home .profile i:hover {
+    cursor: pointer;
+}
+
 main .my-drive .profile .fa-bell,
 main .home .profile .fa-bell {
     margin-right: 1vh;

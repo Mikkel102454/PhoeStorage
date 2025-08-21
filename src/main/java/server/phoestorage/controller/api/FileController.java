@@ -6,11 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import server.phoestorage.dto.FileEntry;
 import server.phoestorage.service.AppUserDetailsService;
 import server.phoestorage.service.FileService;
 import server.phoestorage.service.HandlerService;
 import server.phoestorage.service.LinkService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -100,6 +102,13 @@ public class FileController {
             @RequestParam("fileId") String fileId
     ){
         return fileService.deleteFile(folderId, fileId);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<FileEntry>> searchFile(
+            @RequestParam("query") String query
+    ){
+        return ResponseEntity.ok(fileService.searchFile(query));
     }
 
     @PostMapping("/rename")

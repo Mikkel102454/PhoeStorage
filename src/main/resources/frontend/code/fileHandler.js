@@ -118,6 +118,35 @@ async function renameFile(folderId, fileId, name){
     }
 }
 
+async function searchFiles(query) {
+    const response = await fetch(`/api/files/search?query=${encodeURIComponent(query)}`, {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        throwError(await response.text());
+        return;
+    }
+
+    const result = await response.json();
+    let allFiles = []
+    result.forEach(item => {
+        allFiles.push(new File(
+            item.uuid,
+            item.owner,
+            item.name,
+            item.extension,
+            item.folderId,
+            item.created,
+            item.modified,
+            item.accessed,
+            item.size,
+            item.starred
+        ))
+    });
+    return allFiles
+}
+
 async function getStarredFiles(){
     const response = await fetch(`/api/files/starred`, {
         method: "GET"

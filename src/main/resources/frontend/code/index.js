@@ -22,7 +22,7 @@ onload = function(){
                 loadHome()
         }
     }else{
-        loadHome()
+        loadDrive()
     }
 
 }

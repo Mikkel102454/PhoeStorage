@@ -136,6 +136,7 @@ document.addEventListener("keydown", function(event) {
         closeRenameMenu()
         closeAdminPasswordMenu()
         closeUserUpdateMenu()
+        closeDeleteUserMenu()
     }
 });
 
@@ -162,6 +163,36 @@ function formatSize(bytes) {
 
     const value = bytes % 1 === 0 ? bytes.toFixed(0) : bytes.toFixed(1);
     return `${value} ${units[i]}`;
+}
+
+function parseSize(sizeStr) {
+    if (typeof sizeStr !== "string") return -1;
+
+    // Remove *all* spaces and normalize case
+    sizeStr = sizeStr.replace(/\s+/g, "").toUpperCase();
+
+    const units = {
+        B: 0,
+        KB: 1,
+        MB: 2,
+        GB: 3,
+        TB: 4,
+        PB: 5
+    };
+
+    const regex = /^([\d.]+)([KMGTPE]?B)$/i;
+    const match = sizeStr.match(regex);
+    if (!match) return -1;
+
+    const value = parseFloat(match[1]);
+    const unit = match[2].toUpperCase();
+
+    if (isNaN(value) || value < 0 || !(unit in units)) return -1;
+
+    const exponent = units[unit];
+    const bytes = value * Math.pow(1024, exponent);
+
+    return BigInt(Math.round(bytes));
 }
 
 
@@ -244,3 +275,51 @@ function formatDate(raw){
         day: "numeric"
     });
 }
+
+// Generic debounce that preserves args/this per instance
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+const debouncedMap = new WeakMap();
+
+function getDebouncedFor(el, fn, delay) {
+    if (!debouncedMap.has(el)) {
+        debouncedMap.set(el, debounce(fn, delay));
+    }
+    return debouncedMap.get(el);
+}
+
+
+document.addEventListener('input', (e) => {
+    const el = e.target;
+    if (el.matches('.searchInput') || el.matches('.searchInputStar')) {
+        const starred = el.matches('.searchInputStar');
+
+        const debounced = getDebouncedFor(
+            el,
+            async (val, element, isStarred) => {
+                try {
+                    await search(val, element, isStarred);
+                } catch (err) {
+                    console.error('search failed:', err);
+                }
+            },
+            400
+        );
+
+        debounced(el.value, el, starred); // schedules; not awaited
+    }
+});

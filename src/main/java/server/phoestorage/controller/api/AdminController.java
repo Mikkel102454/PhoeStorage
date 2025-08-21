@@ -25,7 +25,7 @@ public class AdminController {
     public ResponseEntity<String> createuser(
             @RequestParam() String u,
             @RequestParam() String p,
-            @RequestParam() Long d,
+            @RequestParam() long d,
             @RequestParam() boolean a,
             @RequestParam() boolean e
     ){
@@ -45,7 +45,7 @@ public class AdminController {
     public ResponseEntity<String> updateUser(
             @RequestParam() String uuid,
             @RequestParam() String u,
-            @RequestParam() Long d,
+            @RequestParam() long d,
             @RequestParam() boolean a,
             @RequestParam() boolean e
     ){
@@ -74,7 +74,7 @@ public class AdminController {
         };
     }
 
-    @PostMapping("/user")
+    @DeleteMapping("/user")
     public ResponseEntity<String> deleteUser(
             @RequestParam() String uuid
     ){
@@ -82,7 +82,7 @@ public class AdminController {
 
         return switch (code) {
             case 0 -> ResponseEntity.ok("User deleted successfully");
-            case 404 -> ResponseEntity.ok("User not found");
+            case 404 -> ResponseEntity.status(404).body("User not found");
             default -> ResponseEntity.internalServerError().body("Failed to delete user");
         };
     }
@@ -117,7 +117,7 @@ public class AdminController {
     }
 
     @GetMapping("/storage")
-    public ResponseEntity<List<Long>> getStorage(){
+    public ResponseEntity<long[]> getStorage(){
         return null;
     }
 

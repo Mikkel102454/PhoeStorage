@@ -20,7 +20,7 @@
 </nav>
 
 <section id="user">
-  <div class="userUpdaetMenu" id="userUpdateMenu">
+  <div class="userUpdate" id="userUpdateMenu">
     <div class="background" onclick="closeUserUpdateMenu()"></div>
       <div class="content">
         <h3 id="title">User update for "loading..."</h3>
@@ -37,15 +37,27 @@
 
   <div class="passwordReset" id="passwordResetMenu">
     <div class="background" onclick="closeAdminPasswordMenu()"></div>
-      <div class="content">
-        <h3 id="title">Reset password for "loading..."</h3>
-        <input id="passwordResetInput">
-        <div class="interactive">
-          <span onclick="closeAdminPasswordMenu()">Cancel</span>
-          <span onclick="" id="confirmButton">Update</span>
-        </div>
+    <div class="content">
+      <h3 id="title">Reset password for "loading..."</h3>
+      <input id="passwordResetInput">
+      <div class="interactive">
+        <span onclick="closeAdminPasswordMenu()">Cancel</span>
+        <span onclick="" id="confirmButton">Update</span>
       </div>
     </div>
+  </div>
+  </div>
+
+  <div class="passwordReset" id="deleteUserMenu">
+    <div class="background" onclick="closeDeleteUserMenu()"></div>
+    <div class="content">
+      <h3 id="title">Delete user "loading..."</h3>
+      <div class="interactive">
+        <span onclick="closeDeleteUserMenu()">Cancel</span>
+        <span onclick="" id="confirmButton">Delete</span>
+      </div>
+    </div>
+  </div>
   </div>
 
   <h2>Admin Panel</h2>
@@ -103,7 +115,7 @@
         </div>
 
         <!-- Data rows -->
-        <div id="rowContainer">
+        <div id="userRowContainer" class="rowContainer">
           <h3>Nothing to show here</h3>
         </div>
 
@@ -121,11 +133,11 @@
 
       <div class="text1">
         <span>Title</span>
-        <input type="text" placeholder="Title of message" id="username">
+        <input type="text" placeholder="Title of message" id="notifyTitle">
       </div>
       <div class="text1">
         <span>Message</span>
-        <textarea  style="height: 20vh;" type="textarea" placeholder="Type your message here" id="username"></textarea>
+        <textarea  style="height: 20vh;" type="textarea" placeholder="Type your message here" id="notifyMsg"></textarea>
       </div>
       <div style="display: flex; gap: .5vw; justify-content: right;">
         <div class="button2" onclick="sendNotification()">Send</div>
@@ -165,7 +177,7 @@
         </div>
 
         <!-- Data rows -->
-        <div id="rowContainer">
+        <div id="rowContainer" class="rowContainer">
           <h3>Nothing to show here</h3>
         </div>
 
@@ -270,4 +282,5 @@
 
 <script src="/code/alertService.js"></script>
 <script src="/code/util.js"></script>
+<script src="/code/admin.js"></script>
 </html>

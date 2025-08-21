@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -193,7 +195,7 @@
     <div class="my-drive">
         <div class="section">
             <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInputStar"></div>
 
                 <div class="profile">
                     <div>
@@ -201,7 +203,8 @@
                             <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
                         </i>
                     </div>
-                    <i class="fa-solid fa-gear fa-inverse" onclick="location.href = '/setting#account'"></i>
+                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
+                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
                 </div>
             </div>
         </div>
@@ -234,7 +237,7 @@
 
         <div class="section">
             <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInput"></div>
 
                 <div class="profile">
                     <div>
@@ -242,7 +245,8 @@
                             <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
                         </i>
                     </div>
-                    <i class="fa-solid fa-gear fa-inverse" onclick="location.href = '/setting#account'"></i>
+                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
+                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
                 </div>
             </div>
         </div>
@@ -272,16 +276,16 @@
     <div class="home">
         <div class="section">
             <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search"></div>
-                
+                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInputStar"></div>
+
                 <div class="profile">
                     <div>
                         <i class="fa-regular fa-bell fa-inverse">
                             <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
                         </i>
                     </div>
-
-                    <i class="fa-solid fa-gear fa-inverse" onclick="location.href = '/setting#account'"></i>
+                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
+                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
                 </div>
             </div>
             <!--

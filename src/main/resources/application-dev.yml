@@ -1,7 +1,10 @@
 logging:
   level:
     root: info
-    org.hibernate.SQL: error
+    org:
+      hibernate.SQL: error
+      springframework:
+        security=DEBUG:
 
   file:
     path: logs/PhoeStorage.log

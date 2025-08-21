@@ -1,5 +1,3 @@
-const { use } = require("react")
-
 class Download{
     uuid //string
     owner //string
@@ -27,17 +25,23 @@ class User{
     dataLimit //long
     dataUsed //long
     isAdmin //bool
-    isEnabled // bool
-    constructor(uuid, name, extension, download, maxDownload, expire, isFolder) {
+    enabled // bool
+    constructor(uuid, username, dataLimit, dataUsed, isAdmin, enabled) {
         this.uuid = uuid
-        this.name = name
-        this.extension = extension
-        this.download = download
-        this.maxDownload = maxDownload
-        this.expire = expire
-        this.isFolder = isFolder
+        this.username = username
+        this.dataLimit = dataLimit
+        this.dataUsed = dataUsed
+        this.isAdmin = isAdmin
+        this.enabled = enabled
     }
 }
+
+onload = async function(){
+    await getAllUsers()
+    await getStatistic()
+    await getSharedFiles()
+}
+
 
 // User panel
 let createUserPanel
@@ -54,26 +58,24 @@ async function createUser(){
     if(!createAdminInput) {createAdminInput = createUserPanel.querySelector("#admin")}
     if(!createEnabledInput) {createEnabledInput = createUserPanel.querySelector("#enabled")}
 
-    const response = await fetch(`/api/admin/user?
-        u=${encodeURIComponent(createUsernameInput.value)}
-        &p=${encodeURIComponent(createPasswordInput.value)}
-        &d=${encodeURIComponent(createDataLimitInput.value)}
-        &a=${encodeURIComponent(createAdminInput.checked)}
-        &e=${encodeURIComponent(createEnabledInput.checked)}`, {
+    let dataByteLimit = parseSize(createDataLimitInput.value)
+    if(dataByteLimit === -1){throwError("The storage limit input could not be converted to bytes"); return}
+    const response = await fetch(`/api/admin/user?u=${encodeURIComponent(createUsernameInput.value)}&p=${encodeURIComponent(createPasswordInput.value)}&d=${encodeURIComponent(dataByteLimit.toString())}&a=${encodeURIComponent(createAdminInput.checked)}&e=${encodeURIComponent(createEnabledInput.checked)}`, {
         method: "POST"
     });
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
-    getAllUsers()
+    await getAllUsers()
 }
 
 let allUsers
 async function getAllUsers(){
-    const response = await fetch(`/api/admin/link`, {
+    const response = await fetch(`/api/admin/user`, {
         method: "GET"
     });
 
@@ -85,28 +87,28 @@ async function getAllUsers(){
 
     allUsers = []
     result.forEach(item => {
-        users.push(new User(
+        allUsers.push(new User(
             item.uuid,
             item.username,
             item.dataLimit,
             item.dataUsed,
-            item.isAdmin,
-            item.isEnabled,
+            item.admin,
+            item.enabled,
         ))
     });
-    if(!users) {
+    if(!allUsers) {
         throwError("Failed to load download links")
         return
     }
 
-    initUsers(users)
+    initUsers(allUsers)
 }
 
 let userContainer
 let userTemp
 function initUsers(users){
-    if(!userContainer) {document.getElementById("rowContainer")}
-    if(!userTemp) {document.getElementById("userRow")}
+    if(!userContainer) {userContainer = document.getElementById("userRowContainer")}
+    if(!userTemp) {userTemp = document.getElementById("userRow")}
 
     if(!users.length > 0) {
         userContainer.innerHTML = "<h3>Nothing to show here</h3>"
@@ -118,15 +120,17 @@ function initUsers(users){
     for (const d of users) {
         const row = userTemp.content.cloneNode(true);
 
-        row.querySelector("#useranme").value = getUserameFast(d.ownerUuid);
+        console.log(d)
+        row.querySelector("#username").value = getUsernameFast(d.uuid);
         row.querySelector("#dataLimit").value = formatSize(d.dataLimit);
         row.querySelector("#dataUsed").textContent = d.dataUsed;
         row.querySelector("#isAdmin").checked = d.isAdmin;
-        row.querySelector("#isEnabled").checked = d.isEnabled;
+        row.querySelector("#isEnabled").checked = d.enabled;
 
-        row.querySelector("#upload").addEventListener("click", async () => {
-            await openUserUpdateMenu(d.uuid, row.querySelector("#useranme").value, row.querySelector("#dataLimit").value,
-                row.querySelector("#isAdmin").checked, row.querySelector("#isEnabled").checked, d)
+        row.querySelector("#upload").addEventListener("click", async (e) => {
+            const userRow = e.currentTarget.closest(".userRow");
+            await openUserUpdateMenu(d.uuid, userRow.querySelector("#username").value, userRow.querySelector("#dataLimit").value,
+                userRow.querySelector("#isAdmin").checked, userRow.querySelector("#isEnabled").checked, d)
         });
 
         row.querySelector("#forceLogout").addEventListener("click", async () => {
@@ -138,7 +142,7 @@ function initUsers(users){
         });
 
         row.querySelector("#trash").addEventListener("click", async () => {
-            await deleteUser(d.uuid)
+            openDeleteUserMenu(d.uuid)
         });
 
         frag.appendChild(row);
@@ -154,11 +158,11 @@ let userUpdateMenuList
 let userUpdateMenuConfirm
 
 let userUpdateMenuHandler
-function openUserUpdateMenu(uuid, username, dataLimit, isAdmin, isEnabled, user){
+function openUserUpdateMenu(uuid, username, dataLimit, isAdmin, enabled, user){
     if(!userUpdateMenu) {userUpdateMenu = document.getElementById("userUpdateMenu")}
-    if(!userUpdateMenuTitle) {userUpdateMenuTitle = createUserPanel.querySelector("#title")}
-    if(!userUpdateMenuList) {userUpdateMenuList = createUserPanel.querySelector("#listContainer")}
-    if(!userUpdateMenuConfirm) {userUpdateMenuConfirm = createUserPanel.querySelector("#confirmButton")}
+    if(!userUpdateMenuTitle) {userUpdateMenuTitle = userUpdateMenu.querySelector("#title")}
+    if(!userUpdateMenuList) {userUpdateMenuList = userUpdateMenu.querySelector("#listContainer")}
+    if(!userUpdateMenuConfirm) {userUpdateMenuConfirm = userUpdateMenu.querySelector("#confirmButton")}
 
     userUpdateMenuTitle.innerText = `User update for "${user.username}"`
 
@@ -167,20 +171,27 @@ function openUserUpdateMenu(uuid, username, dataLimit, isAdmin, isEnabled, user)
         userUpdateMenuHandler = null;
     }
 
-    if(username !== user.username) {userUpdateMenuList.innerHTML += `<span>Username: ${user.username} -> ${username}</span>`}
-    if(dataLimit !== user.dataLimit) {userUpdateMenuList.innerHTML += `<span>Data limit: ${user.username} -> ${username}</span>`}
-    if(isAdmin !== user.isAdmin) {userUpdateMenuList.innerHTML += `<span>Is admin: ${user.username} -> ${username}</span>`}
-    if(isEnabled !== user.isEnabled) {userUpdateMenuList.innerHTML += `<span>Is enabled: ${user.username} -> ${username}</span>`}
+    let i = 0
+    if(username !== user.username) {userUpdateMenuList.innerHTML += `<span style="font-size: 1.7vh;">Username: ${user.username} -> ${username}</span>`; i++}
+    if(parseSize(dataLimit).toString() !== user.dataLimit.toString()) {userUpdateMenuList.innerHTML += `<span style="font-size: 1.7vh;">Data limit: ${formatSize(user.dataLimit)} -> ${dataLimit}</span>`; i++}
+    if(isAdmin !== user.isAdmin) {userUpdateMenuList.innerHTML += `<span style="font-size: 1.7vh;">Is admin: ${user.isAdmin} -> ${isAdmin}</span>`; i++}
+    if(enabled !== user.enabled) {userUpdateMenuList.innerHTML += `<span style="font-size: 1.7vh;">Is enabled: ${user.enabled} -> ${enabled}</span>`; i++}
+
+    if(i === 0){
+        throwWarning("No user data changed")
+        closeUserUpdateMenu()
+        return
+    }
 
     userUpdateMenuHandler = async function (){
         userUpdateMenuConfirm.disabled = true;
 
-        updateUser(uuid, username, dataLimit, isAdmin, isEnabled)
+        await updateUser(uuid, username, dataLimit, isAdmin, enabled)
 
         closeUserUpdateMenu()
         userUpdateMenuConfirm.disabled = false;
     }
-    userUpdateMenuConfirm.addEventListener("click", deleteModalButtonHandler)
+    userUpdateMenuConfirm.addEventListener("click", userUpdateMenuHandler)
 
     userUpdateMenu.classList.add("visible");
 }
@@ -204,7 +215,7 @@ function openAdminPasswordMenu(uuid){
     if(!adminPasswordMenuInput) {adminPasswordMenuInput = adminPasswordMenu.querySelector("#passwordResetInput")}
     if(!adminPasswordMenuConfirm) {adminPasswordMenuConfirm = adminPasswordMenu.querySelector("#confirmButton")}
 
-    adminPasswordMenuTitle.innerText = `Reset password for "${user.username}"`
+    adminPasswordMenuTitle.innerText = `Reset password for "${getUsernameFast(uuid)}"`
     if (adminPasswordMenuHandler) {
         adminPasswordMenuConfirm.removeEventListener("click", adminPasswordMenuHandler);
         adminPasswordMenuHandler = null;
@@ -213,18 +224,54 @@ function openAdminPasswordMenu(uuid){
     adminPasswordMenuHandler = async function (){
         adminPasswordMenuConfirm.disabled = true;
 
-        adminResetPassword(uuid, adminPasswordMenuInput.value)
+        await adminResetPassword(uuid, adminPasswordMenuInput.value)
 
         closeAdminPasswordMenu()
         adminPasswordMenuConfirm.disabled = false;
     }
-    adminPasswordMenuConfirm.addEventListener("click", deleteModalButtonHandler)
+    adminPasswordMenuConfirm.addEventListener("click", adminPasswordMenuHandler)
+    adminPasswordMenu.classList.add("visible")
 }
 
 function closeAdminPasswordMenu(){
     adminPasswordMenuTitle.innerText = 'Reset password for "Loading..."'
 
     adminPasswordMenu.classList.remove("visible")
+}
+
+
+let deleteUserMenu
+let deleteUserMenuTitle
+let deleteUserMenuConfirm
+
+let deleteUserMenuHandler
+function openDeleteUserMenu(uuid){
+    if(!deleteUserMenu) {deleteUserMenu = document.getElementById("deleteUserMenu")}
+    if(!deleteUserMenuTitle) {deleteUserMenuTitle = deleteUserMenu.querySelector("#title")}
+    if(!deleteUserMenuConfirm) {deleteUserMenuConfirm = deleteUserMenu.querySelector("#confirmButton")}
+
+    deleteUserMenuTitle.innerText = `Delete user "${getUsernameFast(uuid)}"`
+    if (deleteUserMenuHandler) {
+        deleteUserMenuConfirm.removeEventListener("click", deleteUserMenuHandler);
+        deleteUserMenuHandler = null;
+    }
+
+    deleteUserMenuHandler = async function (){
+        deleteUserMenuConfirm.disabled = true;
+
+        await deleteUser(uuid)
+        closeDeleteUserMenu()
+        deleteUserMenuConfirm.disabled = false;
+    }
+    deleteUserMenuConfirm.addEventListener("click", deleteUserMenuHandler)
+
+    deleteUserMenu.classList.add("visible")
+}
+
+function closeDeleteUserMenu(){
+    deleteUserMenuTitle.innerText = 'Delete user "Loading..."'
+
+    deleteUserMenu.classList.remove("visible")
 }
 
 async function deleteUser(uuid){
@@ -234,8 +281,9 @@ async function deleteUser(uuid){
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
-
+    await getAllUsers()
     throwSuccess(await response.text())
 }
 
@@ -246,27 +294,27 @@ async function forceLogout(uuid){
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
 }
 
 
-async function updateUser(uuid, username, dataLimit, isAdmin, isEnabled){
-    const response = await fetch(`/api/admin/user?
-        uuid=${encodeURIComponent(uuid)}
-        &u=${encodeURIComponent(username)}
-        &d=${encodeURIComponent(dataLimit)}
-        &a=${encodeURIComponent(isAdmin)}
-        &e=${encodeURIComponent(isEnabled)}`, {
+async function updateUser(uuid, username, dataLimit, isAdmin, enabled){
+    let dataByteLimit = parseSize(dataLimit)
+    if(dataByteLimit === -1){throwError("The storage limit input could not be converted to bytes"); return}
+    const response = await fetch(`/api/admin/user?uuid=${encodeURIComponent(uuid)}&u=${encodeURIComponent(username)}&d=${encodeURIComponent(dataByteLimit.toString())}&a=${encodeURIComponent(isAdmin)}&e=${encodeURIComponent(enabled)}`, {
         method: "PUT"
     });
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
+    await getAllUsers()
 }
 
 async function adminResetPassword(uuid, newPassword){
@@ -276,6 +324,7 @@ async function adminResetPassword(uuid, newPassword){
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
@@ -287,12 +336,16 @@ async function adminResetPassword(uuid, newPassword){
 let notifyTitleInput
 let notifyMessageInput
 async function sendNotification(){
+    if(!notifyTitleInput) {notifyTitleInput = document.getElementById("notifyTitle")}
+    if(!notifyMessageInput) {notifyMessageInput = document.getElementById("notifyMsg")}
+
     const response = await fetch(`/api/admin/notify?title=${encodeURIComponent(notifyTitleInput.value)}&msg=${encodeURIComponent(notifyMessageInput.value)}`, {
         method: "POST"
     });
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
@@ -310,9 +363,8 @@ async function getStatistic(){
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
-
-    return
 }
 
 
@@ -355,17 +407,17 @@ function initSharedFiles(downloads){
     if(!shareContainer) {shareContainer = document.getElementById("rowContainer")}
 
     if(!downloads.length > 0) {
-        fileRowContainer.innerHTML = "<h3>Nothing to show here</h3>"
+        shareContainer.innerHTML = "<h3>Nothing to show here</h3>"
         return
     }
 
     const frag = document.createDocumentFragment();
 
     for (const d of downloads) {
-        const row = fileRowTemp.content.cloneNode(true);
+        const row = shareTemp.content.cloneNode(true);
 
         row.querySelector("#name").textContent = d.isFolder ? `${d.name}.${d.extension}` : d.name;
-        row.querySelector("#owner").textContent = getUserameFast(d.ownerUuid);
+        row.querySelector("#owner").textContent = getUsernameFast(d.owner);
         row.querySelector("#download").textContent = d.download;
         row.querySelector("#maxDownload").textContent = d.maxDownload === -1 ? "infinite" : d.maxDownload;
 
@@ -376,19 +428,21 @@ function initSharedFiles(downloads){
         });
 
         row.querySelector("#trash").addEventListener("click", async () => {
-            await adminDeleteDownload(d.uuid, d.ownerUuid);
+            await adminDeleteDownload(d.uuid, d.owner);
             await getSharedFiles()
         });
 
         frag.appendChild(row);
     }
 
-    fileRowContainer.innerHTML = "";
-    fileRowContainer.replaceChildren(frag);
+    shareContainer.innerHTML = "";
+    shareContainer.replaceChildren(frag);
 
 }
 
-function getUserameFast(uuid){
+function getUsernameFast(uuid){
+    console.log(allUsers)
+    console.log(uuid)
     for (const u of allUsers){
         if(u.uuid === uuid) {return u.username}
     }
@@ -402,11 +456,24 @@ async function adminDeleteDownload(uuid, owner){
 
     if (!response.ok) {
         throwError(await response.text())
+        return
     }
 
     throwSuccess(await response.text())
 }
 
-getAllUsers()
-getStatistic()
-getSharedFiles()
+const tabs = document.querySelectorAll('.tab');
+
+function syncTab() {
+    const h = location.hash || '#account';
+
+    tabs.forEach(t => t.removeAttribute('tab-current'));
+
+    const active = document.querySelector(`a.tab[href="${h}"]`);
+
+    if (active) active.setAttribute('tab-current', 'page');
+}
+
+window.addEventListener('hashchange', syncTab);
+
+syncTab();

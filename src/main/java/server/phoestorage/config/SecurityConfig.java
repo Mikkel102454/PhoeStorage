@@ -27,13 +27,14 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/**", "/admin/**", "/pages/admin.html", "/code/admin.js").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**", "/admin/**", "/pages/admin.html", "/code/admin.js", "/style/admin.css").hasRole("ADMIN")
                         .requestMatchers("/login", "/api/public/**", "/style/**", "/resource/**", "/pages/download.html", "/code/download.js", "/download/**", "/notfound").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .maximumSessions(-1)
                         .sessionRegistry(sessionRegistry())
+                        .expiredUrl("/login?expired")
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

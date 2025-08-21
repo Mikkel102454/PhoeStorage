@@ -213,12 +213,12 @@ section .userList .userRow i{
     margin-top: auto;
     margin-bottom: auto;
 }
-section .userList #rowContainer{
+section .userList .rowContainer{
     display: flex;
     flex-direction: column;
 }
 
-section .userList #rowContainer h3{
+section .userList .rowContainer h3{
     margin: 8vh auto;
     color: #acacac;
 }
@@ -252,12 +252,12 @@ section .fileList .fileRow i{
     margin-top: auto;
     margin-bottom: auto;
 }
-section .fileList #rowContainer{
+section .fileList .rowContainer{
     display: flex;
     flex-direction: column;
 }
 
-section .fileList #rowContainer h3{
+section .fileList .rowContainer h3{
     margin: 8vh auto;
     color: #acacac;
 }
@@ -345,7 +345,7 @@ section .fileList #rowContainer h3{
 
 
 
-
+.userUpdate,
 .passwordReset {
     top: 0;
     left: 0;
@@ -357,18 +357,21 @@ section .fileList #rowContainer h3{
     display: none;
     z-index: 100;
 }
+.userUpdate.visible,
 .passwordReset.visible{
     display:block;
     opacity: 1;
     pointer-events: auto;
 }
 
+.userUpdate .background,
 .passwordReset .background{
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.2);
 }
 
+.userUpdate .content,
 .passwordReset .content{
     background-color: rgb(33, 35, 36);
     width: fit-content;
@@ -381,12 +384,14 @@ section .fileList #rowContainer h3{
     border-radius: 2vh;
     color: white;
 }
+.userUpdate .content h3,
 .passwordReset .content h3{
     margin: 1vh 0;
     font-weight: 500;
     font-size: 2.8vh;
 }
 
+.userUpdate .content input,
 .passwordReset .content input{
     background-color: oklab(17.852999999999998% 0.00112 -0.00393);
     border-color: rgb(68, 68, 68);
@@ -405,11 +410,13 @@ section .fileList #rowContainer h3{
     width: 18vw;
 }
 
+.userUpdate .content .interactive,
 .passwordReset .content .interactive{
     display: flex;
     padding: 1vh;
 }
 
+.userUpdate .content .interactive span,
 .passwordReset .content .interactive span{
     transition: 0.2s;
     margin-left: auto;
@@ -423,9 +430,11 @@ section .fileList #rowContainer h3{
     text-align: center;
     font-size: 2vh;
 }
+.userUpdate .content .interactive span:hover,
 .passwordReset .content .interactive span:hover{
     cursor: pointer;
 }
+.userUpdate .content .interactive span:last-child,
 .passwordReset .content .interactive span:last-child{
     margin-left: 2vh;
     background: linear-gradient(180deg, #7c7fff, #6ee7ff);

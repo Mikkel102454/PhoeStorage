@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -47,7 +48,7 @@ public class UserService {
      * @return exit code
      *
      */
-    public int addUser(String username, String password, Long data, boolean admin, boolean enabled) {
+    public int addUser(String username, String password, long data, boolean admin, boolean enabled) {
         try{
             if(userRepository.existsByUsername(username)) { return 1; }
             if(password.length() < 3) { return 2; }
@@ -91,13 +92,14 @@ public class UserService {
         }
     }
 
-    public int updateUser(String uuid, String username, Long data, boolean admin, boolean enabled) {
+    public int updateUser(String uuid, String username, long data, boolean admin, boolean enabled) {
         try{
             if(!userRepository.existsByUuid(uuid)) { return 404; }
-            if(userRepository.existsByUsername(username)) { return 1; }
+            UserEntity user = userRepository.findByUuid(uuid);
+            if(!user.getUsername().equals(username) && userRepository.existsByUsername(username)) { return 1; }
             if(username.length() < 3) { return 3; }
 
-            UserEntity user = userRepository.findByUuid(uuid);
+
             user.setUsername(username);
             user.setDataLimit(data);
             user.setAdmin(admin);

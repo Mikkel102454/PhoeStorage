@@ -14,6 +14,7 @@ body {
     gap: 1.5vh;
     width: 40vh;
     padding: 0;
+    z-index: 999999;
 }
 
 /* Base alert style */

@@ -49,4 +49,8 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
                    @Param("fileId") String fileId,
                    @Param("name") String name,
                    @Param("ext") String ext);
+
+    List<FileEntity> findTop100ByOwnerAndNameContainingIgnoreCase(String owner, String namePart);
+
+    List<FileEntity> findTop100ByOwnerAndExtensionContainingIgnoreCase(String owner, String namePart);
 }
