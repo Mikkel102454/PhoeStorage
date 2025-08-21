@@ -153,7 +153,7 @@ public class FileService {
 
             return 0;
         } catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            System.err.println(e);
             return -1;
         }
     }
@@ -191,7 +191,7 @@ public class FileService {
             }
             return fileName;
         }catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            System.err.println(e);
             return null;
         }
     }
@@ -243,7 +243,7 @@ public class FileService {
             fileRepository.save(fileEntity);
             return 0;
         }catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            System.err.println(e);
 
             return 500;
         }
@@ -340,7 +340,7 @@ public class FileService {
 
             return ResponseEntity.ok().build();
         }catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }
@@ -437,7 +437,7 @@ public class FileService {
 
             return ResponseEntity.ok("");
         }catch (Exception e){
-            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+            System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
         }
     }

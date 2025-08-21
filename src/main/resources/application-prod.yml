@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: info
+    org:
+      hibernate.SQL: error
+      springframework:
+        security=DEBUG:
+
+  file:
+    path: logs/PhoeStorage.log
+
+spring:
+  datasource:
+    password: "%Wh@BJrX8z3uHugD7JPG#%"
+    url: jdbc:mysql://127.0.0.1/phoestorage
+    username: storage
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: false
+
+    properties:
+      hibernate:
+        format_sql: true
