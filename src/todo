@@ -1,14 +1,5 @@
 make admin panel - pri-1:
-users tab:
-notification sender
-
-security:
-reset password
-force logout
-deactivate users
-
 storage tab:
-Start UGC service
 server storage limit
 server storage used
 all download links

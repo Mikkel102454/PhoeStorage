@@ -76,7 +76,6 @@ function addDownload(downloads){
     const frag = document.createDocumentFragment();
 
     for (const d of downloads) {
-        console.log(downloads)
         const row = fileRowTemp.content.cloneNode(true);
 
         row.querySelector("#name").textContent = d.isFolder ? `${d.name}.${d.extension}` : d.name;

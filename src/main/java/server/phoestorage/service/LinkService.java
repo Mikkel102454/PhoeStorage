@@ -101,6 +101,18 @@ public class LinkService {
         }
     }
 
+    public int deleteAllDownloadLink(String owner) {
+        try{
+            List<DownloadEntity> downloadEntitys = downloadRepository.findAllByOwnerUuid(owner);
+            downloadRepository.deleteAll(downloadEntitys);
+            return 0;
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            return -1;
+        }
+    }
+
+
     public DownloadEntity isLinkValid(String linkUuid) {
         DownloadEntity downloadEntity = downloadRepository.findByUuid(linkUuid);
         if(downloadEntity == null) {
@@ -138,6 +150,25 @@ public class LinkService {
 
     public List<DownloadEntry> getDownloads(String owner){
         List<DownloadEntity> downloadEntities = downloadRepository.findAllByOwnerUuid(owner);
+
+        List<DownloadEntry> downloadEntries = new ArrayList<>();
+        for(DownloadEntity downloadEntity : downloadEntities){
+            DownloadEntry downloadEntry = new DownloadEntry();
+            downloadEntry.setUuid(downloadEntity.getUuid());
+            downloadEntry.setOwnerUuid(downloadEntity.getOwnerUuid());
+            downloadEntry.setFileName(downloadEntity.getFileName());
+            downloadEntry.setFileExtension(downloadEntity.getFileExtension());
+            downloadEntry.setDownloads(downloadEntity.getDownloads());
+            downloadEntry.setMaxDownloads(downloadEntity.getDownloadLimit());
+            downloadEntry.setDateExpire(downloadEntity.getDateExpire());
+            downloadEntry.setIsFolder(downloadEntity.getIsFolder());
+            downloadEntries.add(downloadEntry);
+        }
+        return downloadEntries;
+    }
+
+    public List<DownloadEntry> getAllDownloads(){
+        List<DownloadEntity> downloadEntities = downloadRepository.findAll();
 
         List<DownloadEntry> downloadEntries = new ArrayList<>();
         for(DownloadEntity downloadEntity : downloadEntities){

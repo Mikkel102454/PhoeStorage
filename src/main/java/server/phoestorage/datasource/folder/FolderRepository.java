@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
     List<FolderEntity> findByOwnerAndFolderId(String userId, String folderId);
+    List<FolderEntity> findAllByOwner(String userId);
 
     Optional<FolderEntity> findByOwnerAndFolderIdAndName(String owner, String folderId, String name);
     Optional<FolderEntity> findByOwnerAndFolderIdAndUuid(String owner, String folderId, String uuid);

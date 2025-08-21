@@ -196,6 +196,9 @@ section .fileList .fileRow:first-child{
 }
 section .fileList .fileRow i{
     cursor: pointer;
+    height: fit-content;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 section .fileList #rowContainer{
     display: flex;

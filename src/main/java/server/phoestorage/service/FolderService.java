@@ -17,8 +17,8 @@ import server.phoestorage.zip.ZipBridge;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
@@ -70,6 +70,24 @@ public class FolderService {
             folderEntity.setUserCreated(false);
 
             folderRepository.save(folderEntity);
+        }catch (Exception e){
+            System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
+        }
+    }
+
+    /**
+     * Delete user folders
+     *
+     * @param user the user uuid
+     * @return true if successful and false if unsuccessful
+     *
+     */
+    public void deleteUserFolder(String user) {
+        try{
+            deleteDirectoryRecursively(Paths.get(rootPath, user));
+
+            folderRepository.deleteAll(folderRepository.findAllByOwner(user));
+            fileRepository.deleteAll(fileRepository.findAllByOwner(user));
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
         }
@@ -340,4 +358,24 @@ public class FolderService {
         return result;
     }
 
+
+    public static void deleteDirectoryRecursively(Path dir) throws IOException {
+        if (dir == null || !Files.exists(dir)) return;
+
+        // Don’t follow symlinks so we only delete inside this tree.
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.deleteIfExists(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path directory, IOException exc) throws IOException {
+                // Delete directory after its contents
+                Files.deleteIfExists(directory);
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
 }

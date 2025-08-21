@@ -11,6 +11,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     UserEntity findByUuid(String uuid);
 
     boolean existsByUsername(String username);
+    boolean existsByUuid(String uuid);
 
     @Query("SELECT u.username FROM users u WHERE u.uuid = :uuid")
     Optional<String> findUsernameByUuid(@Param("uuid") String uuid);

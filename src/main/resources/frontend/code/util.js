@@ -134,6 +134,8 @@ document.addEventListener("keydown", function(event) {
         closeDeleteModal()
         closeShareMenu()
         closeRenameMenu()
+        closeAdminPasswordMenu()
+        closeUserUpdateMenu()
     }
 });
 

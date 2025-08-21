@@ -15,25 +15,42 @@
 <nav>
   <a href="/">Back</a>
   <a class="tab" href="#user">Users</a>
-  <a class="tab" href="#security">Security</a>
-  <a class="tab" href="#shared">Shared files</a>
+  <a class="tab" href="#notification">Notification</a>
+  <a class="tab" href="#storage">Storage</a>
 </nav>
 
-
-
-
-
-
-
-
-
-
-
-
 <section id="user">
-  <h2>Settings</h2>
+  <div class="userUpdaetMenu" id="userUpdateMenu">
+    <div class="background" onclick="closeUserUpdateMenu()"></div>
+      <div class="content">
+        <h3 id="title">User update for "loading..."</h3>
+        <div style="display: flex; flex-direction: column; gap: 1vh; padding: 2vh 0;" id="listContainer">
+
+        </div>
+        <div class="interactive">
+          <span onclick="closeUserUpdateMenu()">Cancel</span>
+          <span onclick="" id="confirmButton">Update</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="passwordReset" id="passwordResetMenu">
+    <div class="background" onclick="closeAdminPasswordMenu()"></div>
+      <div class="content">
+        <h3 id="title">Reset password for "loading..."</h3>
+        <input id="passwordResetInput">
+        <div class="interactive">
+          <span onclick="closeAdminPasswordMenu()">Cancel</span>
+          <span onclick="" id="confirmButton">Update</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Admin Panel</h2>
   <ul>
-    <li class="border">
+    <li class="border" id="userCreate">
       <h3>Create user</h3>
 
       <div class="text1">
@@ -42,19 +59,38 @@
       </div>
       <div class="text1">
         <span>Password</span>
-        <input type="text" placeholder="Password" id="username">
+        <input type="text" placeholder="Password" id="password">
       </div>
       <div class="text1">
         <span>Data limit</span>
-        <input type="text" placeholder="100 GB" id="username">
+        <input type="text" placeholder="100 GB" id="data">
       </div>
+      <label class="label-ckb">
+        <input class="ckb" type="checkbox" name="is-admin" value="1" id="admin">
+        <span class="ckb-box" aria-hidden="true">
+          <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+            <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+          </svg>
+        </span>
+        Is Admin
+      </label>
+      <label class="label-ckb">
+        <input class="ckb" type="checkbox" name="is-enabled" value="1" id="enabled">
+        <span class="ckb-box" aria-hidden="true">
+          <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+            <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+          </svg>
+        </span>
+        Is Enabled
+      </label>
+
       <div style="display: flex; gap: .5vw; justify-content: right;">
-        <div class="button2" onclick="setSettings('username', document.getElementById('username').value)">Save</div>
+        <div class="button2" onclick="createUser()">Create</div>
       </div>
     </li>
 
     <li class="border">
-      <h3>Shared files</h3>
+      <h3>Users</h3>
 
       <div class="userList">
         <!-- Header row -->
@@ -68,7 +104,7 @@
 
         <!-- Data rows -->
         <div id="rowContainer">
-
+          <h3>Nothing to show here</h3>
         </div>
 
       </div>
@@ -76,66 +112,45 @@
   </ul>
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section id="security">
-  <h2>Settings</h2>
+<section id="notification">
+  <h2>Admin Panel</h2>
   <ul>
     <li class="border">
-      <h3>Change password</h3>
+      <h3>Send notification
+      </h3>
 
       <div class="text1">
-        <span>Current password</span>
-        <input type="password" placeholder="*******" id="oldPassword">
+        <span>Title</span>
+        <input type="text" placeholder="Title of message" id="username">
       </div>
       <div class="text1">
-        <span>New password</span>
-        <input type="password" placeholder="*******" id="newPassword">
+        <span>Message</span>
+        <textarea  style="height: 20vh;" type="textarea" placeholder="Type your message here" id="username"></textarea>
       </div>
       <div style="display: flex; gap: .5vw; justify-content: right;">
-        <div class="button2" onclick="setPassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Save</div>
+        <div class="button2" onclick="sendNotification()">Send</div>
       </div>
     </li>
   </ul>
 </section>
-<section id="shared">
-  <h2>Settings</h2>
+
+<section id="storage">
+  <h2>Admin Panel</h2>
   <ul>
+    <li class="border">
+      <h3>Statistics</h3>
+
+      <div class="text1">
+        <span>Used Storage</span>
+          <div class="storage-container">
+            <div class="bar">
+              <div class="bar-fill" id="storageLimitFill"></div>
+            </div>
+          <div class="text" id="storageLimitText">loading. of loading. used</div>
+        </div>
+      </div>
+    </li>
+
     <li class="border">
       <h3>Shared files</h3>
 
@@ -143,6 +158,7 @@
         <!-- Header row -->
         <div class="fileRow header">
           <span>Name</span>
+          <span>Owner</span>
           <span>Downloads</span>
           <span>Total Downloads</span>
           <span>Expire</span>
@@ -160,33 +176,47 @@
 </body>
 
 <template id="userRow">
-    <div class="userRow">
-        <span id="username"><input type="text" placeholder="Loading..."></span>
-        <span id="dataLimit"><input type="text" placeholder="Loading..."></span>
-        <span id="dataUsed"><input type="text"placeholder="Loading..."></span>
-        <span id="isAdmin">
-            <label class="label-ckb">
-                <input class="ckb" type="checkbox" name="remember-me" value="1">
-                <span class="ckb-box" aria-hidden="true">
-                    <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
-                        <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-                    </svg>
-                </span>
-            </label>
+  <div class="userRow">
+     <span><input id="username" type="text" placeholder="Loading..."></span>
+      <span><input id="dataLimit" type="text" placeholder="Loading..."></span>
+      <span id="dataUsed">Loading...</span>
+      <span>
+        <label class="label-ckb">
+          <input id="isAdmin" class="ckb" type="checkbox" name="is-admin" value="1">
+            <span class="ckb-box" aria-hidden="true">
+              <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+                <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+              </svg>
+            </span>
+        </label>
+      </span>
+      <span style="display: flex; height: fit-content"><span>
+        <label class="label-ckb">
+          <input id="isEnabled" class="ckb" type="checkbox" name="is-enabled" value="1">
+          <span class="ckb-box" aria-hidden="true">
+            <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+              <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+            </svg>
+          </span>
+        </label>
+      </span>
+      <i style="margin-left: auto;" id="upload" class="fa-light fa-arrow-rotate-right"></i>
+      <i style="margin-left: .8vw;" id="forceLogout" class="fa-light fa-arrow-left-from-bracket"></i>
+      <i style="margin-left: .8vw;" id="resetPassword" class="fa-light fa-key"></i>
+      <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
+  </div>
+</template>
+<template id="fileRow">
+  <div class="fileRow">
+    <span id="name">Error.</span>
+    <span id="owner">Error.</span>
+    <span id="download">Error.</span>
+    <span id="maxDownload">Error.</span>
+    <span style="display: flex;"><span id="exp">Error.</span>
+            <i style="margin-left: auto;" id="link" class="fa-regular fa-link"></i>
+            <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
         </span>
-        <span style="display: flex; height: fit-content"><span id="isEnabled">
-            <label class="label-ckb">
-                <input class="ckb" type="checkbox" name="remember-me" value="1">
-                <span class="ckb-box" aria-hidden="true">
-                    <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
-                        <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-                    </svg>
-                </span>
-            </label>
-        </span>
-        <i style="margin-left: auto;" id="upload" class="fa-light fa-arrow-rotate-right"></i>
-        <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
-    </div>
+  </div>
 </template>
 
 <template id="alertWarningTemp">
