@@ -1,5 +1,8 @@
 body{
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--main-font-color);
+    font-size: var(--font-medium);
+    overflow: hidden;
 }
 
 .radial-background-1{
@@ -13,10 +16,10 @@ body{
 /* ----        Display      ---- */
 /* ----------------------------- */
 .d-flex{
-    display: flex !important;
+    display: flex;
 }
 .d-grid{
-    display: grid !important;
+    display: grid;
 }
 
 
@@ -34,12 +37,23 @@ body{
     width: 100% !important;
 }
 
+.w-40p{
+    width: 40% !important;
+}
+
 /* ----------------------------- */
 /* ----        Height       ---- */
 /* ----------------------------- */
+.h-fit{
+    height: fit-content !important;
+}
 .h-100{
     height: 100vh !important;
 }
+.h-06{
+    height: .6vh !important;
+}
+
 .h-100p{
     height: 100% !important;
 }
@@ -56,18 +70,46 @@ body{
 }
 
 /* Right */
+.m-r-08{
+    margin-right: 0.8vw !important;
+}
+.m-r-1{
+    margin-right: 1vw !important;
+}
 .m-r-2{
     margin-right: 2vh !important;
 }
+
+/* Left */
+.m-l-a{
+    margin-left: auto !important;
+}
+.m-l-08{
+    margin-left: 0.8vw !important;
+}
+
+.m-l-1{
+    margin-left: 1vw !important;
+}
+
 
 /* Bottom */
 .m-b-2{
     margin-bottom: 2vh !important;
 }
+.m-b-1{
+    margin-bottom: 1vh !important;
+}
 
 /* top */
+.m-t-10p{
+    margin-top: 10% !important;
+}
 .m-t-5p{
     margin-top: 5% !important;
+}
+.m-t-2{
+    margin-top: 2vh !important;
 }
 .m-t-a{
     margin-top: auto !important;
@@ -81,8 +123,28 @@ body{
     padding: 0 !important;
 }
 
+.p-06{
+    padding: 0.6vh !important;
+}
+
+.p-1{
+    padding: 1vh !important;
+}
+
 .p-2{
     padding: 2vh !important;
+}
+
+/* Left */
+
+.p-l-1{
+    padding: 1vh !important;
+}
+
+/* Bottom */
+
+.p-b-1{
+    padding: 1vh !important;
 }
 
 /* ----------------------------- */
@@ -121,4 +183,43 @@ body{
 /* ----------------------------- */
 .size-borderbox{
     box-sizing: border-box !important; 
+}
+
+/* ----------------------------- */
+/* ----        Border       ---- */
+/* ----------------------------- */
+.b-round{
+    border-radius: 100vh !important;
+}
+.b-r-2{
+    border-radius: 1vh !important;
+}
+.b-r-2{
+    border-radius: 1vh !important;
+}
+
+.b-s-t{
+    border-top-style:solid;
+}
+.b-s-b{
+    border-bottom-style:solid;
+}
+.b-s-l{
+    border-left-style:solid;
+}
+.b-s-r{
+    border-right-style:solid;
+}
+.b-c-secondary{
+    border-color: var(--secondary-border-color);
+}
+.b-w-01{
+    border-width: 0.1vh;
+}
+
+
+
+
+.grid-2-2-2-2-a{
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 2fr;
 }

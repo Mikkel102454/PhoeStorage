@@ -11,7 +11,7 @@
 }
 .button-1:hover{
     transition: 0.1s;
-    background-color: oklab(34.07% 0 -0.00004);
+    background-color: var(--accent-color);
     color: var(--main-font-color);
     cursor: pointer;
 }
@@ -20,20 +20,88 @@
     transition: 0.1s;
     padding: 1vh 3vw;
     font-size: var(--font-medium);
-    color: var(--secondary-font-color);
+    color: var(--main-font-color);
     border-radius: 1vh;
     text-decoration: none;
     border-width: 0.1vh;
+    border-color: var(--main-border-color);
+    border-style: solid;
     height: fit-content;
     width: fit-content;
 }
 .button-2:hover{
     transition: 0.1s;
-    background-color: oklab(34.07% 0 -0.00004);
-    color: var(--main-font-color);
+    background-color: var(--accent-color);
+    
     cursor: pointer;
 }
 
+.small-icon{
+    transition: 0.1s;
+    padding: 1vh;
+    font-size: var(--font-medium);
+    line-height: 2vh;
+}
+.small-icon.small{
+    width: 2vh;
+    height: 2vh;
+    text-align: center;
+}
+.small-icon:hover{
+    transition: 0.1s;
+    background-color: var(--accent-color);
+    cursor: pointer;
+    border-radius: 100%;
+}
+
+.hover-1:hover{
+    background-color: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+}
+
+
+
+.input-field-1{
+    /* color */
+    background-color: var(--main-dark-color);
+
+    /* Transform */
+    height: 3.5vh;
+    width: 20vw;
+
+    /* border */
+    border-style: solid;
+    border-width: 0.2vh;
+    border-radius: 1.2vh;
+    border-color: var(--main-border-color);
+
+    /* display */
+    display: flex;
+    align-items: center;
+}
+.input-field-1 i{
+    margin: 0 0.6vw;
+
+    color: var(--main-font-color);
+    font-size: var(--font-small);
+}
+.input-field-1 input{
+    /* color */
+    background-color: transparent;
+
+    /* font */
+    color: var(--main-font-color);
+    font-size: var(--font-small);
+
+    /* transform */
+    padding: 0;
+    flex: 1;
+
+    /* border */
+    outline: none;
+    border: 0;
+
+}
 
 .container-1{
     border-radius: 2vh;

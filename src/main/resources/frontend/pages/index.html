@@ -1,423 +1,194 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAS</title>
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="stylesheet" href="/style/root.css">
+    <link rel="stylesheet" href="/style/preset.css">
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
-
-    <link rel="stylesheet" href="/style/index.css">
-    <link rel="stylesheet" href="/style/alert.css">
-    <link rel="stylesheet" href="/style/preset.css">
 </head>
-<body>    
-    <div id="alertBox">
+<body class="radial-background-1 m-0 h-100 w-100 p-2 size-borderbox d-flex">
+    <!--Nav menu-->
+    <div class="m-r-2 d-flex w-13 flex-column">
+        <!--Logo container-->
+        <div class="w-100p container-1 m-b-2 h-7p"></div>
 
-    </div>
+        <!--Nav items-->
+        <nav class="w-100p flex-1 container-1 flex-column d-flex align-center p-1">
+            <a class="button-1 w-100p size-borderbox p-l-1" href="#drive"><i class="fa-solid fa-hard-drive m-r-08"></i>My Drive</a>
+            <a class="button-1 w-100p size-borderbox p-l-1" href="#starred"><i class="fa-regular fa-star m-r-08"></i>My Starred</a>
 
-    <input type="file" id="hiddenFileInput" style="display: none;" multiple>
-    <input type="file" id="hiddenFolderInput" style="display: none;" webkitdirectory>
-    <div class="createFolder" id="createFolderMenu">
-        <div class="background" onclick="toggleFolderCreationMenu()"></div>
-        <div class="content">
-            <h3>New folder</h3>
-            <input placeholder="Unitled folder" id="createFolderMenuInput">
-            <div>
-                <span onclick="toggleFolderCreationMenu()">Cancel</span>
-                <span onclick="createFolder(document.getElementById('createFolderMenuInput').value)">Create</span>
-            </div>
-        </div>
-    </div>
-    <div class="createFolder" id="renameMenu">
-        <div class="background" onclick="closeRenameMenu()"></div>
-        <div class="content">
-            <h3>Rename</h3>
-            <input id="renameMenuInput">
-            <div>
-                <span onclick="closeRenameMenu()">Cancel</span>
-                <span onclick="" id="confirmButton">Create</span>
-            </div>
-        </div>
-    </div>
-    <div class="createFolder" id="shareMenu">
-        <div class="background" onclick="closeShareMenu()"></div>
-        <div class="content">
-            <h3 id="shareMenuTitle">Share "Item Name"</h3>
-            <input id="shareMenuInput" type="number" placeholder="Download limit (default: unlimited)">
-            <h5 id="shareMenuOutput" onclick="copyToClipboard(window.location.protocol + '//' + this.innerText)"></h5>
-
-            <div>
-                <span onclick="closeShareMenu()">Cancel</span>
-                <span onclick="" id="confirmButton">Share</span>
-            </div>
-        </div>
-    </div>
-    <div class="createFolder" id="passwordMenu">
-        <div class="background"></div>
-        <div class="content">
-            <h3>Please change you password</h3>
-            <div style="display: flex; flex-direction: column">
-                <input id="passwordInput" type="password" placeholder="New password">
-                <input id="confirmPasswordInput" type="password" placeholder="Repeat password">
-            </div>
-            <div>
-                <span style="margin-left: auto" id="confirmButton">Change</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="deleteModal">
-        <div style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: -1;" onclick="closeDeleteModal()"></div>
-        <div class="main">
-            <div class="header">
-                <h2 id="title">Delete file permanently?</h2>
-                <p class="note">Note deleted file cannot be retrieved after its deletion.</p>
-            </div>
-            <div class="info">
-                <div class="infoRow">
-                    <span class="note">Name</span>
-                    <span id="name">Loading...</span>
+            <!--Nav Bottom-->
+            <div class="m-t-a w-100p d-flex flex-column">
+                <div class="w-100p m-b-1 b-round h-06" style="background-color: white">
+                    <div class="w-40p b-round h-06" style="background-color: rgb(59, 167, 255)"></div>
                 </div>
-                <div class="infoRow">
-                    <span class="note">Size</span>
-                    <span id="size">Loading...</span>
-                </div>
-                <div class="infoRow">
-                    <span class="note">Last modified</span>
-                    <span id="date">Loading...</span>
-                </div>
+                <span class="m-b-2 font-small">loading. of loading. used</span>
+
+                <!--Seperator-->
+                <span class="w-100p b-w-01 b-c-secondary b-s-b"></span>
+                <a class="button-2 w-100p size-borderbox p-l-1 m-t-2"><i class="fa-regular fa-arrow-right-from-bracket m-r-08"></i>Logout</a>
             </div>
-            <div class="buttons">
-                <div class="confirmBtn" id="confirmBtn">Delete</div>
-                <div class="cancelBtn" onclick="closeDeleteModal()">Cancel</div>
-            </div>
-        </div>
+        </nav>
     </div>
 
-    <div class="customContextMenu" id="context-menu-drive">
-        <ul>
-            <li tabindex="0" onclick="toggleFolderCreationMenu()"><i class="fa-light fa-folder-plus"></i>Create folder</li>
-        </ul>
-        <div class="divider"></div>
-        <ul>
-            <li tabindex="0" onclick="openFileUploadMenu()"><i class="fa-light fa-file-arrow-up"></i>File upload</li>
-            <li tabindex="0" onclick="openFolderUploadMenu()"><i class="fa-light fa-folder-arrow-up"></i>Folder upload</li>
-        </ul>
-    </div>
-    <nav class="menu-nav">
-        <ul>
-            <div class="category">
-                <!--<li onclick="loadHome()">
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-solid fa-house"></i></div>
-                    <div class="text">Home</div>
-                </li>-->
-                <li onclick="loadDrive()">
-                    <div class="caret"><!--<i class="fa-solid fa-caret-right"></i>--></div>
-                    <div class="icon"><i class="fa-solid fa-hard-drive fa-inverse"></i></div>
-                    <div class="text">My Drive</div>
-                </li>
-                <li onclick="loadStarred()">
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-regular fa-star fa-inverse"></i></div>
-                    <div class="text">Starred</div>
-                </li>
-                <!--<div class="folder">
-                    <li>
-                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
-                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
-                        <div class="text">Folder</div>
-                        <li>
-                            <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
-                            <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
-                            <div class="text">Folder</div>
-                        </li>
-                        <li>
-                            <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
-                            <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
-                            <div class="text">Folder</div>
-                        </li>
-                    </li>
-                    <li>
-                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
-                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
-                        <div class="text">Folder</div>
-                    </li>
-                    <li>
-                        <div class="caret"><i class="fa-solid fa-caret-right"></i></div>
-                        <div class="icon"><i class="fa-solid fa-folder fa-inverse"></i></div>
-                        <div class="text">Folder</div>
-                    </li>
-                </div>-->
-            </div>
 
-            <div class="category">
-                <!--<li>
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-regular fa-user-group fa-inverse"></i></div>
-                    <div class="text">Shared with me</div>
-                </li>
-                <li>
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-regular fa-clock fa-inverse"></i></div>
-                    <div class="text">Recent</div>
-                </li>-->
-                <!--<li>
-                    <div class="caret"></div>
-                    <div class="icon"><i class="fa-regular fa-trash fa-inverse"></i></div>
-                    <div class="text">Trash</div>
-                </li>-->
-            </div>
-            
-            <div class="storage-container">
-                <div class="bar">
-                    <div class="bar-fill" id="storageLimitFill"></div>
+    <main class="flex-1 h-100p">
+        <section class="w-100p h-100p d-flex flex-column" id="drive">
+            <!--Header-->
+            <div class="w-100p container-1 m-b-2 h-7p d-flex align-center">
+
+                <!--Search bar-->
+                <div class="input-field-1 m-l-1 w-40p">
+                    <i class="fa-regular fa-magnifying-glass"></i>
+                    <input type="text" class="" placeholder="">
                 </div>
-                <div class="text" id="storageLimitText">loading. of loading. used</div>
+                
+                <!--Header icons-->
+                <i class="fa-regular fa-bell m-l-a m-r-2 small-icon small" tooltip="Notifications"></i>
+                <i class="fa-light fa-gear m-r-2 small-icon small" onclick="location.href = '/setting#account'" tooltip="Settings"></i>
+                <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown m-r-2 small-icon small" onclick="location.href = '/admin#user'" tooltip="Admin Panel"></i>
             </div>
-        </ul>
-        <div class="divider"></div>
-        <div class="logout">
-            <button onclick="location.href = '/logout'"><i class="fa-regular fa-arrow-right-from-bracket"></i>Log Out</button>
-        </div>
-    </nav>
 
-    <main id="main">
+            <!--Main-->
+            <div class="w-100p flex-1 container-1 d-flex flex-column p-2">
 
+                <!--Path view-->
+                <div class="d-flex h-fit">
+                    <!--Path head-->
+                    <span class="small-icon b-r-2 p-1 h-fit size-borderbox font-s-bold" path="folder-uuid">My Drive</span>
+
+                    <!--Path Container-->
+                    <div class="d-flex h-fit">
+
+                    </div>
+                </div>
+
+                <!--Files view-->
+                <div class="flex-1 size-borderbox font-thick">
+                    <!--Files head-->
+                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center">
+                        <span>Name</span>
+                        <span>Owner</span>
+                        <span>Last modified</span>
+                        <span>File Size</span>
+                    </div>
+
+                    <!--Files container-->
+                    <div>
+                        <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center hover-1">
+                            <span><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
+                            <span>Mikkel102454</span>
+                            <span>24 Apr, 2025</span>
+                            <span>99.99GB</span>
+                            <div class="m-l-a d-flex">
+                                <i class="fa-light fa-user-plus m-r-08 small-icon small" tooltip="Share"></i>
+                                <i class="fa-light fa-down-to-bracket m-r-08 small-icon small" tooltip="Download"></i>
+                                <i class="fa-light fa-pen-line m-r-08 small-icon small" tooltip="Rename"></i>
+                                <i class="fa-regular fa-star m-r-08 small-icon small" tooltip="Favorite"></i>
+                                <i class="fa-light fa-trash m-r-08 small-icon small" tooltip="Delete"></i>
+                            </div>
+                        </div>
+                        <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center hover-1">
+                            <span><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
+                            <span>Mikkel102454</span>
+                            <span>24 Apr, 2025</span>
+                            <span>99.99GB</span>
+                            <div class="m-l-a d-flex">
+                                <i class="fa-light fa-user-plus m-r-08 small-icon small" tooltip="Share"></i>
+                                <i class="fa-light fa-down-to-bracket m-r-08 small-icon small" tooltip="Download"></i>
+                                <i class="fa-light fa-pen-line m-r-08 small-icon small" tooltip="Rename"></i>
+                                <i class="fa-regular fa-star m-r-08 small-icon small" tooltip="Favorite"></i>
+                                <i class="fa-light fa-trash m-r-08 small-icon small" tooltip="Delete"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="w-100p h-100p d-flex flex-column" id="starred">
+            <!--Header-->
+            <div class="w-100p container-1 m-b-2 h-7p d-flex align-center">
+
+                <!--Search bar-->
+                <div class="input-field-1 m-l-1 w-40p">
+                    <i class="fa-regular fa-magnifying-glass"></i>
+                    <input type="text" class="" placeholder="">
+                </div>
+                
+                <!--Header icons-->
+                <i class="fa-regular fa-bell m-l-a m-r-2 small-icon small" tooltip="Notifications"></i>
+                <i class="fa-light fa-gear m-r-2 small-icon small" onclick="location.href = '/setting#account'" tooltip="Settings"></i>
+                <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown m-r-2 small-icon small" onclick="location.href = '/admin#user'" tooltip="Admin Panel"></i>
+            </div>
+
+            <!--Main-->
+            <div class="w-100p flex-1 container-1 d-flex flex-column p-2">
+
+                <!--Path view-->
+                <div class="d-flex h-fit">
+                    <!--Path head-->
+                    <span class="small-icon b-r-2 p-1 h-fit size-borderbox font-s-bold" path="folder-uuid">Starred</span>
+                </div>
+
+                <!--Files view-->
+                <div class="flex-1 size-borderbox font-thick">
+                    <!--Files head-->
+                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center">
+                        <span>Name</span>
+                        <span>Owner</span>
+                        <span>Last modified</span>
+                        <span>File Size</span>
+                    </div>
+
+                    <!--Files container-->
+                    <div id="viewContainerDrive">
+
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 
-
-<template id="starred-file-temp">
-    <div class="my-drive">
-        <div class="section">
-            <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInputStar"></div>
-
-                <div class="profile">
-                    <div>
-                        <i class="fa-regular fa-bell fa-inverse">
-                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
-                        </i>
-                    </div>
-                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
-                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
-                </div>
-            </div>
-        </div>
-        <div class="section section-2">
-            <div class="full-path">
-                <div class="path">
-                    <div class="path-name">
-                        Starred
-                    </div>
-                </div>
-            </div>
-            <div class="main" id="drop-zone">
-                <div class="header">
-                    <div>Name</div>
-                    <div>Owner</div>
-                    <div>Last modified</div>
-                    <div>File size</div>
-                </div>
-                <ul class="content file-content">
-                </ul>
-            </div>
+<template id="file-view">
+    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center hover-1">
+        <span type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
+        <span type="span.username">Mikkel102454</span>
+        <span type="span.date">24 Apr, 2025</span>
+        <span type="span.size">99.99GB</span>
+        <div class="m-l-a d-flex">
+            <i class="fa-light fa-user-plus m-r-08 small-icon small" tooltip="Share" type="icon.share"></i>
+            <i class="fa-light fa-down-to-bracket m-r-08 small-icon small" tooltip="Download" type="icon.download"></i>
+            <i class="fa-light fa-pen-line m-r-08 small-icon small" tooltip="Rename" type="icon.rename"></i>
+            <i class="fa-regular fa-star m-r-08 small-icon small" tooltip="Favorite" type="icon.favorite"></i>
+            <i class="fa-light fa-trash m-r-08 small-icon small" tooltip="Delete" type="icon.delete"></i>
         </div>
     </div>
 </template>
 
-
-<template id="drive-file-temp">
-    <div class="my-drive">
-
-
-        <div class="section">
-            <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInput"></div>
-
-                <div class="profile">
-                    <div>
-                        <i class="fa-regular fa-bell fa-inverse">
-                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
-                        </i>
-                    </div>
-                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
-                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
-                </div>
-            </div>
-        </div>
-        <div class="section section-2">
-            <div class="full-path">
-                <div class="path">
-                    <div class="path-name" onclick="resetPath(this)">
-                        My Drive
-                    </div>
-                </div>
-            </div>
-            <div class="main" id="drop-zone">
-                <div class="header">
-                    <div>Name</div>
-                    <div>Owner</div>
-                    <div>Last modified</div>
-                    <div>File size</div>
-                </div>
-                <ul class="content file-content">
-                </ul>
-            </div>
-        </div>
-    </div>
-</template>
-
-<template id="home-section-temp">
-    <div class="home">
-        <div class="section">
-            <div class="header">
-                <div class="input"><i class="fa-regular fa-magnifying-glass fa-inverse"></i><input placeholder="Search" class="searchInputStar"></div>
-
-                <div class="profile">
-                    <div>
-                        <i class="fa-regular fa-bell fa-inverse">
-                            <i class="fa-solid fa-circle" style="color: #ff6060;"><span>2</span></i>
-                        </i>
-                    </div>
-                    <i class="fa-solid fa-gear fa-inverse" style="height: fit-content; margin: auto 0;" onclick="location.href = '/setting#account'"></i>
-                    <i sec:authorize="hasRole('ADMIN')" class="fa-light fa-user-crown fa-inverse" style="height: fit-content; margin: auto 0 auto 1.7vw;" onclick="location.href = '/admin#user'"></i>
-                </div>
-            </div>
-            <!--
-            List of all file icons
-
-            .docx -     <i class="fa-solid fa-file-word icon" style="color: #4285f8;"></i>
-            .xlsx -     <i class="fa-solid fa-file-excel icon" style="color: #07a85f;"></i>
-            .pptx -     <i class="fa-solid fa-file-powerpoint icon" style="color: #f06741;"></i>
-
-            .img -      <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
-            .music -    <i class="fa-solid fa-file-music icon" style="color: #e6a10c;"></i>
-            .video -    <i class="fa-solid fa-file-video icon" style="color: #2e3eac;"></i>
-
-            .zip -      <i class="fa-solid fa-file-zipper icon" style="color: #ffc640;"></i>
-
-            .unokwn -   <i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i>
-            -->
-            <div class="files">
-                <h3 class="title">Recent Files</h3>
-                <ul id="recent-content">
-
-                </ul>
-            </div>
-        </div>
-        <div class="section section-2">
-            <h3>Quick Access</h3>
-            <div class="main">
-                <div class="header">
-                    <div>Name</div>
-                    <div>Owner</div>
-                    <div>Last modified</div>
-                    <div>File size</div>
-                </div>
-                <ul class="content file-content">
-
-                </ul>
-            </div>
-        </div>
+<template id="file-path">
+    <div class="d-flex align-center">
+        <i class="fa-solid fa-caret-right m-r-08 m-l-08"></i>
+        <span class="small-icon b-r-2 p-1 h-fit size-borderbox font-s-bold"path="folder-uuid">My Drive</span>
     </div>
 </template>
 
 
-<template id="recent-file-temp">
-    <li>
-        <i class="fa-solid fa-file-image icon" style="color: #269b7f;"></i>
-        <h4 class="text">document.docx</h4>
-    </li>
-</template>
+<script src="/code/classes/file.js"></script>
+<script src="/code/classes/folder.js"></script>
 
-<template id="file-card-temp">
-    <li>
-        <div class="file-name"><i class="fa-solid fa-file icon" style="color: #a5a5a5;"></i></div>
-        <div class="file-owner"></div>
-        <div class="file-modified"></div>
-        <div class="file-size"></div>
-        <div class="control">
-            <div><i class="fa-light fa-user-plus fa-inverse"></i></div>
-            <div><i class="fa-light fa-down-to-bracket fa-inverse"></i></div>
-            <div><i class="fa-light fa-pen-line fa-inverse"></i></div>
-            <div><i class="fa-regular fa-star fa-inverse"></i></div>
-            <div><!--<i class="fa-light fa-ellipsis-vertical fa-inverse"></i>--><i class="fa-light fa-trash"></i></div>
-        </div>
-    </li>
-</template>
+<script src="/code/controllers/file.js"></script>
+<script src="/code/controllers/folder.js"></script>
+<script src="/code/controllers/view.js"></script>
 
-<template id="folder-path-temp">
-    <div class="path">
-        <span><i class="fa-solid fa-angle-right"></i></span>
-        <div class="path-name">
-            folder_name
-        </div>
-    </div>
-</template>
-
-
-
-<template id="alertWarningTemp">
-    <div class="alert warning">
-        <span class="icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-        </span>
-        <div class="text">
-            <span>Warning!</span>
-            <span class="alert-msg">Some example warning message text here</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-<template id="alertErrorTemp">
-    <div class="alert error">
-        <span class="icon">
-            <i class="fa-solid fa-circle-xmark"></i>
-        </span>
-        <div class="text">
-            <span>Error!</span>
-            <span class="alert-msg">Some example error message text here</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-<template id="alertInfoTemp">
-    <div class="alert info">
-        <span class="icon">
-            <i class="fa-solid fa-circle-info"></i>
-        </span>
-        <div class="text">
-            <span>Information</span>
-            <span class="alert-msg">Some example message text here</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-<template id="alertSuccessTemp">
-    <div class="alert success">
-        <span class="icon">
-            <i class="fa-solid fa-circle-check"></i>
-        </span>
-        <div class="text">
-            <span>Success</span>
-            <span class="alert-msg">Your action was successful</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-
-
-
-<script src="/code/alertService.js"></script>
-<script src="/code/util.js"></script>
-<script src="/code/index.js"></script>
-<script src="/code/fileHandler.js"></script>
-<script src="/code/file.js"></script>
-<script src="/code/fileDragnDrop.js"></script>
-<script src="/code/security.js"></script>
+<script src="/code/utils/alert.js"></script>
+<script src="/code/utils/format.js"></script>
+<script src="/code/utils/param.js"></script>
+<script src="/code/utils/user.js"></script>
 </html>
