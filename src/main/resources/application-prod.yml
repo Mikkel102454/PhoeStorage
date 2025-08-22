@@ -24,3 +24,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
+server:
+  root: "/srv/phoestorage/"

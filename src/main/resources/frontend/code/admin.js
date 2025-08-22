@@ -123,7 +123,7 @@ function initUsers(users){
         console.log(d)
         row.querySelector("#username").value = getUsernameFast(d.uuid);
         row.querySelector("#dataLimit").value = formatSize(d.dataLimit);
-        row.querySelector("#dataUsed").textContent = d.dataUsed;
+        row.querySelector("#dataUsed").textContent = formatSize(d.dataUsed);
         row.querySelector("#isAdmin").checked = d.isAdmin;
         row.querySelector("#isEnabled").checked = d.enabled;
 

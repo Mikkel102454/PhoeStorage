@@ -4,9 +4,7 @@ make download link have duration - pri-4
 
 
 known bugs:
-login page says email instead of username
 interaction icon like delete file etc does not show tooltip
-admin panel not formated
 
 other:
 frontend overhaul
