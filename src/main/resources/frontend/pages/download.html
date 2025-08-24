@@ -7,36 +7,44 @@
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
     
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="stylesheet" href="/style/root.css">
     <link rel="stylesheet" href="/style/preset.css">
-    <link rel="stylesheet" href="/style/download.css">
+    <link rel="stylesheet" href="/style/alert.css">
 </head>
-<body>
-    <main>
-        <div class="header">
-            <div class="iconContainer" id="fileLogo">
-                <i class="fileLogo fa-solid fa-file icon" style="color: #a5a5a5;"></i>
+<body class="radial-background-1 m-0 h-100 w-100 p-2 size-borderbox d-flex">
+    <main class="container-1 m-a w-40p size-borderbox" style="padding: 4vh;">
+        <!--Header-->
+        <div class="d-flex flex-row align-center">
+            <div class="d-flex accent-solid-bg-color b-r-2" style="height: 3vh; aspect-ratio: 1 / 1; padding: 1vh;">
+                <i class="m-a fa-solid fa-file" style="color: #a5a5a5;"></i>
             </div>
             
-            <span class="fileName" id="fileName">Loading...</span>
+            <span class="m-l-1 font-bold font-large">Loading...</span>
         </div>
-        <div class="info">
-            <ul class="infoHeader">
-                <li>Size</li>
-                <li>Type</li>
-                <li class="hidden">Expires</li>
-            </ul>
-            <ul class="infoValues">
-                <li id="fileSize">Loading...</li>
-                <li id="fileType">Loading...</li>
-                <li id="dateExpire" class="hidden">Loading...</li>
-            </ul>
+
+        <!--Content-->
+        <div class="d-flex m-t-2 m-b-2">
+            <div class="d-flex flex-column" style="width: 5vw;">
+                <span class="m-b-1 font-small font-note">Size</span>
+                <span class="font-small font-thin">Loading...</span>
+            </div>
+            <div class="d-flex flex-column" style="width: 5vw;">
+                <span class="m-b-1 font-small font-note">Type</span>
+                <span class="font-small font-thin">Loading...</span>
+            </div>
+            <div class="d-flex flex-column" style="width: 5vw;">
+                <span class="m-b-1 font-small font-note">Expires</span>
+                <span class="font-small font-thin">Loading...</span>
+            </div>
         </div>
-        <div class="buttonContainer">
-            <div class="download" id="downloadBtn"><div><i class="fa-solid fa-download" style="margin-right: 1vh;"></i>Download</div></div>
-            <div class="copy" id="copyBtn"><div><i class="fa-solid fa-link" style="margin-right: 1vh;"></i>Copy Link</div></div>
+
+        <!--Interactive-->
+        <div class="d-flex">
+            <div class="button-4 m-r-2 flex-1 d-flex justify-center"><div><i class="fa-solid fa-download m-r-1"></i>Download</div></div>
+            <div class="button-2 p-lr-3"><div><i class="fa-solid fa-link m-r-1"></i>Copy Link</div></div>
         </div>
     </main>
 </body>
 
-<script src="/code/download.js"></script>
 </html>
