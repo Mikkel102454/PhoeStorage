@@ -51,7 +51,7 @@ class File{
             openRenameModal(this)
         })
 
-        clone.querySelector('[type="icon.favorite"]').addEventListener("click", async (e) => {
+        clone.querySelector('[type="icon.favorite"]').addEventListener("click", async () => {
             await this.star()
         }) 
 

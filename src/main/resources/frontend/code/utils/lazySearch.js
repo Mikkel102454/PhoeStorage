@@ -7,14 +7,6 @@ function debounce(fn, delay) {
     };
 }
 
-function debounce(fn, delay) {
-    let timer;
-    return function (...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
-    };
-}
-
 const debouncedMap = new WeakMap();
 
 function getDebouncedFor(el, fn, delay) {

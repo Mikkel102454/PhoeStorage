@@ -5,31 +5,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
 import server.phoestorage.dto.FolderEntry;
 import server.phoestorage.service.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/folders")
 public class FolderController {
-    private final FileRepository fileRepository;
-    private FolderService folderService;
-    private HandlerService handlerService;
-    private LinkService linkService;
-    private AppUserDetailsService appUserDetailsService;
+    private final FolderService folderService;
+    private final HandlerService handlerService;
+    private final LinkService linkService;
+    private final AppUserDetailsService appUserDetailsService;
 
     @Autowired
     public FolderController(FolderService folderService,
                             HandlerService handlerService,
-                            FileRepository fileRepository,
                             LinkService linkService,
                             AppUserDetailsService appUserDetailsService) {
         this.folderService = folderService;
         this.handlerService = handlerService;
-        this.fileRepository = fileRepository;
         this.linkService = linkService;
         this.appUserDetailsService = appUserDetailsService;
     }
