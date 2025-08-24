@@ -25,4 +25,4 @@ spring:
       hibernate:
         format_sql: true
 server:
-  root: "C:/PhoeStorage"
+  root: "C:/PhoeStorage/"

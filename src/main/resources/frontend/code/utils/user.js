@@ -15,6 +15,7 @@ async function requestMyUuid() {
 }
 
 async function getUsernameFromUuid(uuid) {
+    if(await isMe(uuid)) {return "me"}
     const response = await fetch(`/api/users/whois?uuid=${uuid}`);
     if (!response.ok) {
         alert("Failed to find user's username.");
@@ -24,5 +25,5 @@ async function getUsernameFromUuid(uuid) {
 }
 
 async function isMe(uuid) {
-    return uuid === myUuid;
+    return uuid === await getMyUuid();
 }

@@ -1,3 +1,5 @@
+let allLoadedFolders = []
+
 class Folder{
     uuid // string
     owner // string
@@ -11,46 +13,77 @@ class Folder{
         this.folderId = folderId;
         this.size = size;
     }
-    load(parent){
-        if(!fileTemp) {console.log("Error loading file. fileTemp is null"); return}
-        this.loadedElement = fileTemp.content.cloneNode(true)
-        this.loadedElement.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon' style = 'color: #FFD43B;'></i>" + this.name
-        this.loadedElement.querySelector('[type="span.username"]').textContent = whois(owner)
-        this.loadedElement.querySelector('[type="span.date"]').textContent =  this.modified ? formatDate(file.modified) : formatDate(file.created)
-        this.loadedElement.querySelector('[type="span.size"]').textContent = formatSize(this.size)
 
-        this.loadedElement.querySelector('[type="icon.share"]').addEventListener("click", async function (){
-            
-        }) //TODO
+    loadedElement
 
-        this.loadedElement.querySelector('[type="icon.download"]').addEventListener("click", async function (){
-            downloadFile(this.folderId, this.uuid)
+    async load(parent) {
+        if (!fileTemp) {
+            console.log("Error loading folder. fileTemp is null");
+            return
+        }
+        if (!parent) {
+            console.log("Error loading folder. parent is null");
+            return
+        }
+
+        const wrapper = document.createElement("div");
+
+        let clone = fileTemp.content.cloneNode(true)
+        clone.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name
+        clone.querySelector('[type="span.username"]').textContent = await getUsernameFromUuid(this.owner)
+        clone.querySelector('[type="span.date"]').innerHTML = "<i class='fa-regular fa-dash'></i>"
+        clone.querySelector('[type="span.size"]').textContent = formatSize(this.size)
+
+        clone.querySelector('[type="icon.share"]').addEventListener("click", async () => {
+            openShareModal(this)
         })
 
-        this.loadedElement.querySelector('[type="icon.rename"]').addEventListener("click", async function (){
-           
-        }) //TODO
+        clone.querySelector('[type="icon.download"]').addEventListener("click", async () => {
+            downloadZipFile(this.folderId, this.uuid)
+        })
 
-        this.loadedElement.querySelector('[type="icon.favorite"]').addEventListener("click", async function (){
-            
-        }) //TODO
+        clone.querySelector('[type="icon.rename"]').addEventListener("click", async () =>  {
+            openRenameModal(this)
+        })
 
-        this.loadedElement.querySelector('[type="icon.delete"]').addEventListener("click", async function (){
-           
-        }) //TODO
+        clone.querySelector('[type="icon.favorite"]').style.visibility = "hidden"
 
-        this.loadedElement.addEventListener("click", async function (){
-           browseDirectory(this.folderId)
-        }) //TODO
+        clone.querySelector('[type="icon.delete"]').addEventListener("click", async () =>  {
+            openTrashModal(this)
+        })
 
-        parent.appendChild(this.loadedElement)
-        allLoadedFiles.append(this)
+        clone.firstElementChild.addEventListener("dblclick", async () =>  {
+            await loadDirectoryDrive(this.uuid, this.name)
+        })
+
+        wrapper.appendChild(clone)
+        parent.appendChild(wrapper)
+        this.loadedElement = wrapper
+        allLoadedFolders.push(this)
     }
 
-    unload(){
+    unload() {
         this.loadedElement.remove()
-        allLoadedFiles.remove(this)
+        const index = allLoadedFolders.indexOf(this);
+        if (index !== -1) {
+            allLoadedFolders.splice(index, 1);
+        }
+    }
+
+    async share(maxDownloads){
+        return await createDownloadLink(this.folderId, this.uuid, maxDownloads ? maxDownloads : -1, true)
+    }
+
+    async rename(newName){
+        if(!await renameFolder(this.folderId, this.uuid, newName)) {return}
+        this.name = newName
+        this.loadedElement.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name
+        await renameFolder(this.folderId, this.uuid, newName)
     }
 }
 
-let allLoadedFiles = []
+async function unloadAllFolders(){
+    while (allLoadedFolders.length > 0) {
+        await allLoadedFolders[0].unload();
+    }
+}

@@ -27,7 +27,7 @@ public class ResourceController {
     }
 
     @Cacheable("code")
-    @GetMapping(value = "/code/{file:.+}", produces = "text/javascript")
+    @GetMapping(value = "/code/{*file}", produces = "text/javascript")
     public ResponseEntity<String> code(@PathVariable String file) {
         if(!file.endsWith(".js")) file += ".js";
 
@@ -47,7 +47,7 @@ public class ResourceController {
         return getResource(path);
     }
     @Cacheable("resources")
-    @GetMapping("/resource/{file:.+}")
+    @GetMapping("/resource/{*file}")
     public ResponseEntity<String> resource(@PathVariable String file) {
         String path = "classpath:frontend/resources/" + file;
         return getResource(path);

@@ -38,6 +38,8 @@ async function uploadFile(file, folderId, notify) {
         uploadId = await response.text()
     }
     if(notify){throwSuccess("Upload finished")}
+
+    return true
 }
 
 function downloadFile(folderId, fileId) {
@@ -66,6 +68,8 @@ function downloadFile(folderId, fileId) {
             window.URL.revokeObjectURL(link.href);
         })
         .catch(error => throwError(error));
+
+    return true
 }
 
 async function deleteFile(folderId, fileId, notify) {
@@ -79,9 +83,13 @@ async function deleteFile(folderId, fileId, notify) {
         return
     }
     if(notify){throwSuccess("File deleted")}
+
+    return true
 }
 
 async function renameFile(folderId, fileId, name){
+    if(!name.length > 0){ throwWarning("File name must be 1 or more characters"); return}
+
     const response = await fetch(`/api/files/rename?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}&name=${encodeURIComponent(name)}`, {
         method: "POST"
     });
@@ -89,6 +97,8 @@ async function renameFile(folderId, fileId, name){
     if (!response.ok) {
         throwError(await response.text())
     }
+
+    return true
 }
 
 async function searchFiles(query) {
@@ -154,4 +164,24 @@ async function setStarredFile(folderId, fileId, value){
         throwError(await response.text())
         return
     }
+
+    return true
 }
+
+
+
+function openFileUploadMenu() {
+    document.getElementById('hiddenFileInput').click();
+}
+
+document.getElementById('hiddenFileInput').addEventListener('change', async function () {
+    if (this.files.length > 0) {
+        throwInformation("Upload Began")
+        for (const file of this.files) {
+            await uploadFile(file, getParameter("jbd"), false);
+            await reloadStorageLimit()
+        }
+        await refreshDirectoryDrive()
+        throwSuccess("Upload finished")
+    }
+});

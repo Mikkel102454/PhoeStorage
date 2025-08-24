@@ -13,7 +13,8 @@ async function getFolderLocation(folderUuid){
         folder.uuid,
         folder.owner,
         folder.name,
-        folder.folderId
+        folder.folderId,
+        folder.size
     ));
 }
 
@@ -25,6 +26,7 @@ async function uploadFolder(folderId, folderName) {
     if (!response.ok) {
         throwError(await response.text())
     }
+
     return response.text();
 }
 
@@ -107,9 +109,13 @@ async function deleteFolder(folderId, folderUuid, notify) {
     }
 
     if(notify){throwSuccess("Folder deleted")}
+
+    return true
 }
 
 async function renameFolder(folderId, folderUuid, name){
+    if(!name.length > 0){ throwWarning("Folder name must be 1 or more characters"); return}
+
     const response = await fetch(`/api/folders/rename?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}&name=${encodeURIComponent(name)}`, {
         method: "POST"
     });
@@ -117,9 +123,11 @@ async function renameFolder(folderId, folderUuid, name){
     if (!response.ok) {
         throwError(await response.text())
     }
+
+    return true
 }
 
-async function getFolderId(folderId, folderName){
+async function getParentFolder(folderId, folderName){
     const response = await fetch(`/api/folders/parent?folderId=${encodeURIComponent(folderId)}&folderName=${encodeURIComponent(folderName)}`, {
         method: "GET"
     });
@@ -129,5 +137,73 @@ async function getFolderId(folderId, folderName){
         return null;
     }
 
-    return await response.text();
+    const result = await response.json()
+
+    return new Folder(
+        result.uuid,
+        result.owner,
+        result.name,
+        result.folderId,
+        result.size
+    );
 }
+
+async function FolderUploading(filesList) {
+    const files = Array.from(filesList);
+    console.log(files)
+    const rootFolderId = getParameter("jbd");
+
+    if (!rootFolderId || typeof rootFolderId !== "string") {
+        alert("Invalid root folder ID.");
+        return;
+    }
+
+    const folderIdCache = new Map();
+    throwInformation("Upload began")
+    for (const file of files) {
+        if (!file.webkitRelativePath) continue; // skip loose files
+
+        const parts = file.webkitRelativePath.split('/');
+        parts.pop(); // Remove file name from path
+        let parentId = rootFolderId;
+
+        for (let i = 0; i < parts.length; i++) {
+            const folderName = parts[i];
+            const cacheKey = `${parentId}/${folderName}`;
+
+            if (!folderIdCache.has(cacheKey)) {
+                let folderId;
+
+                if (i === 0) {
+                    // Always create the top-level folder (e.g., "MyFolder")
+                    folderId = await uploadFolder(parentId, folderName);
+                } else {
+                    // Try to fetch, or create if missing
+                    folderId = await getParentFolder(parentId, folderName).uuid;
+                    if (!folderId || typeof folderId !== "string") {
+                        folderId = await uploadFolder(parentId, folderName);
+                    }
+                }
+
+                folderIdCache.set(cacheKey, folderId);
+            }
+
+            parentId = folderIdCache.get(cacheKey);
+        }
+
+        await uploadFile(file, parentId);
+    }
+    throwSuccess("Upload finished")
+    await refreshDirectoryDrive();
+}
+
+
+
+function openFolderUploadMenu() {
+    document.getElementById('hiddenFolderInput').click();
+}
+
+document.getElementById('hiddenFolderInput').addEventListener('change', async function () {
+    await FolderUploading(this.files)
+    await reloadStorageLimit()
+});

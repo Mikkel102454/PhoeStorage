@@ -4,26 +4,44 @@
     --main-bg-2: rgba(124, 126, 255, 0.233);
 
     --main-color: oklab(0.200175 0.00000910461 0.00000399351 / 0.9);
+    --secondary-color: oklab(65.996% 0 -0.00008 / 0.048);
     --main-dark-color: oklab(17.852999999999998% 0.00112 -0.00393);
     --accent-color: rgba(255, 255, 255, 0.1);
 
     --main-font-color: rgb(221, 221, 221);
     --secondary-font-color: rgb(158, 158, 158);
+    --note-font-color: rgb(158, 158, 158);
 
     --main-border-color: rgba(61, 61, 61, 0.5);
     --secondary-border-color: rgb(221, 221, 221);
 
+    --red-color: rgb(201, 57, 57);
+    --accent-red-color: rgb(255, 69, 69);
+
+    --blue-color: rgb(63, 122, 250);
+    --accent-blue-color: rgb(78, 132, 250);
+
 
     /* FONT */
+    --font-extra-small: 1.4vh;
     --font-small: 1.6vh;
     --font-medium: 2vh;
 
     --font-s-bold: 600;
     --font-thick: 500;
+
+
+    /* STORAGE STAGES */
+    --storage-ok: rgb(0, 140, 255);
+    --storage-warn: rgb(255, 170, 0);
+    --storage-danger: rgb(255, 64, 54);
 }
 
 .main-bg--color{
     background-color: var(--main-color);
+}
+.main-bg-dark-color{
+    background-color: var(--main-dark-color);
 }
 
 .main-border{
@@ -31,6 +49,10 @@
     border: var(--main-border-color);
     border-style: solid;
     border-width: 0.2vh;
+}
+
+.font-extra-small{
+    font-size: var(--font-extra-small);
 }
 
 .font-small{
@@ -49,9 +71,14 @@
     font-weight: var(--font-thick);
 }
 
+.font-note{
+    color: var(--note-font-color);
+}
 
-
-
+/* Stages */
+.ok     { background-color: var(--storage-ok) }   /* blue */
+.warn   { background-color: var(--storage-warn) }   /* amber */
+.danger { background-color: var(--storage-danger) }   /* red */
 
 
 

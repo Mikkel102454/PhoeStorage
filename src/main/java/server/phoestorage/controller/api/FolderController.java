@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
+import server.phoestorage.dto.FolderEntry;
 import server.phoestorage.service.*;
 
 import java.util.List;
@@ -81,11 +82,13 @@ public class FolderController {
     }
 
     @GetMapping("/parent")
-    public ResponseEntity<String> getParentFolder(
+    public ResponseEntity<?> getParentFolder(
             @RequestParam("folderId") String folderId,
             @RequestParam("folderName") String folderName
     ){
-        return folderService.getParentFolder(folderId, folderName);
+        FolderEntry folderEntry = folderService.getParentFolder(folderId, folderName);
+        if(folderEntry == null){return ResponseEntity.status(500).body("Internal server error");}
+        return ResponseEntity.ok(folderEntry);
     }
 
     @GetMapping("/location")

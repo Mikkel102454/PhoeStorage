@@ -3,6 +3,7 @@ body{
     color: var(--main-font-color);
     font-size: var(--font-medium);
     overflow: hidden;
+    user-select: none;
 }
 
 .radial-background-1{
@@ -21,13 +22,39 @@ body{
 .d-grid{
     display: grid;
 }
+.d-none{
+    display: none;
+}
+
+/* ----------------------------- */
+/* ----        Position     ---- */
+/* ----------------------------- */
+.p-absolute{
+    position: absolute;
+}
+.p-fixed{
+    position: fixed;
+}
+
+.top-0{
+    top: 0;
+}
+.left-0{
+    left: 0;
+}
 
 
 /* ----------------------------- */
 /* ----        Width        ---- */
 /* ----------------------------- */
+.w-fit{
+    width: fit-content !important;
+}
 .w-100{
     width: 100vw !important;
+}
+.w-30{
+    width: 30vw !important;
 }
 .w-13{
     width: 13vw !important;
@@ -67,6 +94,9 @@ body{
 /* ----------------------------- */
 .m-0{
     margin: 0 !important;
+}
+.m-a{
+    margin: auto !important;
 }
 
 /* Right */
@@ -111,6 +141,9 @@ body{
 .m-t-2{
     margin-top: 2vh !important;
 }
+.m-t-1{
+    margin-top: 1vh !important;
+}
 .m-t-a{
     margin-top: auto !important;
 }
@@ -145,6 +178,12 @@ body{
 
 .p-b-1{
     padding: 1vh !important;
+}
+
+
+.p-lr-3{
+    padding-left: 3vh !important;
+    padding-right: 3vh !important;
 }
 
 /* ----------------------------- */
@@ -219,7 +258,37 @@ body{
 
 
 
-
+/* TODO */
+/* CREATE NAME FOR THIS */
 .grid-2-2-2-2-a{
     grid-template-columns: 2fr 1.5fr 1fr 1fr 2fr;
+}
+
+
+/* ----------------------------- */
+/* ----        Other        ---- */
+/* ----------------------------- */
+.selectable{
+    user-select: text;
+}
+
+
+
+
+
+/* ----------------------------- */
+/* ----        Index        ---- */
+/* ----------------------------- */
+.modal-index{
+    z-index: 100;
+}
+.ctx-index{
+    z-index: 100;
+}
+.tooltip-index{
+    z-index: 100;
+}
+
+.z-index--1{
+    z-index: -1;
 }

@@ -428,22 +428,3 @@ function initDeleteModal(){
     if(!deleteModalLastModified) deleteModalLastModified = deleteModal.querySelector("#date");
     if(!deleteModalButton) deleteModalButton = deleteModal.querySelector("#confirmBtn");
 }
-
-async function search(query, searchBar, starred){
-    if(query === ""){
-        if(starred) {await loadStarred(); return}
-        await loadDirectory(getParameter("jbd")); return
-    }
-    let result = await searchFiles(query)
-
-    let fileParent = document.querySelector(".file-content")
-
-    fileParent.innerHTML = ""
-    for(const file of result){
-        if(starred){
-            if(file.starred){await createFile(file, fileParent, false)}
-        }else{
-            await createFile(file, fileParent, false)
-        }
-    }
-}

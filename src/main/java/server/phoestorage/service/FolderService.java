@@ -236,14 +236,21 @@ public class FolderService {
         return ResponseEntity.ok("");
     }
 
-    public ResponseEntity<String> getParentFolder(String folderId, String folderName) {
+    public FolderEntry getParentFolder(String folderId, String folderName) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
         if(!folderExistByName(uuid, folderId, folderName)) {
-            return ResponseEntity.ok(null);
+            return null;
         }
 
         FolderEntity folderEntity = folderRepository.findByOwnerAndFolderIdAndName(uuid, folderId, folderName).get();
-        return ResponseEntity.ok(folderEntity.getFolderId());
+
+        FolderEntry folderEntry = new FolderEntry();
+        folderEntry.setUuid(folderEntity.getUuid());
+        folderEntry.setOwner(uuid);
+        folderEntry.setName(folderName);
+        folderEntry.setFolderId(folderEntity.getFolderId());
+
+        return folderEntry;
     }
 
     public ResponseEntity<List<FolderEntry>> getFolderLocation(String folderUuid) {
