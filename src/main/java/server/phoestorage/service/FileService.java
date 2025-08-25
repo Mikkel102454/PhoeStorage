@@ -172,6 +172,7 @@ public class FileService {
 
             String fileName = UUID.randomUUID().toString();
 
+            Files.createDirectories(Paths.get(rootPath, uuid, "storage"));
             Path outputPath = Paths.get(rootPath, uuid, "storage", fileName);
 
             try (OutputStream os = Files.newOutputStream(outputPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {

@@ -103,3 +103,7 @@
 
 section {display: none !important;}
 section:target {display: flex !important;}
+
+::-webkit-scrollbar {
+    display: none;
+}

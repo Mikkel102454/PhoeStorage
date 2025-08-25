@@ -59,9 +59,16 @@ body{
 .w-13{
     width: 13vw !important;
 }
+.w-5{
+    width: 5vw !important;
+}
 
 .w-100p{
     width: 100% !important;
+}
+
+.w-60p{
+    width: 60% !important;
 }
 
 .w-40p{
@@ -76,6 +83,9 @@ body{
 }
 .h-100{
     height: 100vh !important;
+}
+.h-3{
+    height: 3vh !important;
 }
 .h-06{
     height: .6vh !important;
@@ -167,6 +177,9 @@ body{
 .p-2{
     padding: 2vh !important;
 }
+.p-4{
+    padding: 4vh !important;
+}
 
 /* Left */
 
@@ -256,12 +269,31 @@ body{
     border-width: 0.1vh;
 }
 
+/* ----------------------------- */
+/* ----        Overflow     ---- */
+/* ----------------------------- */
+.overflow-h{
+    overflow: hidden;
+}
+.overflow-y-s{
+    overflow-y: scroll;
+}
 
+/* ----------------------------- */
+/* ----        Text         ---- */
+/* ----------------------------- */
+.text-a-r{
+    text-align: right;
+}
+
+/* ----------------------------- */
+/* ----        Grid         ---- */
+/* ----------------------------- */
 
 /* TODO */
 /* CREATE NAME FOR THIS */
-.grid-2-2-2-2-a{
-    grid-template-columns: 2fr 1.5fr 1fr 1fr 2fr;
+.grid-2-105-2-1-2{
+    grid-template-columns: 2fr 1.5fr 2fr 1fr 2fr;
 }
 
 
@@ -271,9 +303,9 @@ body{
 .selectable{
     user-select: text;
 }
-
-
-
+.aspect-1-1{
+    aspect-ratio: 1 / 1 !important;
+}
 
 
 /* ----------------------------- */

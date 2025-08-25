@@ -177,3 +177,10 @@
 .backgrond-blur-1{
     backdrop-filter: blur(1vh);
 }
+
+.text-overflow-h{
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

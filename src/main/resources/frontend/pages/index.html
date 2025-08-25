@@ -7,9 +7,10 @@
 
     <link rel="stylesheet" href="/style/styles.css">
     <link rel="stylesheet" href="/style/root.css">
-    <link rel="stylesheet" href="/style/preset.css">
-    <link rel="stylesheet" href="/style/alert.css">
-    <link rel="stylesheet" href="/style/ctxmenu.css">
+    <link rel="stylesheet" href="/style/presets/preset.css">
+    <link rel="stylesheet" href="/style/presets/alert.css">
+    <link rel="stylesheet" href="/style/presets/ctxmenu.css">
+    <link rel="stylesheet" href="/style/presets/tab.css">
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 </head>
@@ -21,8 +22,8 @@
 
         <!--Nav items-->
         <nav class="w-100p flex-1 container-1 flex-column d-flex align-center p-1">
-            <a class="button-1 w-100p size-borderbox p-l-1" href="#drive" onclick="refreshDirectoryDrive()"><i class="fa-solid fa-hard-drive m-r-08"></i>My Drive</a>
-            <a class="button-1 w-100p size-borderbox p-l-1" href="#starred" onclick="refreshDirectoryStarred()"><i class="fa-regular fa-star m-r-08"></i>My Starred</a>
+            <a class="button-1 w-100p size-borderbox p-l-1 m-b-1" href="#drive" onclick="refreshDirectoryDrive()" type="tab"><i class="fa-solid fa-hard-drive m-r-08"></i>My Drive</a>
+            <a class="button-1 w-100p size-borderbox p-l-1 m-b-1" href="#starred" onclick="refreshDirectoryStarred()" type="tab"><i class="fa-regular fa-star m-r-08"></i>My Starred</a>
 
             <!--Nav Bottom-->
             <div class="m-t-a w-100p d-flex flex-column">
@@ -83,7 +84,7 @@
             </div>
 
             <!--Main-->
-            <div class="w-100p flex-1 container-1 d-flex flex-column p-2">
+            <div class="w-100p flex-1 container-1 d-flex flex-column p-2 overflow-h">
 
                 <!--Path view-->
                 <div class="d-flex h-fit">
@@ -97,9 +98,9 @@
                 </div>
 
                 <!--Files view-->
-                <div class="flex-1 size-borderbox font-thick" id="drop-zone">
+                <div class="flex-1 size-borderbox font-thick overflow-h d-flex flex-column" id="drop-zone">
                     <!--Files head-->
-                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center">
+                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-105-2-1-2 p-06 align-center">
                         <span>Name</span>
                         <span>Owner</span>
                         <span>Last modified</span>
@@ -107,7 +108,7 @@
                     </div>
 
                     <!--Files container-->
-                    <div id="viewContainerDrive">
+                    <div class="overflow-y-s flex-1" id="viewContainerDrive">
 
                     </div>
                 </div>
@@ -131,7 +132,7 @@
             </div>
 
             <!--Main-->
-            <div class="w-100p flex-1 container-1 d-flex flex-column p-2">
+            <div class="w-100p flex-1 container-1 d-flex flex-column p-2 overflow-h">
 
                 <!--Path view-->
                 <div class="d-flex h-fit">
@@ -140,9 +141,9 @@
                 </div>
 
                 <!--Files view-->
-                <div class="flex-1 size-borderbox font-thick">
+                <div class="flex-1 size-borderbox font-thick overflow-hd-flex flex-column">
                     <!--Files head-->
-                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center">
+                    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-105-2-1-2 p-06 align-center">
                         <span>Name</span>
                         <span>Owner</span>
                         <span>Last modified</span>
@@ -150,7 +151,7 @@
                     </div>
 
                     <!--Files container-->
-                    <div id="viewContainerStarred">
+                    <div class="overflow-y-s flex-1" id="viewContainerStarred">
 
                     </div>
                 </div>
@@ -159,12 +160,13 @@
     </main>
 </body>
 
+
 <template id="file-view">
-    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-2-2-2-a p-06 align-center hover-1">
-        <span type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
-        <span type="span.username">Mikkel102454</span>
-        <span type="span.date">24 Apr, 2025</span>
-        <span type="span.size">99.99GB</span>
+    <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-105-2-1-2 p-06 align-center hover-1">
+        <span class="text-overflow-h p-l-1" type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
+        <span class="text-overflow-h p-l-1" type="span.username">Mikkel102454</span>
+        <span class="text-overflow-h p-l-1" type="span.date">24 Apr, 2025</span>
+        <span class="text-overflow-h p-l-1" type="span.size">99.99GB</span>
         <div class="m-l-a d-flex">
             <i class="fa-light fa-user-plus m-r-08 small-icon small" tooltip="Share" type="icon.share"></i>
             <i class="fa-light fa-down-to-bracket m-r-08 small-icon small" tooltip="Download" type="icon.download"></i>
@@ -191,7 +193,7 @@
             <h3 class="p-0 m-0 m-b-1">Delete permanently?</h3>
             <span class="font-note font-small">Deleted items cannot be recovered.</span>
             <div class="container-2 m-t-2 p-2">
-                <div class="d-flex">         <span class="font-note font-small">Name</span>             <span class="m-l-a font-small" type="span.name">Name</span>           </div>
+                <div class="d-flex">         <span class="font-note font-small">Name</span>             <span class="m-l-a font-small text-overflow-h w-60p text-a-r" type="span.name">Name</span>           </div>
                 <div class="d-flex m-t-2">   <span class="font-note font-small">Size</span>             <span class="m-l-a font-small" type="span.size">999.99 GB</span>           </div>
                 <div class="d-flex m-t-2">   <span class="font-note font-small">Last modified</span>    <span class="m-l-a font-small" type="span.date">29 Sep, 2025</span>           </div>
             </div>
@@ -203,7 +205,6 @@
         </div>
     </div>
 </template>
-
 
 <!--Rename modal-->
 <template id="renameModal">
@@ -227,7 +228,6 @@
         </div>
     </div>
 </template>
-
 
 <!--Share modal-->
 <template id="shareModal">
@@ -257,7 +257,6 @@
         </div>
     </div>
 </template>
-
 
 <!--Share copy modal-->
 <template id="shareCopyModal">
@@ -302,6 +301,7 @@
     </div>
 </template>
 
+
 <script src="/code/utils/alert.js"></script>
 <script src="/code/utils/format.js"></script>
 <script src="/code/utils/param.js"></script>
@@ -324,5 +324,6 @@
 <script src="/code/controllers/view.js"></script>
 <script src="/code/controllers/share.js"></script>
 <script src="/code/controllers/storage.js"></script>
+<script src="/code/controllers/tabsync.js"></script>
 
 </html>

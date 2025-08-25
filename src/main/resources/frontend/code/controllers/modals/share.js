@@ -9,11 +9,11 @@ function openShareModal(item){
 
     clone.firstElementChild.id = "shareModalOpen"
 
-    let input = clone.querySelector('[typeI="input.limit"]').value
+    let input = clone.querySelector('[typeI="input.limit"]')
 
     clone.querySelector('[type="button.confirm"]').addEventListener("click", async () => {
         closeShareModal()
-        openShareCopyModal(await item.share(input))
+        openShareCopyModal(await item.share(input.value))
     })
     
     clone.querySelector('[type="button.cancel"]').addEventListener("click", async () => {
@@ -73,5 +73,5 @@ function closeShareCopyModal(){
 }
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeShareCopyModal(); closeShareModal();
+  if (e.key === 'Escape') {closeShareCopyModal(); closeShareModal();}
 });

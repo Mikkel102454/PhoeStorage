@@ -31,7 +31,7 @@ document.addEventListener('input', (e) => {
                     console.error('search failed:', err);
                 }
             },
-            400
+            200
         );
 
         debounced(el.value, el, starred); // schedules; not awaited
