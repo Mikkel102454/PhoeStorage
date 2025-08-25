@@ -3,66 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Settings</title>
-    <link rel="stylesheet" href="/style/setting.css">
-    <link rel="stylesheet" href="/style/alert.css">
+    
+    <link rel="stylesheet" href="/style/root.css">
+    <link rel="stylesheet" href="/style/presets/preset.css">
+    <link rel="stylesheet" href="/style/presets/alert.css">
+    <link rel="stylesheet" href="/style/styles.css">
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 </head>
-<body>
-    <div id="alertBox">
-
-    </div>
-    <nav>
-        <a href="/">Back</a>
-        <a class="tab" href="#account">Account</a>
-        <a class="tab" href="#security">Security</a>
-        <a class="tab" href="#shared">Shared files</a>
+<body class="radial-background-1 m-0 h-100 w-100 p-2 p-lr-20 size-borderbox d-flex">
+    <nav class="container-1 d-flex flex-column p-2 h-fit w-13 m-r-2">
+        <a class="button-2 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="/">Back</a>
+        <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#account">Account</a>
+        <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#security">Security</a>
+        <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#shared">Shared files</a>
     </nav>
-    <section id="account">
-        <h2>Settings</h2>
-        <ul>
-            <li class="border">
-                <h3>Change Username</h3>
+    <section id="account" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+        <h2 class="m-0">Settings</h2>
+        <ul class="p-0">
+            <div class="container-2 p-2 h-fit d-flex flex-column">
+                <h3 class="m-0 font-small m-b-1">Change Username</h3>
 
-                <div class="text1">
-                    <span>Username</span>
-                    <input type="text" placeholder="Username" id="username">
+                <div class="h-fit m-b-1">
+                    <span class="font-extra-small font-note font-s-bold">Username</span>
+                    <div class="input-field-1 m-t-1 w-100p">
+                        <i></i>
+                        <input type="text" placeholder="Username">
+                    </div>
                 </div>
-                <div style="display: flex; gap: .5vw; justify-content: right;">
-                    <div class="button2" onclick="setSettings('username', document.getElementById('username').value)">Save</div>
+                <div class="m-l-a w-fit button-4-accent m-t-1">
+                    <div class="button2 font-s-bold font-extra-small p-lr-105">Save</div>
                 </div>
-            </li>
+            </div>
         </ul>
     </section>
-    <section id="security">
-        <h2>Settings</h2>
-        <ul>
-            <li class="border">
-                <h3>Change password</h3>
+    <section id="security" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+        <h2 class="m-0">Settings</h2>
+        <ul class="p-0">
+            <div class="container-2 p-2 h-fit d-flex flex-column">
+                <h3 class="m-0 font-small m-b-1">Change password</h3>
 
-                <div class="text1">
-                    <span>Current password</span>
-                    <input type="password" placeholder="*******" id="oldPassword">
+                <div class="h-fit m-b-1">
+                    <span class="font-extra-small font-note font-s-bold">Current password</span>
+                    <div class="input-field-1 m-t-1 w-100p">
+                        <i></i>
+                        <input type="password" placeholder="*******">
+                    </div>
                 </div>
-                <div class="text1">
-                    <span>New password</span>
-                    <input type="password" placeholder="*******" id="newPassword">
+                <div class="h-fit m-b-1">
+                    <span class="font-extra-small font-note font-s-bold">New password</span>
+                    <div class="input-field-1 m-t-1 w-100p">
+                        <i></i>
+                        <input type="password" placeholder="*******">
+                    </div>
                 </div>
-                <div style="display: flex; gap: .5vw; justify-content: right;">
-                    <div class="button2" onclick="setPassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Save</div>
+                <div class="m-l-a w-fit button-4-accent m-t-1">
+                    <div class="button2 font-s-bold font-extra-small p-lr-105">Save</div>
                 </div>
-            </li>
+            </div>
         </ul>
     </section>
-    <section id="shared">
-        <h2>Settings</h2>
-        <ul>
-            <li class="border">
-                <h3>Shared files</h3>
+    <section id="shared" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+        <h2 class="m-0">Settings</h2>
+        <ul class="p-0">
+            <li class="container-2 p-2 h-fit d-flex flex-column">
+                <h3 class="m-0 font-small m-b-1">Shared files</h3>
 
-                <div class="fileList">
+                <div class="main-border font-extra-small">
                     <!-- Header row -->
-                    <div class="fileRow header">
+                    <div class="d-grid p-1-1 grid-3-2-3-2-1 b-s-b b-c-main b-w-01">
                         <span>Name</span>
                         <span>Downloads</span>
                         <span>Total Downloads</span>
@@ -70,8 +79,8 @@
                     </div>
 
                     <!-- Data rows -->
-                    <div id="rowContainer">
-                        <h3>Nothing to show here</h3>
+                    <div>
+                        <div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>
                     </div>
 
                 </div>
@@ -81,67 +90,16 @@
 </body>
 
 <template id="fileRow">
-    <div class="fileRow">
+    <div class="d-grid b-s-t b-w-01 p-1-1 b-c-main grid-3-2-3-2-1">
         <span id="name">Error.</span>
         <span id="download">Error.</span>
         <span id="maxDownload">Error.</span>
-        <span style="display: flex;"><span id="exp">Error.</span>
-            <i style="margin-left: auto;" id="link" class="fa-regular fa-link"></i>
-            <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
-        </span>
-    </div>
-</template>
+        <span id="exp">Error.</span>
 
-<template id="alertWarningTemp">
-    <div class="alert warning">
-        <span class="icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-        </span>
-        <div class="text">
-            <span>Warning!</span>
-            <span class="alert-msg">Some example warning message text here</span>
+        <div class="m-l-a d-flex justify-center align-center w-fit">
+            <i id="link" class="fa-regular fa-link"></i>
+            <i id="trash" class="fa-light fa-trash m-l-08"></i>
         </div>
-        <button class="close-btn">&times;</button>
     </div>
 </template>
-<template id="alertErrorTemp">
-    <div class="alert error">
-        <span class="icon">
-            <i class="fa-solid fa-circle-xmark"></i>
-        </span>
-        <div class="text">
-            <span>Error!</span>
-            <span class="alert-msg">Some example error message text here</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-<template id="alertInfoTemp">
-    <div class="alert info">
-        <span class="icon">
-            <i class="fa-solid fa-circle-info"></i>
-        </span>
-        <div class="text">
-            <span>Information</span>
-            <span class="alert-msg">Some example message text here</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-<template id="alertSuccessTemp">
-    <div class="alert success">
-        <span class="icon">
-            <i class="fa-solid fa-circle-check"></i>
-        </span>
-        <div class="text">
-            <span>Success</span>
-            <span class="alert-msg">Your action was successful</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    </div>
-</template>
-
-<script src="/code/alertService.js"></script>
-<script src="/code/util.js"></script>
-<script src="/code/setting.js"></script>
 </html>

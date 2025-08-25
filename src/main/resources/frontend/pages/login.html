@@ -6,27 +6,36 @@
     <title>Login</title>
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
-    <link rel="stylesheet" href="/style/login.css">
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="stylesheet" href="/style/root.css">
+    <link rel="stylesheet" href="/style/presets/preset.css">
+    <link rel="stylesheet" href="/style/presets/alert.css">
 </head>
-<body>
-    <main>
+<body class="radial-background-1 m-0 h-100 w-100 p-2 size-borderbox d-flex">
+    <main class="container-1 m-a p-2" style="width: 27vw;">
         <form th:action="@{/login}" method="post">
-            <div class="header">
-                <h2>Sign in</h2>
-                <p>Access your files through here</p>
+            <div class="d-flex flex-column m-b-2">
+                <h2 class="m-lr-a m-0 m-b-2 m-t-2">Sign in</h2>
+                <p class="font-note font-extra-small m-lr-a">Access your files through here</p>
             </div>
-            <div class="values" th:classappend="${param.error} ? ' error' : ''">
-                <div>
-                    <span>Username</span>
-                    <input type="text" id="username" name="username" required>
+            <div class="values" th:classappend="${param.error} ? 'error' : ''">
+                <div class="d-flex flex-column m-b-2">
+                    <span class="font-small m-b-1">Username</span>
+                    <div class="input-field-1 w-100p errorBorder">
+                        <i></i>
+                        <input class="w-100p" type="text" name="username" required>
+                    </div>
                 </div>
-                <div>
-                    <span>Password</span>
-                    <input type="password" id="password" name="password" required>
+                <div class="d-flex flex-column">
+                    <span class="font-small m-b-1">Password</span>
+                    <div class="input-field-1 w-100p errorBorder">
+                        <i></i>
+                        <input class="w-100p" type="password" name="password" required>
+                    </div>
                 </div>
             </div>
-            <div class="interactive">
-                <label class="label-ckb">
+            <div class="interactive d-flex flex-column">
+                <label class="checkbox-1">
                     <input class="ckb" type="checkbox" name="remember-me" value="1">
                     <span class="ckb-box" aria-hidden="true">
                         <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
@@ -36,7 +45,7 @@
                     <span>Remember me</span>
                 </label>
 
-                <button class="signin" type="submit">Sign in</button>
+                <button class="button-4-accent font-s-bold font-small" type="submit">Sign in</button>
             </div>
         </form>
     </main>

@@ -26,10 +26,14 @@ public class ResourceController {
         this.handlerService = handlerService;
     }
 
-    @Cacheable("code")
-    @GetMapping(value = "/code/{*file}", produces = "text/javascript")
-    public ResponseEntity<String> code(@PathVariable String file) {
-        if(!file.endsWith(".js")) file += ".js";
+    @GetMapping(value = "/code/**", produces = "text/javascript")
+    public ResponseEntity<String> code(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String file = uri.substring("/code/".length());
+
+        if (!file.endsWith(".js")) {
+            file += ".js";
+        }
 
         String path = "classpath:frontend/code/" + file;
         return getResource(path);
@@ -46,6 +50,7 @@ public class ResourceController {
         String path = "classpath:frontend/style/" + file;
         return getResource(path);
     }
+
     @Cacheable("resources")
     @GetMapping("/resource/{*file}")
     public ResponseEntity<String> resource(@PathVariable String file) {
