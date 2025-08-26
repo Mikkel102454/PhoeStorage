@@ -2,111 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin panel</title>
-  <link rel="stylesheet" href="/style/admin.css">
-  <link rel="stylesheet" href="/style/alert.css">
+  <title>Settings</title>
+
+  <link rel="stylesheet" href="/style/root.css">
+  <link rel="stylesheet" href="/style/presets/preset.css">
+  <link rel="stylesheet" href="/style/presets/alert.css">
+  <link rel="stylesheet" href="/style/presets/tab.css">
+  <link rel="stylesheet" href="/style/styles.css">
 
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 </head>
-<body>
-<div id="alertBox">
-
-</div>
-<nav>
-  <a href="/">Back</a>
-  <a class="tab" href="#user">Users</a>
-  <a class="tab" href="#notification">Notification</a>
-  <a class="tab" href="#storage">Storage</a>
+<body class="radial-background-1 m-0 h-100 w-100 p-2 p-lr-20 size-borderbox d-flex">
+<nav class="container-1 d-flex flex-column p-2 h-fit w-13 m-r-2">
+  <a class="button-2 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="/">Back</a>
+  <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#user" type="tab">Users</a>
+  <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#storage" type="tab">Storage</a>
 </nav>
 
-<section id="user">
-  <div class="userUpdate" id="userUpdateMenu">
-    <div class="background" onclick="closeUserUpdateMenu()"></div>
-      <div class="content">
-        <h3 id="title">User update for "loading..."</h3>
-        <div style="display: flex; flex-direction: column; gap: 1vh; padding: 2vh 0;" id="listContainer">
+<!--Tool tip-->
+<div class="w-fit d-none p-fixed main-bg-dark-color p-1 font-extra-small b-r-2 main-border tooltip-index" id="tooltip">example tooltip</div>
 
-        </div>
-        <div class="interactive">
-          <span onclick="closeUserUpdateMenu()">Cancel</span>
-          <span onclick="" id="confirmButton">Update</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<section id="user" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+  <h2 class="m-0">Settings</h2>
+  <ul class="p-0">
+    <li class="container-2 p-2 h-fit d-flex flex-column m-b-2">
+      	<h3 class="m-0 font-small m-b-1">Change Username</h3>
 
-  <div class="passwordReset" id="passwordResetMenu">
-    <div class="background" onclick="closeAdminPasswordMenu()"></div>
-    <div class="content">
-      <h3 id="title">Reset password for "loading..."</h3>
-      <input id="passwordResetInput">
-      <div class="interactive">
-        <span onclick="closeAdminPasswordMenu()">Cancel</span>
-        <span onclick="" id="confirmButton">Update</span>
-      </div>
-    </div>
-  </div>
-  </div>
+      	<div class="h-fit m-b-1">
+        	<span class="font-extra-small font-note font-s-bold">Username</span>
+        	<div class="input-field-1 m-t-1 w-100p">
+          		<i></i>
+          		<input type="text" typeI="input.username.createUser" placeholder="Username">
+        	</div>
+      	</div>
+      	<div class="h-fit m-b-1">
+        	<span class="font-extra-small font-note font-s-bold">Password</span>
+        	<div class="input-field-1 m-t-1 w-100p">
+          		<i></i>
+          		<input type="password" typeI="input.password.createUser" placeholder="Password">
+        	</div>
+      	</div>
+      	<div class="h-fit m-b-1">
+        	<span class="font-extra-small font-note font-s-bold">Data limit</span>
+        	<div class="input-field-1 m-t-1 w-100p">
+          		<i></i>
+          		<input type="text" typeI="input.dataLimit.createUser" placeholder="100 GB">
+        	</div>
+      	</div>
 
-  <div class="passwordReset" id="deleteUserMenu">
-    <div class="background" onclick="closeDeleteUserMenu()"></div>
-    <div class="content">
-      <h3 id="title">Delete user "loading..."</h3>
-      <div class="interactive">
-        <span onclick="closeDeleteUserMenu()">Cancel</span>
-        <span onclick="" id="confirmButton">Delete</span>
-      </div>
-    </div>
-  </div>
-  </div>
+    	<label class="checkbox-1 m-0 p-0 h-fit m-b-1">
+            <input class="ckb" type="checkbox" name="is-admin" typeI="input.isAdmin.createUser" value="1">
+            <span class="ckb-box" aria-hidden="true">
+                <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
+                <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                </svg>
+            </span>
+            <span>Is admin</span>
+        </label>
 
-  <h2>Admin Panel</h2>
-  <ul>
-    <li class="border" id="userCreate">
-      <h3>Create user</h3>
-
-      <div class="text1">
-        <span>Username</span>
-        <input type="text" placeholder="Username" id="username">
-      </div>
-      <div class="text1">
-        <span>Password</span>
-        <input type="text" placeholder="Password" id="password">
-      </div>
-      <div class="text1">
-        <span>Data limit</span>
-        <input type="text" placeholder="100 GB" id="data">
-      </div>
-      <label class="label-ckb">
-        <input class="ckb" type="checkbox" name="is-admin" value="1" id="admin">
-        <span class="ckb-box" aria-hidden="true">
-          <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
-            <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-          </svg>
-        </span>
-        Is Admin
-      </label>
-      <label class="label-ckb">
-        <input class="ckb" type="checkbox" name="is-enabled" value="1" id="enabled">
-        <span class="ckb-box" aria-hidden="true">
-          <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
-            <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-          </svg>
-        </span>
-        Is Enabled
-      </label>
-
-      <div style="display: flex; gap: .5vw; justify-content: right;">
-        <div class="button2" onclick="createUser()">Create</div>
-      </div>
+        <label class="checkbox-1 m-0 p-0 h-fit m-b-1">
+            <input class="ckb" type="checkbox" name="is-enabled" typeI="input.isEnabled.createUser" value="1">
+            <span class="ckb-box" aria-hidden="true">
+                <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
+                <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                </svg>
+              </span>
+            <span>Is enabled</span>
+        </label>
+    	<div class="m-l-a w-fit button-4-accent m-t-1">
+        	<div class="button2 font-s-bold font-extra-small p-lr-105" type="button.confirm.createUser">Create</div>
+      	</div>
     </li>
+    <li class="container-2 p-2 h-fit d-flex flex-column">
+      <h3 class="m-0 font-small m-b-1">Users</h3>
 
-    <li class="border">
-      <h3>Users</h3>
-
-      <div class="userList">
+      <div class="main-border font-extra-small">
         <!-- Header row -->
-        <div class="userRow header">
+        <div class="d-grid p-1-1 b-s-b b-c-main b-w-01" style="grid-template-columns: 3fr 2fr 2fr 2fr 2fr 2fr;">
           <span>Username</span>
           <span>Data limit</span>
           <span>Data used</span>
@@ -115,8 +87,8 @@
         </div>
 
         <!-- Data rows -->
-        <div id="userRowContainer" class="rowContainer">
-          <h3>Nothing to show here</h3>
+        <div type="container.user">
+          <div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>
         </div>
 
       </div>
@@ -124,163 +96,157 @@
   </ul>
 </section>
 
-<section id="notification">
-  <h2>Admin Panel</h2>
-  <ul>
-    <li class="border">
-      <h3>Send notification
-      </h3>
+<section id="storage" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+  <h2 class="m-0">Settings</h2>
+  <ul class="p-0">
+    <li class="container-2 p-2 h-fit d-flex flex-column">
+      <h3 class="m-0 font-small m-b-1">Shared files</h3>
 
-      <div class="text1">
-        <span>Title</span>
-        <input type="text" placeholder="Title of message" id="notifyTitle">
-      </div>
-      <div class="text1">
-        <span>Message</span>
-        <textarea  style="height: 20vh;" type="textarea" placeholder="Type your message here" id="notifyMsg"></textarea>
-      </div>
-      <div style="display: flex; gap: .5vw; justify-content: right;">
-        <div class="button2" onclick="sendNotification()">Send</div>
-      </div>
-    </li>
-  </ul>
-</section>
-
-<section id="storage">
-  <h2>Admin Panel</h2>
-  <ul>
-    <li class="border">
-      <h3>Statistics</h3>
-
-      <div class="text1">
-        <span>Used Storage</span>
-          <div class="storage-container">
-            <div class="bar">
-              <div class="bar-fill" id="storageLimitFill"></div>
-            </div>
-          <div class="text" id="storageLimitText">loading. of loading. used</div>
-        </div>
-      </div>
-    </li>
-
-    <li class="border">
-      <h3>Shared files</h3>
-
-      <div class="fileList">
+      <div class="main-border font-extra-small">
         <!-- Header row -->
-        <div class="fileRow header">
+        <div class="d-grid p-1-1 grid-3-2-3-2-1 b-s-b b-c-main b-w-01">
           <span>Name</span>
-          <span>Owner</span>
           <span>Downloads</span>
           <span>Total Downloads</span>
           <span>Expire</span>
         </div>
 
         <!-- Data rows -->
-        <div id="rowContainer" class="rowContainer">
-          <h3>Nothing to show here</h3>
+        <div type="container.download">
+          <div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>
         </div>
-
       </div>
     </li>
   </ul>
 </section>
 </body>
 
+<template id="downloadRow">
+    <div class="d-grid b-s-t b-w-01 p-1-1 b-c-main grid-3-2-3-2-1">
+        <span type="span.name" class="text-overflow-h">Error.</span>
+        <span type="span.downloads">Error.</span>
+        <span type="span.limit">Error.</span>
+        <span type="span.expire">Error.</span>
+
+        <div class="m-l-a d-flex justify-center align-center w-fit">
+            <i type="icon.link" tooltip="Copy link" class="fa-regular fa-link font-extra-small hover-pointer"></i>
+            <i type="icon.trash" tooltip="Delete" class="fa-light fa-trash m-l-08 font-extra-small hover-pointer"></i>
+        </div>
+    </div>
+</template>
+
 <template id="userRow">
-  <div class="userRow">
-     <span><input id="username" type="text" placeholder="Loading..."></span>
-      <span><input id="dataLimit" type="text" placeholder="Loading..."></span>
-      <span id="dataUsed">Loading...</span>
-      <span>
-        <label class="label-ckb">
-          <input id="isAdmin" class="ckb" type="checkbox" name="is-admin" value="1">
+    <div class="d-grid b-s-t b-w-01 p-1-1 b-c-main h-fit" style="grid-template-columns: 3fr 2fr 2fr 2fr 2fr 2fr; ">
+        <span class="p-r-1 d-flex"><input type="text" class="input-field-2 font-extra-small" typeI="input.username" placeholder="Username"></span>
+        <span class="p-r-1 d-flex"><input type="text" class="input-field-2 font-extra-small" typeI="input.dataLimit" placeholder="Data limit"></span>
+        <span class="p-r-1 d-flex align-center"><span type="span.dataUsed">Error.</span></span>
+
+        <label class="checkbox-1 m-0 p-0 h-fit">
+            <input class="ckb" type="checkbox" name="is-admin" typeI="checkbox.isAdmin" value="1">
             <span class="ckb-box" aria-hidden="true">
-              <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
+                <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
                 <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-              </svg>
+                </svg>
             </span>
         </label>
-      </span>
-      <span style="display: flex; height: fit-content"><span>
-        <label class="label-ckb">
-          <input id="isEnabled" class="ckb" type="checkbox" name="is-enabled" value="1">
-          <span class="ckb-box" aria-hidden="true">
-            <svg class="ckb-icon" viewBox="0 0 16 16" width="1.5vh" height="1.5vh" aria-hidden="true">
-              <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
-            </svg>
-          </span>
+        <label class="checkbox-1 m-0 p-0 h-fit">
+            <input class="ckb" type="checkbox" name="is-enabled" typeI="checkbox.isEnabled" value="1">
+            <span class="ckb-box" aria-hidden="true">
+                <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
+                <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
+                </svg>
+            </span>
         </label>
-      </span>
-      <i style="margin-left: auto;" id="upload" class="fa-light fa-arrow-rotate-right"></i>
-      <i style="margin-left: .8vw;" id="forceLogout" class="fa-light fa-arrow-left-from-bracket"></i>
-      <i style="margin-left: .8vw;" id="resetPassword" class="fa-light fa-key"></i>
-      <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
-  </div>
-</template>
-<template id="fileRow">
-  <div class="fileRow">
-    <span id="name">Error.</span>
-    <span id="owner">Error.</span>
-    <span id="download">Error.</span>
-    <span id="maxDownload">Error.</span>
-    <span style="display: flex;"><span id="exp">Error.</span>
-            <i style="margin-left: auto;" id="link" class="fa-regular fa-link"></i>
-            <i style="margin-left: .8vw;" id="trash" class="fa-light fa-trash"></i>
-        </span>
-  </div>
+			
+
+        <div class="m-l-a d-flex justify-center align-center w-fit">
+            <i type="icon.update" tooltip="Sync changes" class="fa-light fa-arrow-rotate-right font-extra-small hover-pointer"></i>
+            <i type="icon.logout" tooltip="Force logout" class="fa-light fa-arrow-left-from-bracket m-l-08 font-extra-small hover-pointer"></i>
+            <i type="icon.reset" tooltip="Reset password" class="fa-light fa-key m-l-08 font-extra-small hover-pointer"></i>
+            <i type="icon.trash" tooltip="Delete" class="fa-light fa-trash m-l-08 font-extra-small hover-pointer"></i>
+        </div>
+    </div>
 </template>
 
-<template id="alertWarningTemp">
-  <div class="alert warning">
-        <span class="icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-        </span>
-    <div class="text">
-      <span>Warning!</span>
-      <span class="alert-msg">Some example warning message text here</span>
+<template id="passwordResetModal">
+	<div class="w-100 h-100 p-absolute d-flex p-absolute top-0 left-0 modal-index">
+        <div class="w-100p h-100p p-absolute top-0 left-0 z-index--1 backgrond-blur-1" type="modal.background"></div>
+        <div class="container-1 w-30 h-fit m-a p-2 d-flex flex-column">
+            <h3 class="p-0 m-0 m-b-1">Reset password</h3>
+            <span class="font-note font-small" type="span.description">Choose a new password for "".</span>
+
+            <span class="m-t-2 font-small font-note">New password</span>
+            <div class="input-field-1 w-100p m-t-1">
+                <i class=""></i>
+                <input type="text" class="selectable" placeholder="New password" typeI="input.password">
+            </div>
+
+            <div class="d-flex m-t-2">
+                <span class="m-l-a button-2 p-lr-3" type="button.cancel">Cancel</span>
+                <span class="m-l-1 button-4 p-lr-3" type="button.confirm">Save</span>
+            </div>
+
+        </div>
     </div>
-    <button class="close-btn">&times;</button>
-  </div>
-</template>
-<template id="alertErrorTemp">
-  <div class="alert error">
-        <span class="icon">
-            <i class="fa-solid fa-circle-xmark"></i>
-        </span>
-    <div class="text">
-      <span>Error!</span>
-      <span class="alert-msg">Some example error message text here</span>
-    </div>
-    <button class="close-btn">&times;</button>
-  </div>
-</template>
-<template id="alertInfoTemp">
-  <div class="alert info">
-        <span class="icon">
-            <i class="fa-solid fa-circle-info"></i>
-        </span>
-    <div class="text">
-      <span>Information</span>
-      <span class="alert-msg">Some example message text here</span>
-    </div>
-    <button class="close-btn">&times;</button>
-  </div>
-</template>
-<template id="alertSuccessTemp">
-  <div class="alert success">
-        <span class="icon">
-            <i class="fa-solid fa-circle-check"></i>
-        </span>
-    <div class="text">
-      <span>Success</span>
-      <span class="alert-msg">Your action was successful</span>
-    </div>
-    <button class="close-btn">&times;</button>
-  </div>
 </template>
 
-<script src="/code/alertService.js"></script>
-<script src="/code/util.js"></script>
-<script src="/code/admin.js"></script>
+<template id="userDeleteModal">
+	<div class="w-100 h-100 p-absolute d-flex p-absolute top-0 left-0 modal-index">
+        <div class="w-100p h-100p p-absolute top-0 left-0 z-index--1 backgrond-blur-1" type="modal.background"></div>
+        <div class="container-1 w-30 h-fit m-a p-2 d-flex flex-column">
+            <h3 class="p-0 m-0 m-b-1">Delete user?</h3>
+            <span class="font-note font-small text-overflow-h" type="span.description">Are you sure you want to delete "".</span>
+
+            <div class="d-flex m-t-2">
+                <span class="m-l-a button-2 p-lr-3" type="button.cancel">Cancel</span>
+                <span class="m-l-1 button-3 p-lr-3" type="button.confirm">Confirm</span>
+            </div>
+
+        </div>
+    </div>
+</template>
+
+<template id="userUpdateModal">
+	<div class="w-100 h-100 p-absolute d-flex p-absolute top-0 left-0 modal-index">
+		<div class="w-100p h-100p p-absolute top-0 left-0 z-index--1 backgrond-blur-1" type="modal.background"></div>
+			<div class="container-1 w-30 h-fit m-a p-2 d-flex flex-column">
+				<h3 class="p-0 m-0 m-b-1">Update user?</h3>
+				<span class="font-note font-small m-b-2" type="span.description">The following is what will be updated</span>
+
+				<div class="container-2 p-2 font-small d-flex flex-column" type="container.entry">
+
+				</div>
+				<div class="d-flex m-t-1">
+					<span class="m-l-a button-2 p-lr-3" type="button.cancel">Cancel</span>
+					<span class="m-l-1 button-4 p-lr-3" type="button.confirm">Confirm</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template id="userUpdateEntryModal">
+	<div class="m-b-1">
+		<span class="font-note m-r-2" type="span.type">Loading.</span>
+		<span class="m-r-2 text-overflow-h" type="span.valueOld">Loading.</span>
+		<i class="fa-solid fa-caret-right m-r-2"></i>
+		<span type="span.valueNew" class="text-overflow-h">Loading.</span>
+	</div>
+</template>
+
+<script src="/code/classes/download.js"></script>
+<script src="/code/classes/user.js"></script>
+
+<script src="/code/controllers/modals/passwordReset.js"></script>
+<script src="/code/controllers/modals/userDelete.js"></script>
+<script src="/code/controllers/modals/userUpdate.js"></script>
+
+<script src="/code/controllers/admin.js"></script>
+<script src="/code/controllers/share.js"></script>
+<script src="/code/controllers/modal.js"></script>
+
+<script src="/code/utils/alert.js"></script>
+<script src="/code/utils/format.js"></script>
+<script src="/code/utils/tabsync.js"></script>
+<script src="/code/utils/tooltip.js"></script>
 </html>

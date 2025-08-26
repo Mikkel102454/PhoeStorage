@@ -19,9 +19,11 @@ class Download{
         this.isFolder = isFolder
     }
 
+    loadedElement
+
     async load(parent){
         if(!downloadTemp) {downloadTemp = document.getElementById("downloadRow")}
-        if(!downloadTemp) {console.log("Error loading file. fileTemp is null"); return}
+        if(!downloadTemp) {console.log("Error loading file. downloadTemp is null"); return}
         if(!parent) {console.log("Error loading file. parent is null"); return}
 
         const wrapper = document.createElement("div");
@@ -45,7 +47,6 @@ class Download{
         clone.querySelector('[type="icon.trash"]').addEventListener("click", async () => {
             await deleteDownload(this.uuid)
             this.unload()
-            if(!parent.children.length > 0) {parent.innerHTML = '<div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>'}
         })
 
         wrapper.appendChild(clone)
@@ -55,7 +56,9 @@ class Download{
     }
 
     unload() {
+        let parent = this.loadedElement.parentElement
         this.loadedElement.remove()
+        if(!parent.childElementCount > 0) {parent.innerHTML = '<div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>'}
         const index = allLoadedDownloads.indexOf(this);
         if (index !== -1) {
             allLoadedDownloads.splice(index, 1);

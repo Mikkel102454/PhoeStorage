@@ -17,7 +17,7 @@
         <a class="button-2 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="/">Back</a>
         <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#account" type="tab">Account</a>
         <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#security" type="tab">Security</a>
-        <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#shared" tab="tab">Shared files</a>
+        <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#shared" type="tab">Shared files</a>
     </nav>
 
     <!--Tool tip-->
@@ -26,7 +26,7 @@
     <section id="account" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
         <h2 class="m-0">Settings</h2>
         <ul class="p-0">
-            <div class="container-2 p-2 h-fit d-flex flex-column">
+            <li class="container-2 p-2 h-fit d-flex flex-column">
                 <h3 class="m-0 font-small m-b-1">Change Username</h3>
 
                 <div class="h-fit m-b-1">
@@ -39,13 +39,13 @@
                 <div class="m-l-a w-fit button-4-accent m-t-1">
                     <div class="button2 font-s-bold font-extra-small p-lr-105" type="button.username.confirm">Save</div>
                 </div>
-            </div>
+            </li>
         </ul>
     </section>
     <section id="security" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
         <h2 class="m-0">Settings</h2>
         <ul class="p-0">
-            <div class="container-2 p-2 h-fit d-flex flex-column">
+            <li class="container-2 p-2 h-fit d-flex flex-column">
                 <h3 class="m-0 font-small m-b-1">Change password</h3>
 
                 <div class="h-fit m-b-1">
@@ -65,7 +65,7 @@
                 <div class="m-l-a w-fit button-4-accent m-t-1">
                     <div class="button2 font-s-bold font-extra-small p-lr-105" type="button.password.confirm">Save</div>
                 </div>
-            </div>
+            </li>
         </ul>
     </section>
     <section id="shared" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
@@ -96,7 +96,7 @@
 
 <template id="downloadRow">
     <div class="d-grid b-s-t b-w-01 p-1-1 b-c-main grid-3-2-3-2-1">
-        <span type="span.name">Error.</span>
+        <span type="span.name" class="text-overflow-h">Error.</span>
         <span type="span.downloads">Error.</span>
         <span type="span.limit">Error.</span>
         <span type="span.expire">Error.</span>

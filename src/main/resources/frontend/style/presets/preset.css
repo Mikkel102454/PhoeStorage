@@ -182,6 +182,38 @@
 
 
 
+.input-field-2{
+    /* color */
+    background-color: inherit;
+
+    width: 100%;
+
+    /* display */
+    align-items: center;
+
+    /* font */
+    color: var(--main-font-color);
+    font-size: var(--font-small);
+
+    /* transform */
+    padding: 0;
+    flex: 1;
+
+    /* border */
+    outline: none;
+    border: 0;
+}
+
+.input-field-2:-webkit-autofill,
+.input-field-2:-webkit-autofill:hover,
+.input-field-2:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--main-color) inset !important;
+    -webkit-text-fill-color: var(--main-font-color) !important;
+    transition: background-color 9999s ease-in-out 0s; /* prevents flash */
+}
+
+
+
 .container-1{
     border-radius: 2vh;
     border-color: var(--main-border-color);
@@ -261,6 +293,8 @@
     opacity: 1;
     transform: scale(1);
 }
+
+
 
 
 .hover-pointer:hover{
