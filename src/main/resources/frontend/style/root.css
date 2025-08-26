@@ -2,6 +2,7 @@
     /* COLOR */
     --main-bg: rgb(9, 10, 12);
     --main-bg-2: rgba(124, 126, 255, 0.233);
+    --main-bg-3: rgb(229, 229, 229);
 
     --main-color: oklab(0.200175 0.00000910461 0.00000399351 / 0.9);
     --secondary-color: oklab(65.996% 0 -0.00008 / 0.048);
@@ -47,6 +48,9 @@
 }
 .main-bg-dark-color{
     background-color: var(--main-dark-color);
+}
+.bg-3-color{
+    background-color: var(--main-bg-3);
 }
 .accent-solid-bg-color{
     background-color: var(--accent-color-solid);
