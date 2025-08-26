@@ -261,3 +261,8 @@
     opacity: 1;
     transform: scale(1);
 }
+
+
+.hover-pointer:hover{
+    cursor: pointer;
+}

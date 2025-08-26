@@ -13,3 +13,15 @@ async function createDownloadLink(folderId, itemId, maxDownloads, isFolder) {
             return null
         });
 }
+
+async function deleteDownload(uuid){
+    const response = await fetch(`/api/users/download?downloadUuid=${encodeURIComponent(uuid)}`, {
+        method: "DELETE"
+    });
+
+    if (!response.ok) {
+        throwError("Failed to delete download link")
+    }
+
+    throwSuccess("Download link deleted")
+}

@@ -72,3 +72,20 @@ document.addEventListener("mouseout", e => {
   // keep tooltip visible a little after leaving
   hideTimer = setTimeout(() => hideTooltip(), 300);
 });
+
+// Hide tooltip if the currently-hovered element is removed from the DOM
+const removalObserver = new MutationObserver(() => {
+  if (currentTarget && !currentTarget.isConnected) {
+    clearTimeout(hoverTimer);
+    clearTimeout(hideTimer);
+    hideTooltip();
+    currentTarget = null;
+  }
+});
+
+// Watch the whole document for removals
+removalObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
