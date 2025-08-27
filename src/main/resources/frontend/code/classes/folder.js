@@ -28,6 +28,11 @@ class Folder{
 
         const wrapper = document.createElement("div");
 
+        wrapper.setAttribute("isFolder", "1")
+        wrapper.setAttribute("uuid", this.uuid)
+        wrapper.setAttribute("folderId", this.folderId)
+        wrapper.setAttribute("item", "")
+
         let clone = fileTemp.content.cloneNode(true)
         clone.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name
         clone.querySelector('[type="span.username"]').textContent = await getUsernameFromUuid(this.owner)
@@ -85,5 +90,11 @@ class Folder{
 async function unloadAllFolders(){
     while (allLoadedFolders.length > 0) {
         await allLoadedFolders[0].unload();
+    }
+}
+
+function getFolder(uuid, folderId){
+    for(let i = 0; i < allLoadedFolders.length; i++){
+        if(allLoadedFolders[i].uuid === uuid && allLoadedFolders[i].folderId === folderId) return allLoadedFolders[i]
     }
 }

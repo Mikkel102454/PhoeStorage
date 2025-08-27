@@ -14,50 +14,47 @@
 </head>
 <body class="radial-background-1 m-0 h-100 w-100 p-2 p-lr-20 size-borderbox d-flex">
 <nav class="container-1 d-flex flex-column p-2 h-fit w-13 m-r-2">
-  <a class="button-2 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="/">Back</a>
-  <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#user" type="tab">Users</a>
-  <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-extra-small" href="#storage" type="tab">Storage</a>
+  <a class="button-2 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-small font-thick" href="/">Back</a>
+  <a class="button-1 m-b-1 text-a-l p-l-1 w-100p size-borderbox font-small font-thick" href="#user" type="tab">Users</a>
+  <a class="button-1 text-a-l p-l-1 w-100p size-borderbox font-small font-thick" href="#storage" type="tab">Storage</a>
 </nav>
 
 <!--Tool tip-->
 <div class="w-fit d-none p-fixed main-bg-dark-color p-1 font-extra-small b-r-2 main-border tooltip-index" id="tooltip">example tooltip</div>
 
-<section id="user" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+<section id="user" class="container-1 flex-1 h-fit p-2 d-flex flex-column" style="max-height: 100%;">
   <h2 class="m-0">Settings</h2>
-  <ul class="p-0">
+  <ul class="p-0 overflow-h overflow-y-s">
     <li class="container-2 p-2 h-fit d-flex flex-column m-b-2">
       	<h3 class="m-0 font-small m-b-1">Change Username</h3>
 
       	<div class="h-fit m-b-1">
         	<span class="font-extra-small font-note font-s-bold">Username</span>
         	<div class="input-field-1 m-t-1 w-100p">
-          		<i></i>
           		<input type="text" typeI="input.username.createUser" placeholder="Username">
         	</div>
       	</div>
       	<div class="h-fit m-b-1">
         	<span class="font-extra-small font-note font-s-bold">Password</span>
         	<div class="input-field-1 m-t-1 w-100p">
-          		<i></i>
           		<input type="password" typeI="input.password.createUser" placeholder="Password">
         	</div>
       	</div>
-      	<div class="h-fit m-b-1">
+      	<div class="h-fit m-b-2">
         	<span class="font-extra-small font-note font-s-bold">Data limit</span>
         	<div class="input-field-1 m-t-1 w-100p">
-          		<i></i>
           		<input type="text" typeI="input.dataLimit.createUser" placeholder="100 GB">
         	</div>
       	</div>
 
-    	<label class="checkbox-1 m-0 p-0 h-fit m-b-1">
+    	<label class="checkbox-1 m-0 p-0 h-fit m-b-2">
             <input class="ckb" type="checkbox" name="is-admin" typeI="input.isAdmin.createUser" value="1">
             <span class="ckb-box" aria-hidden="true">
                 <svg class="ckb-icon" viewBox="0 0 16 16" width="2vh" height="2vh" aria-hidden="true">
                 <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
                 </svg>
             </span>
-            <span>Is admin</span>
+            <span>Admin</span>
         </label>
 
         <label class="checkbox-1 m-0 p-0 h-fit m-b-1">
@@ -67,7 +64,7 @@
                 <path d="M6.4 11.2L3.2 8l1.1-1.1 2.1 2.1 5.3-5.3 1.1 1.1-6.4 6.4z" fill="#0a0a0a"/>
                 </svg>
               </span>
-            <span>Is enabled</span>
+            <span>Enabled</span>
         </label>
     	<div class="m-l-a w-fit button-4-accent m-t-1">
         	<div class="button2 font-s-bold font-extra-small p-lr-105" type="button.confirm.createUser">Create</div>
@@ -82,23 +79,22 @@
           <span>Username</span>
           <span>Data limit</span>
           <span>Data used</span>
-          <span>Is admin</span>
-          <span>Is enabled</span>
+          <span>Admin</span>
+          <span>Enabled</span>
         </div>
 
         <!-- Data rows -->
-        <div type="container.user">
+        <div class="" type="container.user">
           <div class="d-flex h-15"><h3 class="m-a w-fit font-note">Nothing to show here</h3></div>
         </div>
-
       </div>
     </li>
   </ul>
 </section>
 
-<section id="storage" class="container-1 flex-1 h-fit p-2 d-flex flex-column">
+<section id="storage" class="container-1 flex-1 h-fit p-2 d-flex flex-column" style="max-height: 100%;">
   <h2 class="m-0">Settings</h2>
-  <ul class="p-0">
+  <ul class="p-0 overflow-h overflow-y-s">
     <li class="container-2 p-2 h-fit d-flex flex-column">
       <h3 class="m-0 font-small m-b-1">Shared files</h3>
 
@@ -177,7 +173,6 @@
 
             <span class="m-t-2 font-small font-note">New password</span>
             <div class="input-field-1 w-100p m-t-1">
-                <i class=""></i>
                 <input type="text" class="selectable" placeholder="New password" typeI="input.password">
             </div>
 
@@ -226,7 +221,7 @@
 </template>
 
 <template id="userUpdateEntryModal">
-	<div class="m-b-1">
+	<div class="m-b-1 d-flex align-center">
 		<span class="font-note m-r-2" type="span.type">Loading.</span>
 		<span class="m-r-2 text-overflow-h" type="span.valueOld">Loading.</span>
 		<i class="fa-solid fa-caret-right m-r-2"></i>

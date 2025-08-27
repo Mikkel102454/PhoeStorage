@@ -73,7 +73,6 @@ public class FileService {
             try (FileLock lock = ch.lock()) { // exclusive lock
                 ch.position(0);
 
-                // Read current value
                 ByteBuffer buf = ByteBuffer.allocate(64);
                 int read = ch.read(buf);
                 long current = 0L;
@@ -308,6 +307,31 @@ public class FileService {
         }catch (Exception e){
             System.err.println(e.getMessage() + "\n With Cause:\n" + e.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(e));
+        }
+    }
+
+    public int moveFile(String fileId, String folderId, String newFolderUuid){
+        try{
+            String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+            Optional<FileEntity> fileEntity = fileRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, fileId);
+            if(fileEntity.isEmpty()) return 404;
+
+            if(folderRepository.findByOwnerAndUuid(uuid, newFolderUuid).isEmpty()) return 2;
+
+
+
+            FileEntity file = fileEntity.get();
+
+            if(fileExistByName(uuid, newFolderUuid, file.getName())) return 409;
+
+            file.setFolderId(newFolderUuid);
+            fileRepository.save(file);
+            return 0;
+
+        } catch (Exception e) {
+            System.err.println(e);
+            return 500;
         }
     }
 

@@ -52,9 +52,9 @@ public class FileController {
 
         int chunkCode = fileService.saveChunk(chunkIndex, file, folderId, fileName, uploadId);
         if(chunkCode == -2) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(fileName);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A file is already named that in this directory");
         }
-        if(chunkCode != 0) {
+        if(chunkCode == -3) {
             return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE).body("You dont have enough space for this file");
         }
         if(chunkCode != 0) {
@@ -65,12 +65,12 @@ public class FileController {
             int code = fileService.saveFileDatabase(folderId, fileName, uploadId, totalChunks);
             if(code != 0){
                 if(code == 409){
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Something happened");
                 }
                 if(code == 404){
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
                 }
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception("error while saving file to database")));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something happened");
             }
         }
         return ResponseEntity.ok(uploadId);
@@ -137,4 +137,19 @@ public class FileController {
         return fileService.setStarredFile(folderId, fileId, value);
     }
 
+    @PutMapping("/move")
+    public ResponseEntity<?> moveFile(
+            @RequestParam("folderId") String folderId,
+            @RequestParam("fileId") String fileId,
+            @RequestParam("newFolderId") String newFolderId
+    ){
+        int code = fileService.moveFile(fileId, folderId, newFolderId);
+        return switch (code) {
+            case 0 -> ResponseEntity.ok("Successfully moved file");
+            case 2 -> ResponseEntity.ok("Could not find the folder");
+            case 404 -> ResponseEntity.status(404).body("Could not find the file");
+            case 409 -> ResponseEntity.status(409).body("A file named that already exist in the new location");
+            default -> ResponseEntity.status(500).body("Something happened");
+        };
+    }
 }

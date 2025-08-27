@@ -25,12 +25,17 @@ class File{
     }
 
     loadedElement
+    drag
 
     async load(parent){
         if(!fileTemp) {console.log("Error loading file. fileTemp is null"); return}
         if(!parent) {console.log("Error loading file. parent is null"); return}
 
         const wrapper = document.createElement("div");
+        wrapper.setAttribute("isFolder", "0")
+        wrapper.setAttribute("uuid", this.uuid)
+        wrapper.setAttribute("folderId", this.folderId)
+        wrapper.setAttribute("item", "")
 
         let clone = fileTemp.content.cloneNode(true)
         clone.querySelector('[type="span.name"]').innerHTML = fileIcon(this.extension) + this.name
@@ -58,6 +63,25 @@ class File{
         clone.querySelector('[type="icon.delete"]').addEventListener("click", async () => {
             openTrashModal(this)
         })
+
+
+        wrapper.addEventListener('mousedown', () => {
+            this.drag = true
+        });
+
+        window.addEventListener('mouseup', async (e) => {
+            if(!this.drag) return
+
+            this.drag = false
+            let element  = document.elementFromPoint(e.clientX, e.clientY).closest('[item]');
+            if(!element) return;
+            if(element.getAttribute("isFolder") === "0") return
+
+            if(element.getAttribute("uuid") === this.folderId) return
+
+            if(await this.move(element.getAttribute("uuid")) === false) return
+            this.unload()
+        });
 
         wrapper.appendChild(clone)
         parent.appendChild(wrapper)
@@ -90,6 +114,10 @@ class File{
 
     async share(maxDownloads){
         return await createDownloadLink(this.folderId, this.uuid, maxDownloads ? maxDownloads : -1, false)
+    }
+
+    async move(newFolderUuid){
+        return await moveFile(this.uuid, this.folderId, newFolderUuid)
     }
 }
 

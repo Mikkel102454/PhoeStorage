@@ -90,7 +90,7 @@
                 <!--Path view-->
                 <div class="d-flex h-fit">
                     <!--Path head-->
-                    <span class="small-icon b-r-2 p-1 h-fit size-borderbox font-s-bold" type="span.name" onclick="resetDirectoryDrive()">My Drive</span>
+                    <span class="small-icon b-r-2 p-1 h-fit size-borderbox font-s-bold" type="span.homePathDrive" onclick="resetDirectoryDrive()">My Drive</span>
 
                     <!--Path Container-->
                     <div class="d-flex h-fit" id="pathContainerDrive">
@@ -162,7 +162,7 @@
     <div class="d-none p-absolute container-2 overflow-h h-fit m-2vh-6vh w-18p right-0 bottom-0 modal-upload" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
         <div class="d-flex align-center" style="background-color: rgb(56, 56, 56);">
             <h3 class="m-b-2 m-t-2 m-l-1 font-small" type="span.title">Uploading x item</h3>
-            <i class="fa-solid fa-x font-small hover-1 m-l-a m-r-2"></i>
+            <i class="fa-solid fa-x font-small hover-1 m-l-a m-r-2" onclick="this.parentElement.parentElement.classList.add('d-none')"></i>
         </div>
 
         <div class="h-fit" type="container.upload">
@@ -175,7 +175,7 @@
 
 <template id="file-view">
     <div class="b-s-b b-c-secondary b-w-01 d-grid grid-2-105-2-1-2 p-06 align-center hover-1">
-        <span class="text-overflow-h p-l-1" type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
+        <span class="text-overflow-h p-l-1 m-r-2" type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>document.docx</span>
         <span class="text-overflow-h" type="span.username">Mikkel102454</span>
         <span class="text-overflow-h" type="span.date">24 Apr, 2025</span>
         <span class="text-overflow-h" type="span.size">99.99GB</span>
@@ -228,7 +228,6 @@
 
             <span class="m-t-2 font-small font-note">New name</span>
             <div class="input-field-1 w-100p m-t-1">
-                <i class=""></i>
                 <input type="text" class="selectable" placeholder="New name" typeI="input.name">
             </div>
 
@@ -251,7 +250,6 @@
 
             <span class="m-t-2 font-small font-note">Download limit</span>
             <div class="input-field-1 w-100p m-t-1">
-                <i class=""></i>
                 <input type="number" class="selectable" placeholder="Limit" typeI="input.limit">
             </div>
 
@@ -300,7 +298,6 @@
 
             <span class="m-t-2 font-small font-note">name</span>
             <div class="input-field-1 w-100p m-t-1">
-                <i class=""></i>
                 <input type="text" class="selectable" placeholder="New folder" typeI="input.name">
             </div>
 

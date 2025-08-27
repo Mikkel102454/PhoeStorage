@@ -26,7 +26,7 @@ async function uploadFile(file, folderId) {
     const temp = uploadTemp.content.cloneNode(true)
 
     temp.querySelector('[type="span.name"]').innerHTML = fileIcon(file.extension) + file.name
-    temp.querySelector('[type="span.time"]').textContent = "estimating..."
+    temp.querySelector('[type="span.time"]').textContent = "Estimating..."
 
     temp.querySelector('[type="icon.stop"]').addEventListener("click", () => {
         cancelled = true
@@ -51,10 +51,12 @@ async function uploadFile(file, folderId) {
         const h = Math.floor(sec / 3600);
         const m = Math.floor((sec % 3600) / 60);
         const s = sec % 60;
-        if (h > 0) return `${h} hour left`;
-        if (m > 0) return `${m} min left`;
-        return `${s} second left`;
+        if (h > 0) return `${h} hour, ${m} min left`;
+        if (m > 0) return `${m} min, ${s} sec left`;
+        if(!s > 0) return "Finalizing"
+        return `${s} seconds left`;
     }
+    
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         if(cancelled) return
         const start = chunkIndex * chunkSize;
@@ -224,6 +226,19 @@ async function setStarredFile(folderId, fileId, value){
         return
     }
 
+    return true
+}
+
+async function moveFile(fileId, folderId, newFolderId){
+    const response = await fetch(`/api/files/move?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}&newFolderId=${encodeURIComponent(newFolderId)}`, {
+        method: "PUT"
+    });
+
+    if (!response.ok) {
+        throwError(await response.text())
+    }
+
+    throwSuccess(await response.text())
     return true
 }
 

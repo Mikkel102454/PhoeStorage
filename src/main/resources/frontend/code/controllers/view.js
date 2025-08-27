@@ -1,5 +1,6 @@
 let viewContainerDrive
 let pathContainerDrive
+let homePathDrive
 let fileTemp = document.getElementById("file-view")
 let pathTemp = document.getElementById("path-view")
 
@@ -65,14 +66,20 @@ function initPathView(uuid, name, parent){
     clone.querySelector('[type="span.name"]').addEventListener("click", async function (){
         await loadDirectoryDrive(uuid, null)
 
-        let node = this.parentElement.nextElementSibling;
+        let node = this.parentElement.parentElement.nextElementSibling;
         while (node) {
-            const next = this.parentElement.nextElementSibling;
+            const next = this.parentElement.parentElement.nextElementSibling;
             node.remove();
             node = next;
         }
     })
-    parent.appendChild(clone)
+    const wrapper = document.createElement("div");
+
+    wrapper.setAttribute("isFolder", "1")
+    wrapper.setAttribute("uuid", uuid)
+    wrapper.setAttribute("item", "")
+    wrapper.appendChild(clone)
+    parent.appendChild(wrapper)
 }
 
 
@@ -114,6 +121,11 @@ async function search(query, searchBar, starred){
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+    homePathDrive = document.querySelector('[type="span.homePathDrive"]')
+    homePathDrive.setAttribute("isFolder", "1")
+    homePathDrive.setAttribute("uuid", await getMyUuid())
+    homePathDrive.setAttribute("item", "")
+
     await setParameterIfNotExist("jbd", await getMyUuid());
     await refreshDirectoryDrive();
 });
