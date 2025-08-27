@@ -61,6 +61,24 @@ class Folder{
             await loadDirectoryDrive(this.uuid, this.name)
         })
 
+        wrapper.addEventListener('mousedown', () => {
+            this.drag = true
+        });
+
+        window.addEventListener('mouseup', async (e) => {
+            if(!this.drag) return
+
+            this.drag = false
+            let element  = document.elementFromPoint(e.clientX, e.clientY).closest('[item]');
+            if(!element) return;
+            if(element.getAttribute("isFolder") === "0") return
+
+            if(element.getAttribute("uuid") === this.folderId) return
+
+            if(await this.move(element.getAttribute("uuid")) === false) return
+            this.unload()
+        });
+
         wrapper.appendChild(clone)
         parent.appendChild(wrapper)
         this.loadedElement = wrapper
@@ -84,6 +102,11 @@ class Folder{
         this.name = newName
         this.loadedElement.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name
         await renameFolder(this.folderId, this.uuid, newName)
+    }
+
+    async move(newFolderUuid){
+        //create moveFolder function on frontend and backend
+        return await moveFolder(this.uuid, this.folderId, newFolderUuid)
     }
 }
 
