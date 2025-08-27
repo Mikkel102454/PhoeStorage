@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/style/presets/alert.css">
     <link rel="stylesheet" href="/style/presets/ctxmenu.css">
     <link rel="stylesheet" href="/style/presets/tab.css">
+    <link rel="stylesheet" href="/style/presets/circleProgress.css">
 
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
 </head>
@@ -158,6 +159,17 @@
             </div>
         </section>
     </main>
+    <div class="d-none p-absolute container-2 overflow-h h-fit m-2vh-6vh w-18p right-0 bottom-0 modal-upload" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+        <div class="d-flex align-center" style="background-color: rgb(56, 56, 56);">
+            <h3 class="m-b-2 m-t-2 m-l-1 font-small" type="span.title">Uploading x item</h3>
+            <i class="fa-solid fa-x font-small hover-1 m-l-a m-r-2"></i>
+        </div>
+
+        <div class="h-fit" type="container.upload">
+            
+        </div>
+    </div>
+
 </body>
 
 
@@ -301,24 +313,33 @@
     </div>
 </template>
 
-<!--Item Tmeporary Upload-->
-<template id="Item-dummy">
-    <div class="b-s-b b-c-secondary b-w-01 d-grid p-06 align-center hover-1" style="grid-template-columns: 2fr 3fr 2fr;">
-        <span class="text-overflow-h p-l-1" type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>Doucemnt.docx</span>
-        <div class="w-100p h-20p bg-3-color overflow-h b-r-2">
-            <div class="h-100p" style="width: 40%; background: linear-gradient(90deg, #5088ff, #3a6fe0); transition: width 0.3s ease;"></div>
+<template id="uploadItem">
+    <div class="d-flex align-center m-t-1 m-b-1">
+        <div class="d-flex align-center w-50p">
+            <span class="text-overflow-h p-l-1 font-small flex-1" type="span.name"></span>
         </div>
 
-        <div class="m-l-a d-flex">
-            <i class="fa-solid fa-pause m-r-08 small-icon small" tooltip="Pause"></i>
-            <i class="fa-regular fa-circle-xmark m-r-08 small-icon small" tooltip="Stop"></i>
-            <!--<i class="fa-solid fa-play m-r-08 small-icon small" tooltip="Reusme"></i>-->
+        <span class="font-small m-l-a m-r-08" type="span.time">left</span>
+
+        <div class="progress-wrap m-0 m-r-08">
+                <!-- circular progress -->
+            <div class="c-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <svg viewBox="0 0 120 120" class="c-progress__svg">
+                    <circle class="c-progress__track" cx="60" cy="60" r="54"></circle>
+                    <circle class="c-progress__bar"   cx="60" cy="60" r="54"></circle>
+                </svg>
+            </div>
+
+            <!-- hover replacement icon -->
+            <div class="c-progress__icon" type="icon.stop">
+                <i class="fa-light fa-circle-xmark" aria-hidden="true"></i>
+            </div>
         </div>
     </div>
 </template>
 
 
-<!--<script src="/code/utils/alert.js"></script>
+<script src="/code/utils/alert.js"></script>
 <script src="/code/utils/format.js"></script>
 <script src="/code/utils/param.js"></script>
 <script src="/code/utils/user.js"></script>
@@ -327,6 +348,7 @@
 <script src="/code/utils/contextMenu.js"></script>
 <script src="/code/utils/tooltip.js"></script>
 <script src="/code/utils/tabsync.js"></script>
+<script src="/code/utils/cirlceProgress.js"></script>
 
 <script src="/code/classes/file.js"></script>
 <script src="/code/classes/folder.js"></script>
@@ -340,7 +362,7 @@
 <script src="/code/controllers/folder.js"></script>
 <script src="/code/controllers/view.js"></script>
 <script src="/code/controllers/share.js"></script>
-<script src="/code/controllers/storage.js"></script>-->
+<script src="/code/controllers/storage.js"></script>
 
 
 </html>

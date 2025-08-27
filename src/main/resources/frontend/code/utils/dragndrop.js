@@ -133,8 +133,6 @@ async function initDragnDrop() {
         };
 
         try {
-            // Single start notification
-            throwInformation("Upload started");
 
             // 1) Upload loose files (not in folders)
             const loose = Array.from(e.dataTransfer.files || [])
@@ -156,11 +154,8 @@ async function initDragnDrop() {
             if (typeof reloadStorageLimit === "function") await reloadStorageLimit();
             if (typeof refreshDirectoryDrive === "function") await refreshDirectoryDrive(rootFolderId);
 
-            // Single success notification
-            throwSuccess("Upload finished");
         } catch (err) {
             console.error(err);
-            throwError(err?.message || "Upload failed");
         }
     });
 }

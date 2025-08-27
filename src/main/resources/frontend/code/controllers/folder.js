@@ -159,7 +159,6 @@ async function FolderUploading(filesList) {
     }
 
     const folderIdCache = new Map();
-    throwInformation("Upload began")
     for (const file of files) {
         if (!file.webkitRelativePath) continue; // skip loose files
 
@@ -190,10 +189,9 @@ async function FolderUploading(filesList) {
 
             parentId = folderIdCache.get(cacheKey);
         }
-
+        await refreshDirectoryDrive()
         await uploadFile(file, parentId);
     }
-    throwSuccess("Upload finished")
     await refreshDirectoryDrive();
 }
 

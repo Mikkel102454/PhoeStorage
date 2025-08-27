@@ -1,0 +1,57 @@
+/* Size the wrapper (adjust 3vh as needed) */
+.progress-wrap {
+  position: relative;
+  display: inline-block;
+  width: 3vh;
+  height: 3vh;
+}
+
+/* Circular progress layer */
+.progress-wrap .c-progress {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #3b82f6; /* progress ring color via currentColor */
+}
+
+/* Hover replacement icon layer (hidden by default) */
+.progress-wrap .c-progress__icon {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+}
+
+/* Hover swap: hide ring, show icon */
+.progress-wrap:hover .c-progress {
+  display: none;
+}
+.progress-wrap:hover .c-progress__icon {
+  display: grid;
+}
+
+/* SVG + circles */
+.c-progress__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.c-progress__track {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 12;
+}
+.c-progress__bar {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s ease;
+}
+
+/* Icon sizing matches wrapper size */
+.c-progress__icon i {
+  font-size: 3vh;
+  color: rgb(255, 102, 102);
+}

@@ -42,6 +42,12 @@ body{
 .left-0{
     left: 0;
 }
+.bottom-0{
+    bottom: 0;
+}
+.right-0{
+    right: 0;
+}
 
 
 /* ----------------------------- */
@@ -71,8 +77,16 @@ body{
     width: 60% !important;
 }
 
+.w-50p{
+    width: 50% !important;
+}
+
 .w-40p{
     width: 40% !important;
+}
+
+.w-18p{
+    width: 18% !important;
 }
 
 /* ----------------------------- */
@@ -173,6 +187,10 @@ body{
 .m-lr-a{
     margin-right: auto !important;
     margin-left: auto !important;
+}
+
+.m-2vh-6vh{
+    margin: 2vh 6vh;
 }
 
 
@@ -361,6 +379,9 @@ body{
 /* ----------------------------- */
 .modal-index{
     z-index: 100;
+}
+.modal-upload{
+    z-index: 90;
 }
 .ctx-index{
     z-index: 100;

@@ -1,7 +1,8 @@
-async function uploadFile(file, folderId, notify) {
+let uploadTemp;
+let uploadContainer;
+
+async function uploadFile(file, folderId) {
     const chunkSize = 10 * 1024 * 1024; // 10 MB
-    const totalChunks = Math.ceil(file.size / chunkSize);
-    const fileName = file.name;
 
     if (!file) {
         throwWarning("You did not upload a file")
@@ -11,9 +12,51 @@ async function uploadFile(file, folderId, notify) {
         throwWarning("Your uploaded file is empty")
         return;
     }
-    if(notify){throwInformation("Upload Began")}
+
+    let cancelled = false
+
+    if(!uploadTemp) {uploadTemp = document.getElementById("uploadItem")}
+    if(!uploadContainer) {uploadContainer = document.querySelector('[type="container.upload"]')}
+
+    const totalSize = file.size;
+    const totalChunks = Math.ceil(totalSize / chunkSize);
+    const fileName = file.name;
+
+    const wrapper = document.createElement("div");
+    const temp = uploadTemp.content.cloneNode(true)
+
+    temp.querySelector('[type="span.name"]').innerHTML = fileIcon(file.extension) + file.name
+    temp.querySelector('[type="span.time"]').textContent = "estimating..."
+
+    temp.querySelector('[type="icon.stop"]').addEventListener("click", () => {
+        cancelled = true
+        wrapper.remove()
+        if(!uploadContainer.childElementCount > 0) uploadContainer.parentElement.classList.add("d-none")
+    })
+
+    setCircleProgress(temp, 0);
+
+    wrapper.appendChild(temp)
+    uploadContainer.appendChild(wrapper)
+
+    uploadContainer.parentElement.querySelector('[type="span.title"]').textContent = `Uploading ${uploadContainer.childElementCount} item`
+
+    uploadContainer.parentElement.classList.remove("d-none")
+
     let uploadId = "";
+    const startedAt = performance.now();
+
+    function fmtDuration(sec) {
+        sec = Math.max(0, Math.round(sec));
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        if (h > 0) return `${h} hour left`;
+        if (m > 0) return `${m} min left`;
+        return `${s} second left`;
+    }
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        if(cancelled) return
         const start = chunkIndex * chunkSize;
         const end = Math.min(start + chunkSize, file.size);
         const chunk = file.slice(start, end);
@@ -25,7 +68,7 @@ async function uploadFile(file, folderId, notify) {
         formData.append("fileName", fileName);
         formData.append("folderId", folderId);
         formData.append("uploadId", uploadId);
-        console.log(formData)
+
         const response = await fetch("/api/files/upload", {
             method: "POST",
             body: formData
@@ -33,12 +76,28 @@ async function uploadFile(file, folderId, notify) {
 
         if (!response.ok) {
             throwError(await response.text())
+            wrapper.remove()
+            if(!uploadContainer.childElementCount > 0) uploadContainer.parentElement.classList.add("d-none")
             return;
         }
         uploadId = await response.text()
-    }
-    if(notify){throwSuccess("Upload finished")}
 
+        const uploadedBytes = end;
+        const f = uploadedBytes / totalSize;
+        const pct = Math.round(f * 100);
+        const elapsed = (performance.now() - startedAt) / 1000;
+        const etaSec = f > 0 ? (elapsed * (1 - f)) / f : Infinity;
+
+        if(etaSec === 0){
+            wrapper.querySelector('[type="span.time"]').textContent = "finalizing..."
+        } else{
+            wrapper.querySelector('[type="span.time"]').textContent = isFinite(etaSec) ? fmtDuration(etaSec) : "estimating..."
+        }
+        
+        setCircleProgress(wrapper, pct);
+    }
+    wrapper.remove()
+    if(!uploadContainer.childElementCount > 0) uploadContainer.parentElement.classList.add("d-none")
     return true
 }
 
@@ -168,20 +227,16 @@ async function setStarredFile(folderId, fileId, value){
     return true
 }
 
-
-
 function openFileUploadMenu() {
     document.getElementById('hiddenFileInput').click();
 }
 
 document.getElementById('hiddenFileInput').addEventListener('change', async function () {
     if (this.files.length > 0) {
-        throwInformation("Upload Began")
         for (const file of this.files) {
             await uploadFile(file, getParameter("jbd"), false);
             await reloadStorageLimit()
         }
         await refreshDirectoryDrive()
-        throwSuccess("Upload finished")
     }
 });
