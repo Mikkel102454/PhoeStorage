@@ -4,6 +4,8 @@ let homePathDrive
 let fileTemp = document.getElementById("file-view")
 let pathTemp = document.getElementById("path-view")
 
+let itemDrag
+
 async function resetDirectoryDrive(){
     await setParameter("jbd", await getMyUuid());
     pathContainerDrive.innerHTML = ""
@@ -73,13 +75,11 @@ function initPathView(uuid, name, parent){
             node = next;
         }
     })
-    const wrapper = document.createElement("div");
 
-    wrapper.setAttribute("isFolder", "1")
-    wrapper.setAttribute("uuid", uuid)
-    wrapper.setAttribute("item", "")
-    wrapper.appendChild(clone)
-    parent.appendChild(wrapper)
+    clone.querySelector('[type="span.name"]').setAttribute("isFolder", "1")
+    clone.querySelector('[type="span.name"]').setAttribute("uuid", uuid)
+    clone.querySelector('[type="span.name"]').setAttribute("item", "")
+    parent.appendChild(clone)
 }
 
 
@@ -125,6 +125,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     homePathDrive.setAttribute("isFolder", "1")
     homePathDrive.setAttribute("uuid", await getMyUuid())
     homePathDrive.setAttribute("item", "")
+
+    itemDrag = document.getElementById("item-drag")
 
     await setParameterIfNotExist("jbd", await getMyUuid());
     await refreshDirectoryDrive();

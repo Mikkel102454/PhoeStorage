@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import server.phoestorage.service.AppUserDetailsService;
+import server.phoestorage.utils.PasswordEncoding;
 
 @Configuration
 @EnableWebSecurity
@@ -67,13 +68,8 @@ public class SecurityConfig {
 
         builder
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+                .passwordEncoder(PasswordEncoding.getEncoder("bcrypt"));
 
         return builder.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

@@ -298,9 +298,9 @@ body{
     border-radius: 100vh !important;
 }
 .b-r-2{
-    border-radius: 1vh !important;
+    border-radius: 2vh !important;
 }
-.b-r-2{
+.b-r-1{
     border-radius: 1vh !important;
 }
 
@@ -369,6 +369,7 @@ body{
 .aspect-1-1{
     aspect-ratio: 1 / 1 !important;
 }
+.error.errorBorder,
 .error .errorBorder{
     border-color: #d14040;
 }

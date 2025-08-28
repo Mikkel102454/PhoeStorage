@@ -3,7 +3,7 @@ let currentPasswordResetModal
 
 function openPasswordResetModal(user){
     if(!passwordResetModalTemplate){throwError("passwordResetModalTemplate was not set"); return}
-    if(currentPasswordResetModal){throwError("passwordReserModal already open"); return}
+    if(currentPasswordResetModal){throwError("passwordResetModal already open"); return}
 
     let clone = passwordResetModalTemplate.content.cloneNode(true)
 
@@ -30,7 +30,7 @@ function openPasswordResetModal(user){
 }
 
 function closePasswordResetModal(){
-    if(!currentPasswordResetModal) {console.log("passwordReserModal was not open"); return}
+    if(!currentPasswordResetModal) {console.log("passwordResetModal was not open"); return}
     currentPasswordResetModal.remove()
     currentPasswordResetModal = null
 }

@@ -4,10 +4,10 @@
     --main-bg-2: rgba(124, 126, 255, 0.233);
     --main-bg-3: rgb(229, 229, 229);
 
-    --main-color: oklab(0.200175 0.00000910461 0.00000399351 / 0.9);
-    --secondary-color: oklab(65.996% 0 -0.00008 / 0.048);
+    --main-color: oklab(0.200175 0.00000910461 0.00000399351 / 1);
+    --secondary-color: oklab(21.779% 0 -0.00002);
     --main-dark-color: oklab(17.852999999999998% 0.00112 -0.00393);
-    --accent-color-solid: oklab(0.260175 0.00000910461 0.00000399351 / 0.9);
+    --accent-color-solid: oklab(0.260175 0.00000910461 0.00000399351 / 1);
     --accent-color: rgba(255, 255, 255, 0.1);
 
     --main-font-color: rgb(221, 221, 221);
@@ -15,7 +15,7 @@
     --note-font-color: rgb(158, 158, 158);
     --black-font-color: rgb(0, 0, 0);
 
-    --main-border-color: rgba(61, 61, 61, 0.5);
+    --main-border-color: rgb(32, 32, 32);
     --secondary-border-color: rgb(221, 221, 221);
 
     --red-color: rgb(201, 57, 57);

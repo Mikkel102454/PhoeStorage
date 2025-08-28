@@ -222,6 +222,8 @@ async function setStarredFile(folderId, fileId, value){
 }
 
 async function moveFile(fileId, folderId, newFolderId){
+    if (newFolderId === folderId) return false
+
     const response = await fetch(`/api/files/move?folderId=${encodeURIComponent(folderId)}&fileId=${encodeURIComponent(fileId)}&newFolderId=${encodeURIComponent(newFolderId)}`, {
         method: "PUT"
     });

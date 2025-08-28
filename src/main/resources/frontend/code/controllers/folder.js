@@ -113,7 +113,8 @@ async function deleteFolder(folderId, folderUuid, notify) {
         method: "POST"
     });
 
-    return handleServerReturnAlert(response.status, await response.text())
+    if(getHandleServerReturnType(response.status)) return handleServerReturnAlert(response.status, await response.text())
+    return true
 }
 
 async function renameFolder(folderId, folderUuid, name){
@@ -191,8 +192,9 @@ async function FolderUploading(filesList) {
     await refreshDirectoryDrive();
 }
 
-async function moveFolder(itemId, newFolderId){
+async function moveFolder(itemId, folderId, newFolderId){
     if (itemId === newFolderId) return false
+    if (folderId === newFolderId) return false
     const response = await fetch(`/api/folders/move?itemId=${encodeURIComponent(itemId)}&newFolderId=${encodeURIComponent(newFolderId)}`, {
         method: "PUT"
     });

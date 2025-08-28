@@ -1,6 +1,7 @@
 package server.phoestorage.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.phoestorage.datasource.users.UserRepository;
@@ -135,11 +136,11 @@ public class UserController {
         }
         int code = userService.forceSetPassword(uuid, newPassword);
         return switch (code) {
-            case 0 -> ResponseEntity.ok("");
-            case 400 -> ResponseEntity.badRequest().build();
-            case 404 -> ResponseEntity.notFound().build();
-            case 401 -> ResponseEntity.status(401).build();
-            default -> ResponseEntity.internalServerError().build();
+            case 0 -> ResponseEntity.status(HttpStatus.OK).body("Password has been updated");
+            case 400 -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password must be 3 characters or more");
+            case 404 -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            case 401 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are note forced to change your password. Please use settings");
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something happened");
         };
     }
 

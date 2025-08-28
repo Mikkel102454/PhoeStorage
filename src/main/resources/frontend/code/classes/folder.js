@@ -15,6 +15,7 @@ class Folder{
     }
 
     loadedElement
+    dragElement
 
     async load(parent) {
         if (!fileTemp) {
@@ -61,22 +62,94 @@ class Folder{
             await loadDirectoryDrive(this.uuid, this.name)
         })
 
-        wrapper.addEventListener('mousedown', () => {
-            this.drag = true
+        let currentHover = null;
+        let dragTimer = null;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            dragTimer = setTimeout(() => {
+                this.drag = true;
+
+                const wrapper2 = document.createElement("div");
+                const clone2 = itemDrag.content.cloneNode(true);
+                clone2.querySelector('[type="span.name"]').innerHTML =
+                    "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name;
+
+                wrapper2.appendChild(clone2);
+                // make it behave like a drag ghost
+                Object.assign(wrapper2.style, {
+                    position: 'fixed',
+                    left: e.clientX + 'px',
+                    top: e.clientY + 'px',
+                    pointerEvents: 'none',
+                    opacity: '0.9',
+                    zIndex: '9999',
+                });
+
+                this.loadedElement.style.opacity = "0.6"
+
+                document.body.appendChild(wrapper2);
+                this.dragElement = wrapper2;
+            }, 500);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!this.drag || !this.dragElement) return;
+
+            // follow cursor
+            this.dragElement.style.left = e.clientX + 'px';
+            this.dragElement.style.top  = e.clientY + 'px';
+
+            // detect item under cursor
+            const el = document.elementFromPoint(e.clientX, e.clientY);
+            const target = el && el.closest('[item]');
+
+            // clear old highlight
+            if (currentHover && currentHover !== target) {
+                currentHover.style.backgroundColor = '';
+                currentHover = null;
+            }
+
+            if (!target) return;
+
+            // skip non-folders
+            if (target.getAttribute('isFolder') === '0') return;
+
+            // apply highlight (no semicolon inside value)
+            target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+            currentHover = target;
         });
 
         window.addEventListener('mouseup', async (e) => {
-            if(!this.drag) return
+            if (e.button !== 0) return;
+            if (dragTimer) { clearTimeout(dragTimer); dragTimer = null; }
 
-            this.drag = false
-            let element  = document.elementFromPoint(e.clientX, e.clientY).closest('[item]');
-            if(!element) return;
-            if(element.getAttribute("isFolder") === "0") return
+            if (!this.drag) return;
+            this.drag = false;
 
-            if(element.getAttribute("uuid") === this.folderId) return
+            // cleanup ghost
+            if (this.dragElement) {
+                this.dragElement.remove();
+                this.dragElement = null;
+            }
+            this.loadedElement.style.opacity = "1"
 
-            if(await this.move(element.getAttribute("uuid")) === false) return
+            let completed
+            // cleanup highlight
+            if (currentHover) {
+                completed = await this.move(currentHover.getAttribute("uuid"))
+                currentHover.style.backgroundColor = '';
+                currentHover = null;
+            }
+
+
+            if (!completed) return
             this.unload()
+        });
+
+        wrapper.addEventListener('mouseleave', () => {
+            // not strictly needed if we have window listeners, but harmless
+            if (!this.drag) { this.drag = false; if (dragTimer) { clearTimeout(dragTimer); dragTimer = null; } }
         });
 
         wrapper.appendChild(clone)
@@ -106,7 +179,7 @@ class Folder{
     }
 
     async move(newFolderUuid){
-        return moveFolder(this.uuid, newFolderUuid)
+        return moveFolder(this.uuid, this.folderId, newFolderUuid)
     }
 }
 

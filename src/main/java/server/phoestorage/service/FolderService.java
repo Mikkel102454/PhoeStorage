@@ -1,14 +1,11 @@
 package server.phoestorage.service;
 
-import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
 import server.phoestorage.datasource.folder.FolderEntity;
@@ -24,7 +21,6 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 import static server.phoestorage.utils.Database.extractConstraintName;
 
@@ -35,7 +31,6 @@ public class FolderService {
 
     private final AppUserDetailsService appUserDetailsService;
     private final FileService fileService;
-    private final HandlerService handlerService;
 
     private final FolderRepository folderRepository;
     private final FileRepository fileRepository;
@@ -44,13 +39,11 @@ public class FolderService {
     public FolderService(AppUserDetailsService appUserDetailsService,
                        FolderRepository folderRepository,
                          FileRepository fileRepository,
-                         FileService fileService,
-                         HandlerService handlerService) {
+                         FileService fileService) {
         this.appUserDetailsService = appUserDetailsService;
         this.folderRepository = folderRepository;
         this.fileRepository = fileRepository;
         this.fileService = fileService;
-        this.handlerService = handlerService;
     }
 
     /**
@@ -153,7 +146,6 @@ public class FolderService {
      * @return exit code
      *
      */
-    @Timed(value = "dir.create", histogram = true)
     public FolderEntry createFolder(String folderId, String folderName) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
 

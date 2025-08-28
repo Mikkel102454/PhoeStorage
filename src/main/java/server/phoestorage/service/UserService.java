@@ -12,7 +12,7 @@ import server.phoestorage.datasource.users.UserEntity;
 import server.phoestorage.datasource.users.UserRepository;
 import server.phoestorage.dto.SettingsEntry;
 import server.phoestorage.dto.UserEntry;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import server.phoestorage.utils.PasswordEncoding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +21,14 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final FolderService folderService;
     private final AppUserDetailsService appUserDetailsService;
     private final SessionRegistry sessionRegistry;
     private final LinkService linkService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FolderService folderService, AppUserDetailsService appUserDetailsService, SessionRegistry sessionRegistry, LinkService linkService) {
+    public UserService(UserRepository userRepository, FolderService folderService, AppUserDetailsService appUserDetailsService, SessionRegistry sessionRegistry, LinkService linkService) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.folderService = folderService;
         this.appUserDetailsService = appUserDetailsService;
         this.sessionRegistry = sessionRegistry;
@@ -57,7 +55,7 @@ public class UserService {
             UserEntity user = new UserEntity();
             user.setUuid(uuid);
             user.setUsername(username);
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(PasswordEncoding.encode("bcrypt", password));
             user.setDataLimit(data);
             user.setAdmin(admin);
             user.setEnabled(enabled);
@@ -117,7 +115,7 @@ public class UserService {
             if(newPassword.length() < 3) { return 2; }
 
             UserEntity user = userRepository.findByUuid(uuid);
-            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPassword(PasswordEncoding.encode("bcrypt", newPassword));
             user.setForceChangePassword(true);
             userRepository.save(user);
             return 0;
@@ -186,9 +184,9 @@ public class UserService {
     public int setPassword(String uuid, String oldPassword, String newPassword){
         if(newPassword.length() < 3) { return 400; }
         UserEntity user = userRepository.findByUuid(uuid);
-        if(!passwordEncoder.matches(oldPassword, user.getPassword())) { return 401; }
+        if(!PasswordEncoding.matches("bcrypt", oldPassword, user.getPassword())) { return 401; }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(PasswordEncoding.encode("bcrypt", newPassword));
 
         userRepository.save(user);
 
@@ -200,7 +198,7 @@ public class UserService {
         UserEntity user = userRepository.findByUuid(uuid);
         if(!user.isForceChangePassword()) { return 401; }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(PasswordEncoding.encode("bcrypt", newPassword));
         user.setForceChangePassword(false);
         userRepository.save(user);
 

@@ -49,6 +49,7 @@
     </div>-->
 
     <!--Context menu-->
+
     <div class="p-fixed d-none flex-column p-1 font-small font-s-bold b-r-2 main-border main-bg-dark-color ctx-index" id="ctx-menu">
         <span class="button-1-accent" onclick="openFileUploadMenu(); closeContextMenu()"><i class="fa-solid fa-file-arrow-up m-r-08"></i>Upload files</span>
         <span class="m-b-1 button-1-accent" onclick="openFolderUploadMenu(); closeContextMenu()"><i class="fa-solid fa-folder-arrow-up m-r-08"></i>Upload folder</span>
@@ -110,7 +111,7 @@
 
                     <!--Files container-->
                     <div class="overflow-y-s flex-1" id="viewContainerDrive">
-
+                        
                     </div>
                 </div>
             </div>
@@ -160,7 +161,7 @@
         </section>
     </main>
     <div class="d-none p-absolute container-2 overflow-h h-fit m-2vh-6vh w-18p right-0 bottom-0 modal-upload" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-        <div class="d-flex align-center" style="background-color: rgb(56, 56, 56);">
+        <div class="d-flex align-center" style="background-color: rgb(29, 29, 29);">
             <h3 class="m-b-2 m-t-2 m-l-1 font-small" type="span.title">Uploading x item</h3>
             <i class="fa-solid fa-x font-small hover-1 m-l-a m-r-2" onclick="this.parentElement.parentElement.classList.add('d-none')"></i>
         </div>
@@ -169,7 +170,6 @@
             
         </div>
     </div>
-
 </body>
 
 
@@ -196,7 +196,11 @@
     </div>
 </template>
 
-
+<template id="item-drag">
+    <div class="container-2 h-fit w-fit p-absolute p-06 b-r-1">
+        <span class="text-overflow-h p-l-1 m-r-2 font-small" type="span.name"><i class="fa-solid fa-file icon m-r-08" style="color: #a5a5a5;"></i>document.docx</span>
+    </div>
+</template>
 <!--Trash modal-->
 <template id="trashModal">
     <div class="w-100 h-100 p-absolute d-flex p-absolute top-0 left-0 modal-index">
@@ -335,6 +339,33 @@
     </div>
 </template>
 
+<!--Force password reset modal-->
+<template id="forcePasswordResetModal">
+    <div class="w-100 h-100 p-absolute d-flex p-absolute top-0 left-0 modal-index">
+        <div class="w-100p h-100p p-absolute top-0 left-0 z-index--1 backgrond-blur-1" type="modal.background"></div>
+        <div class="container-1 w-30 h-fit m-a p-2 d-flex flex-column">
+            <h3 class="p-0 m-0 m-b-1">Password reset</h3>
+            <span class="font-note font-small">Please change your password.</span>
+
+            <span class="m-t-2 font-small font-note">New password</span>
+            <div class="input-field-1 w-100p m-t-1">
+                <input type="password" class="selectable" typeI="input.password">
+            </div>
+
+            <span class="m-t-2 font-small font-note">Confirm password</span>
+            <div class="input-field-1 w-100p m-t-1">
+                <input type="password" class="selectable" typeI="input.passwordConfirm">
+            </div>
+
+            <div class="d-flex m-t-2">
+                <span class="m-l-a button-2 p-lr-3" type="button.cancel">Cancel</span>
+                <span class="m-l-1 button-4 p-lr-3" type="button.confirm">Save</span>
+            </div>
+
+        </div>
+    </div>
+</template>
+
 
 <script src="/code/utils/alert.js"></script>
 <script src="/code/utils/format.js"></script>
@@ -354,12 +385,14 @@
 <script src="/code/controllers/modals/share.js"></script>
 <script src="/code/controllers/modals/trash.js"></script>
 <script src="/code/controllers/modals/folder.js"></script>
+<script src="/code/controllers/modals/forcePasswordReset.js"></script>
 <script src="/code/controllers/modal.js"></script>
 <script src="/code/controllers/file.js"></script>
 <script src="/code/controllers/folder.js"></script>
 <script src="/code/controllers/view.js"></script>
 <script src="/code/controllers/share.js"></script>
 <script src="/code/controllers/storage.js"></script>
+<script src="/code/controllers/security.js"></script>
 
 
 </html>
