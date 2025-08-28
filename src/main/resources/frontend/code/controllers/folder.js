@@ -4,7 +4,7 @@ async function getFolderLocation(folderUuid){
     });
 
     if (!response.ok) {
-        throwError("Failed to get folder location: " + await response.text())
+        return handleServerReturnAlert(response.status, await response.text())
     }
 
     const result = await response.json();
@@ -23,11 +23,21 @@ async function uploadFolder(folderId, folderName) {
         method: "POST"
     });
 
-    if (!response.ok) {
-        throwError(await response.text())
-    }
+    if(getHandleServerReturnType(response.status) !== true) return handleServerReturnAlert(response.status, await response.text());
 
-    return response.text();
+    const result = await response.json();
+
+    let folder = new Folder(
+        result.uuid,
+        result.owner,
+        result.name,
+        result.folderId,
+        result.size
+    );
+
+    await folder.load(viewContainerDrive)
+
+    return true
 }
 
 async function browseDirectory(folderId) {
@@ -36,7 +46,7 @@ async function browseDirectory(folderId) {
     });
 
     if (!response.ok) {
-        throwError(await response.text());
+        handleServerReturnAlert(response.status, await response.text())
         return;
     }
 
@@ -99,32 +109,19 @@ function downloadZipFile(folderId, folderUuid) {
 }
 
 async function deleteFolder(folderId, folderUuid, notify) {
-
     const response = await fetch(`/api/folders/delete?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}`, {
         method: "POST"
     });
 
-    if (!response.ok) {
-        throwError(await response.text())
-    }
-
-    if(notify){throwSuccess("Folder deleted")}
-
-    return true
+    return handleServerReturnAlert(response.status, await response.text())
 }
 
 async function renameFolder(folderId, folderUuid, name){
-    if(!name.length > 0){ throwWarning("Folder name must be 1 or more characters"); return}
-
     const response = await fetch(`/api/folders/rename?folderId=${encodeURIComponent(folderId)}&folderUuid=${encodeURIComponent(folderUuid)}&name=${encodeURIComponent(name)}`, {
         method: "POST"
     });
 
-    if (!response.ok) {
-        throwError(await response.text())
-    }
-
-    return true
+    return handleServerReturnAlert(response.status, await response.text())
 }
 
 async function getParentFolder(folderId, folderName){
@@ -133,7 +130,7 @@ async function getParentFolder(folderId, folderName){
     });
 
     if (!response.ok) {
-        throwError(await response.text())
+        handleServerReturnAlert(response.status, await response.text())
         return null;
     }
 
@@ -154,7 +151,6 @@ async function FolderUploading(filesList) {
     const rootFolderId = getParameter("jbd");
 
     if (!rootFolderId || typeof rootFolderId !== "string") {
-        alert("Invalid root folder ID.");
         return;
     }
 
@@ -195,7 +191,14 @@ async function FolderUploading(filesList) {
     await refreshDirectoryDrive();
 }
 
+async function moveFolder(itemId, newFolderId){
+    if (itemId === newFolderId) return false
+    const response = await fetch(`/api/folders/move?itemId=${encodeURIComponent(itemId)}&newFolderId=${encodeURIComponent(newFolderId)}`, {
+        method: "PUT"
+    });
 
+    return handleServerReturnAlert(response.status, await response.text())
+}
 
 function openFolderUploadMenu() {
     document.getElementById('hiddenFolderInput').click();

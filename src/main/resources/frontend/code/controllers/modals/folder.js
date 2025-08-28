@@ -14,7 +14,6 @@ function openFolderModal(){
     clone.querySelector('[type="button.confirm"]').addEventListener("click", async () => {
         closeFolderModal()
         await uploadFolder(getParameter("jbd"), nameInput.value)
-        await refreshDirectoryDrive()
     })
 
     clone.querySelector('[type="button.cancel"]').addEventListener("click", async () => {

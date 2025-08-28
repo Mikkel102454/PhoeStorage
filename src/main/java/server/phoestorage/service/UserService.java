@@ -12,12 +12,10 @@ import server.phoestorage.datasource.users.UserEntity;
 import server.phoestorage.datasource.users.UserRepository;
 import server.phoestorage.dto.SettingsEntry;
 import server.phoestorage.dto.UserEntry;
-import server.phoestorage.service.FileService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service

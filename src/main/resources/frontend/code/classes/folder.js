@@ -98,15 +98,15 @@ class Folder{
     }
 
     async rename(newName){
+        if(!newName.length > 0){ throwWarning("Folder name must be 1 or more characters"); return}
+        if(newName === this.name) return
         if(!await renameFolder(this.folderId, this.uuid, newName)) {return}
         this.name = newName
         this.loadedElement.querySelector('[type="span.name"]').innerHTML = "<i class='fa-solid fa-folder icon m-r-08' style = 'color: #FFD43B;'></i>" + this.name
-        await renameFolder(this.folderId, this.uuid, newName)
     }
 
     async move(newFolderUuid){
-        //create moveFolder function on frontend and backend
-        return await moveFolder(this.uuid, this.folderId, newFolderUuid)
+        return moveFolder(this.uuid, newFolderUuid)
     }
 }
 

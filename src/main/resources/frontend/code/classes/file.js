@@ -117,7 +117,7 @@ class File{
     }
 
     async move(newFolderUuid){
-        return await moveFile(this.uuid, this.folderId, newFolderUuid)
+        return moveFile(this.uuid, this.folderId, newFolderUuid);
     }
 }
 

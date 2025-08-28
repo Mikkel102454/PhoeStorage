@@ -1,11 +1,14 @@
 package server.phoestorage.service;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.phoestorage.datasource.file.FileEntity;
 import server.phoestorage.datasource.file.FileRepository;
 import server.phoestorage.datasource.folder.FolderEntity;
@@ -22,6 +25,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
+
+import static server.phoestorage.utils.Database.extractConstraintName;
 
 @Service
 public class FolderService {
@@ -148,14 +153,14 @@ public class FolderService {
      * @return exit code
      *
      */
-    public ResponseEntity<String> createFolder(String folderId, String folderName) {
+    @Timed(value = "dir.create", histogram = true)
+    public FolderEntry createFolder(String folderId, String folderName) {
         String uuid = appUserDetailsService.getUserEntity().getUuid();
 
-        if(folderExistByName(uuid, folderId, folderName)) { folderName = getValidFolderName(folderId, folderName, uuid); }
+        folderName = getValidFolderName(folderId, folderName, uuid);
 
         if(folderName.equals("nil")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(folderName);
+            return null;
         }
 
         String folderUuid = UUID.randomUUID().toString();
@@ -168,25 +173,16 @@ public class FolderService {
         folderEntity.setUserCreated(true);
 
         folderRepository.save(folderEntity);
-        return ResponseEntity.ok(folderUuid);
+
+        FolderEntry folderEntry = new FolderEntry();
+        folderEntry.setUuid(folderUuid);
+        folderEntry.setOwner(uuid);
+        folderEntry.setName(folderName);
+        folderEntry.setFolderId(folderId);
+        folderEntry.setSize(0);
+        return folderEntry;
     }
-    public String getValidFolderName(String folderId, String folderName, String owner) {
-        List<String> existingNames = folderRepository
-                .findByOwnerAndFolderIdStartingWithName(owner, folderId, folderName);
 
-        if (!existingNames.contains(folderName)) {
-            return folderName;
-        }
-
-        for (int i = 1; i <= 20; i++) {
-            String newFolderName = folderName + " (" + i + ")";
-            if (!existingNames.contains(newFolderName)) {
-                return newFolderName;
-            }
-        }
-
-        return "nil"; // fallback if all names are taken
-    }
 
     /**
      * Delete folder
@@ -210,47 +206,6 @@ public class FolderService {
         folderRepository.deleteAll(folders);
 
         return 0;
-    }
-
-    public ResponseEntity<?> renameFolder(String folderId, String folderUuid, String name){
-        String uuid = appUserDetailsService.getUserEntity().getUuid();
-
-        if(!folderExistByUuid(uuid, folderId, folderUuid)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerService.get404());
-        }
-
-        if(folderRepository.findByOwnerAndFolderIdAndUuid(uuid, folderId, folderUuid).get().getName().equals(name)) {
-            return ResponseEntity.ok().body("");
-        }
-
-        if(folderExistByName(uuid, folderId, name)) {
-            name = getValidFolderName(folderId, name, uuid);
-            if(name.equals("nil")){
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(name);
-            }
-        }
-
-        if(folderRepository.renameFolder(uuid, folderId, folderUuid, name) != 1){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(handlerService.get500(new Exception()));
-        }
-        return ResponseEntity.ok("");
-    }
-
-    public FolderEntry getParentFolder(String folderId, String folderName) {
-        String uuid = appUserDetailsService.getUserEntity().getUuid();
-        if(!folderExistByName(uuid, folderId, folderName)) {
-            return null;
-        }
-
-        FolderEntity folderEntity = folderRepository.findByOwnerAndFolderIdAndName(uuid, folderId, folderName).get();
-
-        FolderEntry folderEntry = new FolderEntry();
-        folderEntry.setUuid(folderEntity.getUuid());
-        folderEntry.setOwner(uuid);
-        folderEntry.setName(folderName);
-        folderEntry.setFolderId(folderEntity.getFolderId());
-
-        return folderEntry;
     }
 
     public ResponseEntity<List<FolderEntry>> getFolderLocation(String folderUuid) {
@@ -299,6 +254,9 @@ public class FolderService {
 
         return folderEntity.isPresent();
     }
+
+
+
 
     public void downloadZipFile(String folderId, String folderUuid, HttpServletResponse response, String uuid) {
         try {
@@ -384,5 +342,77 @@ public class FolderService {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+
+
+    /* optimised single query*/
+    public String getValidFolderName(String folderId, String folderName, String owner) {
+        List<String> existingNames = folderRepository
+                .findByOwnerAndFolderIdStartingWithName(owner, folderId, folderName);
+
+        if (!existingNames.contains(folderName)) {
+            return folderName;
+        }
+
+        for (int i = 1; i <= 20; i++) {
+            String newFolderName = folderName + " (" + i + ")";
+            if (!existingNames.contains(newFolderName)) {
+                return newFolderName;
+            }
+        }
+
+        return "nil"; // fallback if all names are taken
+    }
+
+    public FolderEntry getParentFolder(String folderId, String folderName) {
+        String uuid = appUserDetailsService.getUserEntity().getUuid();
+
+        Optional<FolderEntity> folder = folderRepository.findByOwnerAndFolderIdAndName(uuid, folderId, folderName);
+        if(folder.isEmpty()) return null;
+
+        FolderEntity folderEntity = folder.get();
+
+        FolderEntry folderEntry = new FolderEntry();
+        folderEntry.setUuid(folderEntity.getUuid());
+        folderEntry.setOwner(uuid);
+        folderEntry.setName(folderName);
+        folderEntry.setFolderId(folderEntity.getFolderId());
+
+        return folderEntry;
+    }
+
+    public int renameFolder(String folderId, String folderUuid, String name){
+        String owner = appUserDetailsService.getUserEntity().getUuid();
+
+        try {
+            int rows = folderRepository.renameFolder(owner, folderId, folderUuid, name);
+            if (rows == 0) return 404;
+            return 200;
+
+        } catch (DataIntegrityViolationException ex) {
+            String c = extractConstraintName(ex);
+            if ("fk_folder_parent".equalsIgnoreCase(c)) return 404;    // destination missing
+            if ("uq_owner_parent_name".equalsIgnoreCase(c)) return 409; // duplicate
+            return 500;
+        }
+    }
+
+    public int moveFolder(String itemId, String newParent) {
+        if (itemId.equals(newParent)) return 400; // moved into self
+
+        String owner = appUserDetailsService.getUserEntity().getUuid();
+
+        try {
+            int rows = folderRepository.moveFolder(owner, itemId, newParent);
+            if (rows == 0) return 404;
+            return 200;
+
+        } catch (DataIntegrityViolationException ex) {
+            String c = extractConstraintName(ex);
+            if ("fk_folder_parent".equalsIgnoreCase(c)) return 404;    // destination missing
+            if ("uq_owner_parent_name".equalsIgnoreCase(c)) return 409; // duplicate
+            return 500;
+        }
     }
 }

@@ -140,10 +140,9 @@ async function deleteFile(folderId, fileId, notify) {
     });
 
     if (!response.ok) {
-        throwError(await response.text())
-        return
+        return handleServerReturnAlert(response.status, await response.text())
     }
-    if(notify){throwSuccess("File deleted")}
+    if(notify){return handleServerReturnAlert(response.status, await response.text())}
 
     return true
 }
@@ -155,11 +154,7 @@ async function renameFile(folderId, fileId, name){
         method: "POST"
     });
 
-    if (!response.ok) {
-        throwError(await response.text())
-    }
-
-    return true
+    return handleServerReturnAlert(response.status, await response.text())
 }
 
 async function searchFiles(query) {
@@ -168,8 +163,7 @@ async function searchFiles(query) {
     });
 
     if (!response.ok) {
-        throwError(await response.text());
-        return;
+        return handleServerReturnAlert(response.status, await response.text())
     }
 
     const result = await response.json();
@@ -197,8 +191,7 @@ async function getStarredFiles(){
     });
 
     if (!response.ok) {
-        throwError(await response.text())
-        return
+        return handleServerReturnAlert(response.status, await response.text())
     }
     const result = await response.json();
 
@@ -222,8 +215,7 @@ async function setStarredFile(folderId, fileId, value){
     });
 
     if (!response.ok) {
-        throwError(await response.text())
-        return
+        return handleServerReturnAlert(response.status, await response.text())
     }
 
     return true
@@ -234,12 +226,7 @@ async function moveFile(fileId, folderId, newFolderId){
         method: "PUT"
     });
 
-    if (!response.ok) {
-        throwError(await response.text())
-    }
-
-    throwSuccess(await response.text())
-    return true
+    return handleServerReturnAlert(response.status, await response.text())
 }
 
 function openFileUploadMenu() {

@@ -83,3 +83,35 @@ function throwSuccess(msg)    { console.log(msg);   spawnAlert("success", msg, 4
 // If you still want an init, keep it minimal:
 function init(){ ensureAlertBox(); }
 init();
+
+function handleServerReturnAlert(code, msg){
+    switch (code){
+        case 200:
+            throwSuccess(msg)
+            return true
+        case 201:
+            throwSuccess(msg)
+            return true
+        case 400:
+            throwWarning(msg)
+            return false
+        case 409:
+            throwWarning(msg)
+            return false
+        case 500:
+            throwError(msg)
+            return false
+
+    }
+}
+
+function getHandleServerReturnType(code){
+    switch (code) {
+        case 200:
+            return true
+        case 201:
+            return true
+        default:
+            return false
+    }
+}

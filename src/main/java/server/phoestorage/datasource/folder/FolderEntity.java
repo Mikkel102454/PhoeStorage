@@ -6,7 +6,20 @@ import jakarta.persistence.*;
  * File entity is data of a file
  *
  */
-@Entity(name = "folder")
+@Entity(name = "folder")                 // JPQL entity name is "folder"
+@Table(
+        name = "folder",                     // physical table name
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_owner_parent_name",
+                        columnNames = {"owner", "folderId", "name"}   // use your actual column names
+                )
+        },
+        indexes = {
+                @Index(name = "ix_folders_owner_uuid",   columnList = "owner, uuid"),
+                @Index(name = "ix_folders_owner_parent", columnList = "owner, folderId")
+        }
+)
 public class FolderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

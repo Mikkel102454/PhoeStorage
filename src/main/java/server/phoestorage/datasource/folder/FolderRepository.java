@@ -1,9 +1,11 @@
 package server.phoestorage.datasource.folder;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import server.phoestorage.datasource.file.FileEntity;
 
@@ -42,13 +44,7 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
             @Param("folderId") String folderId
     );
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE folder f SET f.name = :name WHERE f.owner = :owner AND f.folderId = :folderId AND f.uuid = :folderUuid")
-    int renameFolder(@Param("owner") String owner,
-                   @Param("folderId") String folderId,
-                   @Param("folderUuid") String folderUuid,
-                   @Param("name") String name);
+
 
     @Query(value = """
     WITH RECURSIVE folder_chain AS (
@@ -98,4 +94,26 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Integer> {
             @Param("parentId") String parentId,
             @Param("owner")    String owner
     );
+
+
+    //Improved signle queries
+    @Modifying
+    @Transactional
+    @Query("UPDATE folder f SET f.name = :name WHERE f.owner = :owner AND f.folderId = :folderId AND f.uuid = :folderUuid")
+    int renameFolder(@Param("owner") String owner,
+                     @Param("folderId") String folderId,
+                     @Param("folderUuid") String folderUuid,
+                     @Param("name") String name);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = false)
+    @Transactional
+    @Query("""
+        update folder f
+           set f.folderId = :newParent
+         where f.owner    = :owner
+           and f.uuid     = :id
+    """)
+    int moveFolder(@Param("owner") String owner,
+                       @Param("id") String itemId,
+                       @Param("newParent") String newFolderUuid) throws DataAccessException;
 }
