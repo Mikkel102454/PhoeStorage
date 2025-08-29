@@ -7,13 +7,13 @@ logging:
         security=DEBUG:
 
   file:
-    path: logs/PhoeStorage.log
+    path: logs/storage.log
 
 spring:
   datasource:
-    password: "%Wh@BJrX8z3uHugD7JPG#%"
-    url: jdbc:mysql://127.0.0.1/phoestorage
-    username: storage
+    password:
+    url:
+    username:
 
   jpa:
     hibernate:
@@ -25,4 +25,4 @@ spring:
       hibernate:
         format_sql: true
 server:
-  root: "/srv/phoestorage/"
+  root: "/srv/storage/"
