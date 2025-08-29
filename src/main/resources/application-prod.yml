@@ -11,9 +11,9 @@ logging:
 
 spring:
   datasource:
-    password:
-    url:
-    username:
+    password: "%Wh@BJrX8z3uHugD7JPG#%"
+    url: jdbc:mysql://188.228.52.113/phoestorage
+    username: storage
 
   jpa:
     hibernate:
@@ -25,4 +25,4 @@ spring:
       hibernate:
         format_sql: true
 server:
-  root: "/srv/storage/"
+  root: "C:/storage/"
