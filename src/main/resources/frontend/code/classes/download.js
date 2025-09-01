@@ -9,7 +9,8 @@ class Download{
     maxDownload //int
     expire //string
     isFolder // bool
-    constructor(uuid, name, extension, download, maxDownload, expire, isFolder) {
+    size
+    constructor(uuid, name, extension, download, maxDownload, expire, isFolder, size) {
         this.uuid = uuid
         this.name = name
         this.extension = extension
@@ -17,6 +18,7 @@ class Download{
         this.maxDownload = maxDownload
         this.expire = expire
         this.isFolder = isFolder
+        this.size = size
     }
 
     loadedElement

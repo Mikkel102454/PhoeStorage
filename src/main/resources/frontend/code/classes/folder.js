@@ -138,6 +138,14 @@ class Folder{
             // cleanup highlight
             if (currentHover) {
                 completed = await this.move(currentHover.getAttribute("uuid"))
+
+                if(completed) {
+                    let sizeSpan = currentHover.querySelector('[type="span.size"]')
+                    if (sizeSpan) {
+                        sizeSpan.innerText = formatSize(BigInt(formatSizeReverse(sizeSpan.innerText)) + BigInt(this.size))
+                    }
+                }
+
                 currentHover.style.backgroundColor = '';
                 currentHover = null;
             }

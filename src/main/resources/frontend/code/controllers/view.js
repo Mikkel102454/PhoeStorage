@@ -42,9 +42,6 @@ async function refreshDirectoryDrive(){
 
     const { files, folders } = await browseDirectory(getParameter("jbd"))
 
-    await unloadAllFiles()
-    await unloadAllFolders()
-
     pathContainerDrive.innerHTML = ""
 
     const folderChain = await getFolderLocation(getParameter("jbd"))
@@ -53,6 +50,8 @@ async function refreshDirectoryDrive(){
         initPathView(folderChain[i].uuid ,folderChain[i].name, pathContainerDrive)
     }
 
+    await unloadAllFiles()
+    await unloadAllFolders()
 
     for(const key in folders){
         await folders[key].load(viewContainerDrive)
@@ -68,9 +67,9 @@ function initPathView(uuid, name, parent){
     clone.querySelector('[type="span.name"]').addEventListener("click", async function (){
         await loadDirectoryDrive(uuid, null)
 
-        let node = this.parentElement.parentElement.nextElementSibling;
+        let node = this.parentElement.nextElementSibling;
         while (node) {
-            const next = this.parentElement.parentElement.nextElementSibling;
+            const next = this.parentElement.nextElementSibling;
             node.remove();
             node = next;
         }

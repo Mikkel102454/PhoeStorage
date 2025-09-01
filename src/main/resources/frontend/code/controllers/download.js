@@ -80,18 +80,20 @@ async function downloadInit(){
         result.ownerUuid,
         result.fileName,
         result.fileExtension,
+        0,
+        0,
         result.dateExpire,
         result.isFolder,
         result.size
     );
 
     //set data
-    document.querySelector('[type="span.name"]').textContent = download.fileName
+    document.querySelector('[type="span.name"]').textContent = download.name
     document.querySelector('[type="span.size"]').textContent = formatSize(download.size)
-    document.querySelector('[type="span.extension"]').textContent = download.fileExtension
-    document.querySelector('[type="span.expire"]').textContent = download.dateExpire === "-1" ? "Never" : formatDate(download.dateExpire)
+    document.querySelector('[type="span.extension"]').textContent = download.extension
+    document.querySelector('[type="span.expire"]').textContent = download.expire === "-1" ? "Never" : formatDate(download.expire)
 
-    document.querySelector('[type="span.icon"]').innerHTML = fileIcon(download.fileExtension)
+    document.querySelector('[type="span.icon"]').innerHTML = fileIcon(download.extension)
     document.querySelector('[type="span.icon"]').firstElementChild.classList.remove("m-r-08")
     document.querySelector('[type="span.icon"]').firstElementChild.classList.add("m-a")
 
