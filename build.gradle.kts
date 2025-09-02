@@ -24,6 +24,8 @@ dependencies {
 
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
+    implementation("org.scijava:native-lib-loader:2.5.0")
+    implementation("me.paulschwarz:spring-dotenv:4.0.0")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("org.springframework.boot:spring-boot-starter-actuator")

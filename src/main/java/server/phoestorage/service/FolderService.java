@@ -13,14 +13,17 @@ import server.phoestorage.datasource.folder.FolderRepository;
 import server.phoestorage.datasource.users.UserEntity;
 import server.phoestorage.dto.FileEntry;
 import server.phoestorage.dto.FolderEntry;
-import server.phoestorage.zip.ZipBridge;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static server.phoestorage.utils.Database.extractConstraintName;
 
@@ -249,48 +252,84 @@ public class FolderService {
 
 
 
-
-    public void downloadZipFile(String folderId, String folderUuid, HttpServletResponse response, String uuid) {
+    public void downloadZipFile(String folderId, String folderUuid,
+                                HttpServletResponse response, String uuid) {
         try {
+            // 1) Collect folders/files from your repositories
             List<FolderEntity> allFolders = folderRepository.findAllDescendantFolders(uuid, folderId, folderUuid);
-            List<FileEntity> allFiles = fileRepository.findAllFilesUnderFolderTree(uuid, folderId, folderUuid);
+            List<FileEntity> allFiles    = fileRepository.findAllFilesUnderFolderTree(uuid, folderId, folderUuid);
 
+            // 2) Validate files exist on disk
             List<FileEntity> validFiles = allFiles.stream()
                     .filter(f -> Files.exists(Paths.get(f.getInternalPath())))
                     .toList();
 
             if (validFiles.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND , "No files found to zip.");
-                System.err.println("No files found to zip.");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No files found to zip.");
                 return;
             }
 
+            // 3) Choose download filename from the root folder name
             String zipFileName = allFolders.stream()
                     .filter(f -> f.getUuid().equals(folderUuid))
                     .map(FolderEntity::getName)
                     .findFirst()
                     .orElse("download") + ".zip";
 
-            response.setContentType("application/zip");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFileName + "\"");
-
+            // 4) Build "zip path" → "disk path" mapping
             Map<String, String> zipMap = buildZipPathMap(validFiles, allFolders, folderUuid);
 
-            String[] zipNames = zipMap.keySet().toArray(new String[0]);
-            String[] diskPaths = zipMap.values().toArray(new String[0]);
+            // 5) Prepare response headers (send early to get TTFB and avoid proxy timeouts)
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + zipFileName + "\"");
+            // (Optional, helps with Nginx/Cloudflare):
+            response.setHeader("X-Accel-Buffering", "no");
+            response.setBufferSize(128 * 1024);
+            response.flushBuffer(); // flush headers immediately
 
-            new ZipBridge().streamZip(zipNames, diskPaths, response.getOutputStream());
+            // 6) Stream the ZIP
+            try (ZipOutputStream zip = new ZipOutputStream(response.getOutputStream())) {
+                zip.setLevel(Deflater.NO_COMPRESSION);
 
-        } catch (Exception e) {
-            System.err.println("ZIP generation failed: " + e.getMessage());
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate zip.");
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+                byte[] buffer = new byte[1024  * 1024];
+
+                for (Map.Entry<String, String> e : zipMap.entrySet()) {
+                    String zipName  = normalizeZipPath(e.getKey());
+                    Path   diskPath = Paths.get(e.getValue());
+
+                    // Ensure directory entries are present if you want (optional; not strictly required)
+                    // addParentDirs(zip, zipName);
+
+                    ZipEntry entry = new ZipEntry(zipName);
+                    zip.putNextEntry(entry);
+
+                    try (InputStream in = Files.newInputStream(diskPath)) {
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            zip.write(buffer, 0, read);
+                        }
+                    } catch (IOException io) {
+                        // On per-file error, close the entry and continue with the next file
+                        // (You could also log + break, depending on your requirements)
+                    } finally {
+                        zip.closeEntry();
+                    }
+                }
+
+                zip.finish(); // finalize central directory
+                zip.flush();
             }
+        } catch (Exception e) {
+            // If anything fails before headers are committed, return a 500
+            try {
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to generate zip.");
+                }
+            } catch (IOException ignored) {}
         }
     }
 
+    // Keep your original mapping logic; just normalize to forward slashes for ZIP entries.
     public Map<String, String> buildZipPathMap(List<FileEntity> files, List<FolderEntity> folders, String rootFolderId) {
         Map<String, FolderEntity> folderMap = folders.stream()
                 .collect(Collectors.toMap(FolderEntity::getUuid, f -> f));
@@ -304,17 +343,21 @@ public class FolderService {
             while (parentId != null) {
                 FolderEntity parent = folderMap.get(parentId);
                 if (parent == null || parent.getUuid().equals(rootFolderId)) break;
-
                 zipPath = parent.getName() + "/" + zipPath;
                 parentId = parent.getFolderId();
             }
 
             result.put(zipPath, file.getInternalPath());
         }
-
         return result;
     }
 
+    private static String normalizeZipPath(String p) {
+        // ZIP spec uses forward slashes; also guard against accidental leading slashes
+        String s = p.replace('\\', '/');
+        while (s.startsWith("/")) s = s.substring(1);
+        return s;
+    }
 
     public static void deleteDirectoryRecursively(Path dir) throws IOException {
         if (dir == null || !Files.exists(dir)) return;

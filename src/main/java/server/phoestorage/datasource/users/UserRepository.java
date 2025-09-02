@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query("SELECT u.uuid FROM users u WHERE u.username = :username")
     Optional<String> findUuidByUsername(String username);
+
+    boolean existsByAdminTrue();
 }

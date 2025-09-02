@@ -24,7 +24,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  config:
-    import: optional:file:.env[.properties]
 server:
-  root: "C:/storage/"
+  root: ${APP_ROOT}
